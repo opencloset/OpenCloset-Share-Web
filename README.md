@@ -14,5 +14,5 @@ https://share.theopencloset.net
 
 ## Run ##
 
-    $ ln -s share.conf.sample share.conf    # symlink config sample and customize it.
+    $ cp share.conf.sample share.conf    # copy config sample and customize it.
     $ MOJO_CONFIG=share.conf morbo ./script/share
