@@ -1,0 +1,26 @@
+{
+  "name": "opencloset-share-web",
+  "homepage": "https://github.com/opencloset/OpenCloset-Share-Web",
+  "authors": [
+    "Hyungsuk Hong <aanoaa@gmail.com>"
+  ],
+  "description": "opencloset share webservice",
+  "main": "",
+  "moduleType": [],
+  "license": "Artistic",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.2.0",
+    "underscore": "~1.8.3",
+    "bootstrap": "~3.3.6",
+    "font-awesome": "~4.5.0",
+    "opencloset.css": "https://github.com/opencloset/opencloset.css.git"
+  }
+}

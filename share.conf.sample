@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+{
+    database => {
+        dsn  => $ENV{OPENCLOSET_DATABASE_DSN}  || "dbi:mysql:opencloset:127.0.0.1",
+        name => $ENV{OPENCLOSET_DATABASE_NAME} || 'opencloset',
+        user => $ENV{OPENCLOSET_DATABASE_USER} || 'opencloset',
+        pass => $ENV{OPENCLOSET_DATABASE_PASS} // 'opencloset',
+        opts => {
+            quote_char        => q{`},
+            mysql_enable_utf8 => 1,
+            on_connect_do     => 'SET NAMES utf8',
+            RaiseError        => 1,
+            AutoCommit        => 1,
+        },
+    },
+    secrets => [ $ENV{OPENCLOSET_SECRET} ],                                         # must set secret of staff.theopencloset.net
+    cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
+};
