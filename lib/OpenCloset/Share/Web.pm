@@ -20,8 +20,15 @@ sub startup {
     $self->sessions->cookie_name('opencloset');
     $self->sessions->default_expiration(86400);
 
+    $self->_assets;
     $self->_public_routes;
     $self->_private_routes;
+}
+
+sub _assets {
+    my $self = shift;
+
+    $self->defaults( jses => [], csses => [] );
 }
 
 sub _public_routes {
