@@ -1,0 +1,361 @@
+.iu-center-box {
+  width:320px;
+}
+.opencloset_02header {
+  background-color:rgb(255,211,0);
+  color:rgb(51,51,51);
+  float:none;
+  height:50px;
+  position:fixed;
+  width:100%;
+  z-index:11;
+}
+.opencloset_02image {
+  height:31px;
+  left:4px;
+  top:11px;
+  width:117px;
+}
+.opencloset_02image-13 {
+  height:20px;
+  left:293px;
+  top:14px;
+  width:20px;
+}
+.opencloset_02page-content {
+  background-color:rgb(255,255,255);
+}
+.opencloset_02section-21 {
+  background-color:rgba(182,182,182,0.30);
+  height:80px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.opencloset_02image-22 {
+  height:20px;
+  left:6px;
+  top:55px;
+  width:20px;
+}
+.opencloset_02opencloset_02text-32 {
+  height:22px;
+  left:0px;
+  margin-left:auto;
+  margin-right:auto;
+  right:0px;
+  top:54px;
+  width:92px;
+}
+.opencloset_02section {
+  height:600px;
+}
+.opencloset_02opencloset_02image-69 {
+  height:34px;
+  left:276px;
+  top:225px;
+  width:34px;
+}
+.opencloset_02text {
+  border-bottom-width:0px;
+  font-size:12px;
+  font-weight:400;
+  height:20px;
+  left:4px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:51px;
+}
+.opencloset_02opencloset_02text-15 {
+  border-bottom-color:rgb(43,228,255);
+  border-bottom-width:2px;
+  border-left-width:0px;
+  border-right-width:0px;
+  border-top-width:0px;
+  font-size:8px;
+  height:20px;
+  left:56px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:51px;
+}
+.opencloset_02opencloset_02opencloset_02text {
+  border-bottom-width:0px;
+  font-size:8px;
+  height:20px;
+  left:108px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:51px;
+}
+.opencloset_02opencloset_02opencloset_02opencloset_02text {
+  border-bottom-width:0px;
+  font-size:8px;
+  height:20px;
+  left:162px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:41px;
+}
+.opencloset_02opencloset_02opencloset_02opencloset_02text-18 {
+  border-bottom-width:0px;
+  font-size:8px;
+  height:20px;
+  left:202px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:51px;
+}
+.opencloset_02opencloset_02opencloset_02opencloset_02opencloset_02text {
+  border-bottom-width:0px;
+  font-size:10px;
+  height:20px;
+  left:256px;
+  letter-spacing:-1px;
+  text-align:center;
+  top:6px;
+  width:58px;
+}
+.opencloset_02webmovie {
+  height:180px;
+  left:0px;
+  top:28px;
+  width:320px;
+}
+.opencloset_02opencloset_02image {
+  height:34px;
+  left:9px;
+  top:225px;
+  width:34px;
+}
+.opencloset_02opencloset_02pg-text-field {
+  border-color:rgb(218,218,218);
+  border-width:1px;
+  font-size:24px;
+  height:42px;
+  left:0px;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:8px;
+  padding-right:8px;
+  right:0px;
+  text-align:center;
+  top:220px;
+  width:83px;
+}
+.opencloset_02opencloset_02opencloset_02text-24 {
+  height:24px;
+  left:0px;
+  margin-left:auto;
+  margin-right:auto;
+  right:0px;
+  text-align:center;
+  top:262px;
+  width:28px;
+}
+.opencloset_02footer {
+  background-color:rgb(109,109,109);
+  height:132px;
+  left:0px;
+  position:relative;
+  top:0px;
+  width:100%;
+}
+.openclosettext-5 {
+  bottom:0px;
+  color:rgb(150,150,150);
+  font-family:'Helvetica', sans-serif;
+  font-size:24px;
+  height:115px;
+  left:4px;
+  line-height:0.70;
+  margin-bottom:auto;
+  margin-top:auto;
+  text-align:center;
+  top:0px;
+  width:97.21%;
+}
+.openclosetpanel {
+  background-color:rgba(0,0,0,0.90);
+  height:103.35%;
+  left:100%;
+  position:fixed;
+  width:320px;
+  z-index:90;
+}
+.openclosetpanel > .iux-panel-close-button {
+  background-image:url('/resource/project/ico-close-modal.png');
+  display:inherit;
+  height:32px;
+  left:287px;
+  position:absolute;
+  top:9px;
+  width:32px;
+}
+.openclosettext-18 {
+  background-position:center top;
+  color:rgb(255,255,255);
+  font-size:14px;
+  font-weight:300;
+  height:180px;
+  left:0px;
+  margin-left:auto;
+  margin-right:auto;
+  right:0px;
+  text-align:center;
+  top:79px;
+  width:179px;
+}
+.openclosettext-19 {
+  height:23px;
+  left:18px;
+  top:16px;
+  width:83px;
+}
+.openclosetcell {
+  height:40px;
+  left:161px;
+  line-height:40px;
+  text-align:center;
+  top:47px;
+  width:100px;
+}
+.openclosetcell-20 {
+  border-color:rgb(255,255,255);
+  border-radius:2px;
+  border-width:1px;
+  font-size:14px;
+  height:23px;
+  left:83px;
+  line-height:23px;
+  text-align:center;
+  top:15px;
+  width:63px;
+}
+@media screen and (min-width:375px) {
+  .iu-center-box {
+    width:375px;
+  }
+  .opencloset_02image {
+    left:10px;
+    top:11px;
+  }
+  .opencloset_02image-13 {
+    left:345px;
+    top:14px;
+  }
+  .opencloset_02section-21 {
+    background-color:rgba(182,182,182,0.30);
+    height:80px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .opencloset_02image-22 {
+    height:20px;
+    left:11px;
+    top:55px;
+    width:20px;
+  }
+  .opencloset_02opencloset_02text-32 {
+    height:24px;
+    left:0px;
+    margin-left:auto;
+    margin-right:auto;
+    right:0px;
+    top:55px;
+    width:93px;
+  }
+  .opencloset_02opencloset_02image-69 {
+    left:338px;
+    top:246px;
+  }
+  .opencloset_02text {
+    font-size:14px;
+    left:12px;
+    top:6px;
+  }
+  .opencloset_02opencloset_02text-15 {
+    border-bottom-color:rgb(43,228,255);
+    border-bottom-width:2px;
+    font-size:14px;
+    left:72px;
+    top:6px;
+  }
+  .opencloset_02opencloset_02opencloset_02text {
+    border-bottom-width:0px;
+    font-size:14px;
+    left:134px;
+    top:6px;
+  }
+  .opencloset_02opencloset_02opencloset_02opencloset_02text {
+    border-bottom-width:0px;
+    font-size:14px;
+    left:196px;
+    top:6px;
+  }
+  .opencloset_02opencloset_02opencloset_02opencloset_02text-18 {
+    border-bottom-width:0px;
+    font-size:14px;
+    left:246px;
+    top:6px;
+  }
+  .opencloset_02opencloset_02opencloset_02opencloset_02opencloset_02text {
+    font-size:14px;
+    left:307px;
+    top:6px;
+  }
+  .opencloset_02webmovie {
+    height:201px;
+    left:12px;
+    top:28px;
+    width:353px;
+  }
+  .opencloset_02opencloset_02image {
+    left:9px;
+    top:246px;
+  }
+  .opencloset_02opencloset_02pg-text-field {
+    left:0px;
+    margin-left:auto;
+    margin-right:auto;
+    right:0px;
+    top:241px;
+  }
+  .opencloset_02opencloset_02opencloset_02text-24 {
+    left:0px;
+    margin-left:auto;
+    margin-right:auto;
+    right:0px;
+    top:283px;
+  }
+  .openclosettext-5 {
+    bottom:0px;
+    margin-bottom:auto;
+    margin-top:auto;
+    top:0px;
+  }
+  .openclosetpanel {
+    height:100%;
+    width:100%;
+  }
+  .openclosetpanel > .iux-panel-close-button {
+    background-image:url('/resource/project/ico-close-modal.png');
+    display:inherit;
+    height:32px;
+    left:339px;
+    position:absolute;
+    top:9px;
+    width:32px;
+  }
+  .openclosettext-18 {
+    left:0px;
+    margin-left:auto;
+    margin-right:auto;
+    right:0px;
+  }
+
+}
