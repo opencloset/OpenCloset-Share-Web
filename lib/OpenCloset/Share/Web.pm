@@ -1,18 +1,36 @@
 package OpenCloset::Share::Web;
 use Mojo::Base 'Mojolicious';
 
-# This method will run once at server start
+=head1 METHODS
+
+=head2 startup
+
+This method will run once at server start
+
+=cut
+
 sub startup {
-  my $self = shift;
+    my $self = shift;
 
-  # Documentation browser under "/perldoc"
-  $self->plugin('PODRenderer');
+    $self->plugin('Config');
+    $self->plugin('OpenCloset::Plugin::Helpers');
 
-  # Router
-  my $r = $self->routes;
+    $self->secrets( $self->config->{secrets} );
+    $self->sessions->cookie_domain( $self->config->{cookie_domain} );
+    $self->sessions->cookie_name('opencloset');
+    $self->sessions->default_expiration(86400);
 
-  # Normal route to controller
-  $r->get('/')->to('example#welcome');
+    $self->_public_routes;
+    $self->_private_routes;
 }
+
+sub _public_routes {
+    my $self = shift;
+    my $r    = $self->routes;
+
+    $r->get('/')->to('root#index')->name('root.index');
+}
+
+sub _private_routes { }
 
 1;
