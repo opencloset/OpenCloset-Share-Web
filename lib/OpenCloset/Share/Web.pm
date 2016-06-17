@@ -1,6 +1,21 @@
 package OpenCloset::Share::Web;
 use Mojo::Base 'Mojolicious';
 
+use OpenCloset::Schema;
+
+has schema => sub {
+    my $self   = shift;
+    my $conf   = $self->config->{database};
+    my $schema = OpenCloset::Schema->connect(
+        {
+            dsn => $conf->{dsn}, user => $conf->{user}, password => $conf->{pass},
+            %{ $conf->{opts} },
+        }
+    );
+
+    return $schema;
+};
+
 =head1 METHODS
 
 =head2 startup
