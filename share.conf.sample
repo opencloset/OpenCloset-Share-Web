@@ -13,6 +13,10 @@
             AutoCommit        => 1,
         },
     },
-    secrets => [ $ENV{OPENCLOSET_SECRET} ],                                         # must set secret of staff.theopencloset.net
+
+    ## must set secret of staff.theopencloset.net
+    secrets       => [ $ENV{OPENCLOSET_SECRET} ],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
+
+    opencloset => { login => 'http://localhost:5001/login' },
 };

@@ -35,10 +35,13 @@ sub _assets {
 sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
+}
+
+sub _private_routes {
+    my $self = shift;
+    my $r    = $self->routes->under('/')->to('user#auth');
 
     $r->get('/')->to('root#index')->name('root.index');
 }
-
-sub _private_routes { }
 
 1;
