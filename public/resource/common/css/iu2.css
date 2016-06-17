@@ -1,0 +1,141 @@
+.iux-inner-link{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.iu-header {
+    overflow: visible;
+}
+
+.iux-carousel-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+.iux-carousel-wrapper > div {
+    float: left;
+    position: relative;
+}
+
+.iu-googlmap {
+    /* google chrome bug :  div fixed issue */
+    /* http://stackoverflow.com/questions/16576961/chrome-only-fixed-div-w-google-map-scrolls-when-other-div-scrolls */
+    -webkit-font-smoothing: subpixel-antialiased !important;
+    -webkit-transform: none !important;
+}
+ 
+.iu-transition-item:last-child {
+    display:none;
+}
+
+/* progress bar */
+
+@-webkit-keyframes key-iu-inner-bar {
+    from {
+        background-position: 0px 40px
+    }
+    to {
+        background-position: 0 0
+    }
+}
+
+@keyframes key-iu-inner-bar {
+    from {
+        background-position: 0px 40px
+    }
+    to {
+        background-position: 0 0
+    }
+}
+
+.iu-progress-bar > .iux-active,
+.iu-pg-slide-bar > .iux-active,
+.iu-pg-range-slide-bar > .iux-active {
+    -webkit-animation: key-iu-inner-bar 2s linear infinite;
+    -o-animation: key-iu-inner-bar 2s linear infinite;
+    animation: key-iu-inner-bar 2s linear infinite;
+}
+
+.iu-popup,
+.iu-panel {
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+/* Popup */
+.iu-popup {
+    visibility: hidden;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+ 
+ 
+#iux-panel-dimcolor,
+#iux-popup-dimcolor {
+    will-change: transform, opacity;
+}
+
+
+/* collapsible*/
+
+.iu-collabsilbeheader-item:last-child {
+    display: none;
+}
+
+.iu-collabsilbeheader-item:first-child {
+    display: block;
+}
+
+
+/****************************************************
+     pg group css 
+*****************************************************/
+
+.iu-pg-flip-on-item,
+.iu-pg-flip-off-item {
+    position: relative;
+    float: left;
+    width: 50%;
+}
+ 
+.iux-pg-switch-checkbox{
+     display:none;
+}
+
+
+/****************************************************
+     event css
+*****************************************************/
+
+.iu-transition,
+.iu-collapsible-header,
+.iu-simple-tab-button,
+.iu-tab-header-item,
+.iu-pg-button,
+.iu-pg-fileuploadinnerbutton,
+.iux-panel-button,
+.iux-panel-close-button,
+.iux-popup-button,
+.iux-popup-close-button,
+.iux-click-trigger,
+.iu-pg-switch,
+.iu-pg-flip-switch,
+ iux-pg-file-upload-innerbutton {
+    cursor: pointer;
+}
+
+.iux-event-receiver {
+    display: none;
+}
+
+.iux-fixed-one-size {
+    position: fixed !important;
+    height: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+}

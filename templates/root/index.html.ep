@@ -1,0 +1,135 @@
+% layout 'default';
+% title 'root.index';
+
+<div class="iu-page index">
+  <header class="iu-header opencloset_02header">
+    <div class="iu-center-box opencloset_02center-box">
+      <a class="iux-outer-link" href="/index.html">
+        <img class="iu-image opencloset_02image" src="/resource/project/opencloset_CI.png">
+      </a>
+      <img class="iux-panel-button iu-image opencloset_02image-13" src="/resource/project/btn_menu.png" data-iu-panel-id="openclosetpanel">
+    </div>
+  </header>
+  <section class="iu-page-content opencloset_02page-content">
+    <section class="iu-section opencloset_02section">
+      <div class="iu-center-box opencloset_02center-box-14">
+        <div class="iu-box opencloset_02box">
+          <div class="iu-text opencloset_02text">
+            <p><span style="font-size: 10pt;"><span style="font-size: 12pt;">김열린</span> 님을 위한 맞춤 추천</span></p>
+          </div>
+          <div class="iu-text opencloset_02text-22">
+            <p><span style="font-size: 10pt;"><span style="color: #999999;">키 177cm 몸무게 65kg 기준</span><span style="color: #999999;">(측정일: 2016.03.06)&nbsp;</span></span></p>
+          </div>
+          <div class="iu-text opencloset_02text-36">
+            <a class="iux-inner-link" href="/measure/measure_chest.html">
+              <p><span style="font-size: 10pt;">치수정보 수정하기 &gt;</span></p>
+            </a>
+          </div>
+        </div>
+        <div class="iu-box opencloset_02box-24">
+          <div class="iu-text opencloset_02text-31">
+            <p><span style="font-size: 10pt;">&nbsp;가슴 99 / 허리 88　　</span></p>
+            <p>&nbsp;<span style="font-size: 10pt;">블랙 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+          <img class="iu-image opencloset_02image-26" src="/resource/project/suit_men_01.JPG">
+          <div class="iu-text opencloset_02text-25">
+            <p><span style="font-size: 8pt; color: #ffffff;">대여했던 정장</span></p>
+          </div>
+          <div class="iu-center-box opencloset_02center-box-44"></div>
+        </div>
+        <div class="iu-box opencloset_02opencloset_02opencloset_02box-40">
+          <img class="iu-image opencloset_02opencloset_02image" src="/resource/project/suit_men_02.JPG">
+          <div class="iu-text opencloset_02opencloset_02opencloset_02text-41">
+            <p><span style="font-size: 10pt;">&nbsp;가슴 98&nbsp;/ 허리 86</span></p>
+            <p>&nbsp;<span style="font-size: 10pt;">그레이 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+          <div class="iu-text opencloset_02opencloset_02opencloset_02text-42">
+            <p><span style="color: #ff294f; font-size: 8pt;">인기 정장</span></p>
+          </div>
+        </div>
+        <div class="iu-box opencloset_02opencloset_02box">
+          <img class="iu-image opencloset_02image-27" src="/resource/project/suit_men_02.JPG">
+          <div class="iu-text opencloset_02opencloset_02text-32">
+            <p><span style="font-size: 10pt;">&nbsp;가슴 98&nbsp;/ 허리 86</span></p>
+            <p>&nbsp;<span style="font-size: 10pt;">그레이 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+          <div class="iu-text opencloset_02opencloset_02text" data-iu-text='[
+               "<p><span style=\"color: #ff294f; font-size: 8pt;\">인기 정장<\/span><\/p>",
+               "<p><strong><span style=\"color: #999999; font-size: 12pt;\">치수 측정하기<\/span><\/strong><\/p>"
+               ]' data-iu-text-slot="[[0, 375],[375, 9999]]" data-iu-text-index="0">
+            <p><span style="color: #ff294f; font-size: 8pt;">인기 정장</span></p>
+          </div>
+        </div>
+        <div class="iu-box opencloset_02opencloset_02opencloset_02box">
+          <img class="iu-image opencloset_02image-28" src="/resource/project/suit_men_03.JPG">
+          <div class="iu-text opencloset_02opencloset_02text-33">
+            <p><span style="font-size: 10pt;">가슴 100 / 허리 89</span></p>
+            <p><span style="font-size: 10pt;">네이비 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+        </div>
+        <div class="iu-box opencloset_02opencloset_02opencloset_02opencloset_02box">
+          <img class="iu-image opencloset_02opencloset_02image-37" src="/resource/project/suit_men_03.JPG">
+          <div class="iu-text opencloset_02opencloset_02opencloset_02text">
+            <p><span style="font-size: 10pt;">가슴 100 / 허리 89</span></p>
+            <p><span style="font-size: 10pt;">네이비 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+        </div>
+        <div class="iu-box opencloset_02opencloset_02opencloset_02box-39">
+          <div class="iu-text opencloset_02opencloset_02opencloset_02text-40">
+            <p><span style="font-size: 10pt;">&nbsp;가슴 99 / 허리88　　</span></p>
+            <p>&nbsp;<span style="font-size: 10pt;">블랙 솔리드</span></p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+          </div>
+          <img class="iu-image opencloset_02opencloset_02opencloset_02image" src="/resource/project/suit_men_01.JPG">
+        </div>
+      </div>
+    </section>
+  </section>
+  <footer class="iu-footer opencloset_02footer">
+    <div class="iu-center-box opencloset_02center-box-2">
+      <div class="iu-text openclosettext-5">
+        <p><span style="font-size: 8pt;"><span style="color: #ffffff;"><a href="https://www.theopencloset.net/about" target="_blank">회사소개</a> &nbsp;| &nbsp;이용약관 &nbsp; | &nbsp; 개인정보 취급방침</span> &nbsp;</span></p>
+        <p><span style="font-size: 8pt;">&nbsp;</span></p>
+        <p><span style="font-size: 8pt;">회사: 사단법인 열린옷장 | 주소: 서울특별시 광진구 아차산로 213 (웅진빌딩) 502호 | 대표: 한만일 | 사업자등록번호: 498-82-00028 | 통신판매업신고번호: 제 2016-서울광진-0004 호 | 개인정보관리자: 김소령&nbsp;</span></p>
+        <p><span style="font-size: 8pt;">전화번호: 070-7583-7521 | 팩스번호: 02-6974-1521 | </span></p>
+        <p><span style="font-size: 8pt;">메일: &nbsp;help@theopencloset.net&nbsp;</span></p>
+      </div>
+    </div>
+  </footer>
+</div>
+<div id="iux-panel-dimcolor" class="iux-panel-dimcolor" style="display:none;"></div>
+<nav id="openclosetpanel" class="iu-panel openclosetpanel" data-iu-panel-extern-closed data-iu-panel-direction="1" data-iu-show-duration="0.40" data-iu-show-animation="overlay">
+  <div class="iu-text openclosettext-18">
+    <a class="iux-inner-link" href="/index.html">
+      <p><span style="font-size: 12pt;">대여하기</span></p>
+      <p><span style="font-size: 12pt;">&nbsp;</span></p>
+      <p><span style="font-size: 12pt;">마이페이지</span></p>
+      <p><span style="font-size: 12pt;">&nbsp;</span></p>
+      <p><span style="font-size: 12pt;">고객센터</span></p>
+    </a>
+  </div>
+  <div class="iu-text openclosettext-19">
+    <p><span style="color: #ffffff; font-size: 12pt;">김열린 님</span></p>
+  </div>
+  <div class="iu-cell openclosetcell"></div>
+  <div class="iu-cell openclosetcell-20">
+    <p><span style="color: #ffffff;">로그아웃</span></p>
+  </div>
+  <div class="iux-panel-close-button"></div>
+</nav>

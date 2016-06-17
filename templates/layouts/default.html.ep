@@ -1,5 +1,17 @@
 <!DOCTYPE html>
 <html>
-  <head><title><%= title %></title></head>
-  <body><%= content %></body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/assets/components/jquery/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/resource/common/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="/resource/common/css/iubase2.css">
+    <link rel="stylesheet" type="text/css" href="/resource/common/css/iu2.css">
+    <link rel="stylesheet" type="text/css" href="/resource/css/pages/index.css">
+    <title><%= title %></title>
+  </head>
+  <body>
+    <%= content %>
+  </body>
 </html>
