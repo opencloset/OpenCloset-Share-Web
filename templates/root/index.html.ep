@@ -9,6 +9,6 @@
 </h2>
 
 <p>
-  키 <samp>177cm</samp> 몸무게 <samp>65kg</samp> 기준
+  키 <samp><%= $user_info->height || '?' %>cm</samp> 몸무게 <samp><%= $user_info->weight || '?' %>kg</samp> 기준
   <abbr class="timeago" title="2016-03-06T00:00:00Z">2016-03-06T00:00:00</abbr>
 </p>
