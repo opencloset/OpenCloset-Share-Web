@@ -21,6 +21,7 @@
     "underscore": "~1.8.3",
     "bootstrap": "~3.3.6",
     "font-awesome": "~4.5.0",
-    "opencloset.css": "https://github.com/opencloset/opencloset.css.git"
+    "opencloset.css": "https://github.com/opencloset/opencloset.css.git",
+    "jquery-timeago": "^1.5.2"
   }
 }
