@@ -14,6 +14,7 @@ sub startup {
 
     $self->plugin('Config');
     $self->plugin('OpenCloset::Plugin::Helpers');
+    $self->plugin('OpenCloset::Share::Web::Plugin::Helpers');
 
     $self->secrets( $self->config->{secrets} );
     $self->sessions->cookie_domain( $self->config->{cookie_domain} );
