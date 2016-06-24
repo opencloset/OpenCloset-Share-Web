@@ -50,6 +50,8 @@ sub _assets {
 sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
+
+    $r->get('/welcome')->to('welcome#index')->name('welcome');
 }
 
 sub _private_routes {
