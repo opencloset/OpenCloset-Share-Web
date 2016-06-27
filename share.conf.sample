@@ -18,5 +18,5 @@
     secrets       => [ $ENV{OPENCLOSET_SECRET} ],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
 
-    opencloset => { login => 'http://localhost:5001/login' },
+    opencloset => { login => 'http://localhost:5001/login', root => 'http://localhost:5001' },
 };

@@ -56,11 +56,16 @@ sub _public_routes {
 
 sub _private_routes {
     my $self = shift;
-    my $r    = $self->routes->under('/')->to('user#auth');
+    my $root = $self->routes;
+
+    my $r            = $root->under('/')->to('user#auth');
+    my $measurements = $root->under('/measurements')->to('user#auth');
 
     $r->get('/')->to('root#index')->name('root.index');
-
     $r->get('/logout')->to('user#logout')->name('logout');
+
+    $measurements->get('/')->to('measurement#index');
+    $measurements->post('/')->to('measurement#update');
 }
 
 1;

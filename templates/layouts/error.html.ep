@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> &middot; 열린옷장</title>
+    <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/components/opencloset.css/dist/css/opencloset.min.css">
+    <link rel="stylesheet" href="/assets/dist/css/screen.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div id="content">
+        %= content
+      </div>
+    </div>
+    %= footer
+    <script src="/assets/components/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
