@@ -1,0 +1,13 @@
+% layout 'welcome';
+% title '정장대여소개';
+
+<h1>정장대여소개</h1>
+
+<ul>
+  <li>
+    <a href="#">회원가입</a>
+  </li>
+  <li>
+    <a href="<%= url_for('/login') %>">로그인</a>
+  </li>
+</ul>
