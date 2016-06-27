@@ -8,6 +8,6 @@
     <a href="#">회원가입</a>
   </li>
   <li>
-    <a href="<%= url_for('/login') %>">로그인</a>
+    <a href="<%= url_for('/') %>">로그인</a>
   </li>
 </ul>
