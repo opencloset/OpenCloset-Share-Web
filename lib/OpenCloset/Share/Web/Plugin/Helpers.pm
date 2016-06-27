@@ -25,7 +25,8 @@ OpenCloset::Share::Web::Plugin::Helpers - opencloset share web mojo helper
 sub register {
     my ( $self, $app, $conf ) = @_;
 
-    $app->helper( agent => \&agent );
+    $app->helper( agent        => \&agent );
+    $app->helper( current_user => \&current_user );
 }
 
 =head1 HELPERS
@@ -57,6 +58,30 @@ sub agent {
     );
 
     return $http;
+}
+
+=head2 current_user
+
+    my $user = $self->current_user;
+
+=cut
+
+sub current_user {
+    my $self = shift;
+
+    my $id = $self->session('access_token');
+    unless ($id) {
+        $self->log->error('Not found session: access_token');
+        return;
+    }
+
+    my $user = $self->schema->resultset('User')->find( { id => $id } );
+    unless ($user) {
+        $self->log->error("Not found user: $id");
+        return;
+    }
+
+    return $user;
 }
 
 1;
