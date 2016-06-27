@@ -64,7 +64,8 @@ sub _private_routes {
     $r->get('/')->to('root#index')->name('root.index');
     $r->get('/logout')->to('user#logout')->name('logout');
 
-    $measurements->get('/')->to('measurement#index')->name('measurements.index');
+    $measurements->get('/')->to('measurement#index');
+    $measurements->post('/')->to('measurement#update');
 }
 
 1;
