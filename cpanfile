@@ -1,3 +1,4 @@
+requires 'HTTP::Tiny';
 requires 'Mojolicious';
 
 # cpan.theopencloset.net
