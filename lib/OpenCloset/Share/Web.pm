@@ -59,6 +59,8 @@ sub _private_routes {
     my $r    = $self->routes->under('/')->to('user#auth');
 
     $r->get('/')->to('root#index')->name('root.index');
+
+    $r->get('/logout')->to('user#logout')->name('logout');
 }
 
 1;

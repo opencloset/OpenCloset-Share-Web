@@ -24,4 +24,18 @@ sub auth {
     return 1;
 }
 
+=head2 logout
+
+    # logout
+    GET /logout
+
+=cut
+
+sub logout {
+    my $self = shift;
+
+    delete $self->session->{access_token};
+    $self->redirect_to('welcome');
+}
+
 1;
