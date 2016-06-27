@@ -42,7 +42,19 @@ sub agent {
 
     my $agent  = __PACKAGE__;
     my $cookie = $self->cookie('opencloset');
-    my $http   = HTTP::Tiny->new( default_headers => { agent => $agent, cookie => "opencloset=$cookie" } );
+
+    unless ($cookie) {
+        $self->log->error('Not found cookie: opencloset');
+        return;
+    }
+
+    my $http = HTTP::Tiny->new(
+        default_headers => {
+            agent  => $agent,
+            cookie => "opencloset=$cookie",
+            accept => 'application/json',
+        }
+    );
 
     return $http;
 }
