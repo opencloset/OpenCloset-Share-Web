@@ -30,6 +30,7 @@ sub register {
     $app->helper( current_user => \&current_user );
     $app->helper( is_success   => \&is_success );
     $app->helper( trim_code    => \&trim_code );
+    $app->helper( clothes2desc => \&clothes2desc );
 }
 
 =head1 HELPERS
@@ -114,7 +115,7 @@ sub is_success {
 
 trim clothes code
 
-    %= trim_code('0J001')
+    % trim_code('0J001')
     # J001
 
 =cut
@@ -133,6 +134,32 @@ sub trim_code {
 
     $code =~ s/^0//;
     return $code;
+}
+
+=head2 clothes2desc
+
+    % clothes2desc($clothes)
+    # 가슴 99 / 허리 88 black
+
+Support only a suit of top bottom set.
+
+=cut
+
+sub clothes2desc {
+    my ( $self, $clothes ) = @_;
+    return '' unless $clothes;
+
+    my $top    = $clothes->top;
+    my $bottom = $clothes->bottom;
+
+    return '' unless $top;
+    return '' unless $bottom;
+
+    my $bust  = $top->bust      || 'Unknown';
+    my $waist = $bottom->waist  || 'Unknown';
+    my $color = $clothes->color || 'Unknown';
+
+    return sprintf "가슴 %s / 허리 %s %s", $bust, $waist, $color;
 }
 
 1;
