@@ -7,7 +7,7 @@ has schema => sub { shift->app->schema };
 
 =head2 index
 
-    # root.index
+    # index
     GET /
 
 =cut

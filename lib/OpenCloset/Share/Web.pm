@@ -61,7 +61,7 @@ sub _private_routes {
     my $r            = $root->under('/')->to('user#auth');
     my $measurements = $root->under('/measurements')->to('user#auth');
 
-    $r->get('/')->to('root#index')->name('root.index');
+    $r->get('/')->to('root#index')->name('index');
     $r->get('/logout')->to('user#logout')->name('logout');
 
     $measurements->get('/')->to('measurement#index');
