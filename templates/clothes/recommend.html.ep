@@ -9,7 +9,7 @@
           <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
           <div class="caption">
             <p>
-              %= $top->code
+              %= clothes2desc($top)
             </p>
           </div>
         </div>
