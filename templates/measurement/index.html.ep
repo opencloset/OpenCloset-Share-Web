@@ -15,6 +15,18 @@
 
 <form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
   <div class="form-group">
+    <label class="col-sm-2 control-label">키</label>
+    <div class="col-sm-10">
+      <input name="height" type="text" class="form-control" placeholder="키 cm" value="<%= $user_info->height || '' %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">몸무게</label>
+    <div class="col-sm-10">
+      <input name="weight" type="text" class="form-control" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
+    </div>
+  </div>
+  <div class="form-group">
     <label class="col-sm-2 control-label">가슴둘레</label>
     <div class="col-sm-10">
       <input name="bust" type="text" class="form-control" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>">
