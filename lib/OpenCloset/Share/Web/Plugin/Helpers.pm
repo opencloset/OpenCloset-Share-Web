@@ -34,7 +34,7 @@ sub register {
 =head2 agent
 
     my $agent = $self->agent;    # HTTP::Tiny object
-    my $res   = $agent->get('/api/user/30000.json');
+    my $res   = $agent->get('https://staff.theopencloset.net/api/user/30000');
 
 =cut
 
