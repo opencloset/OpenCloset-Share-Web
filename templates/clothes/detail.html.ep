@@ -1,0 +1,8 @@
+% layout 'default';
+% title clothes2desc($clothes);
+
+<h2>
+  %= clothes2desc($clothes)
+</h2>
+
+<a href="#">대여하기</a>
