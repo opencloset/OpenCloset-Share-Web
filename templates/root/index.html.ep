@@ -12,3 +12,5 @@
   키 <samp><%= $user_info->height || '?' %>cm</samp> 몸무게 <samp><%= $user_info->weight || '?' %>kg</samp> 기준
   <abbr class="timeago" title="2016-03-06T00:00:00Z">2016-03-06T00:00:00</abbr>
 </p>
+
+<div id="clothes-recommend"></div>
