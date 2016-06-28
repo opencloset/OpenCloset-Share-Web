@@ -3,6 +3,7 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 use Mojo::Base 'Mojolicious::Plugin';
 
 use HTTP::Tiny;
+use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
 
@@ -27,6 +28,9 @@ sub register {
 
     $app->helper( agent        => \&agent );
     $app->helper( current_user => \&current_user );
+    $app->helper( is_success   => \&is_success );
+    $app->helper( trim_code    => \&trim_code );
+    $app->helper( clothes2desc => \&clothes2desc );
 }
 
 =head1 HELPERS
@@ -34,7 +38,7 @@ sub register {
 =head2 agent
 
     my $agent = $self->agent;    # HTTP::Tiny object
-    my $res   = $agent->get('/api/user/30000.json');
+    my $res   = $agent->get('https://staff.theopencloset.net/api/user/30000');
 
 =cut
 
@@ -82,6 +86,80 @@ sub current_user {
     }
 
     return $user;
+}
+
+=head2 is_success
+
+print error log unless C<$res->{success}>
+
+    my $res = $agent->get('somewhere');
+    return $self->error(xxx, 'blahblah') unless $self->is_success($res);
+
+    # do something
+
+=cut
+
+sub is_success {
+    my ( $self, $res ) = @_;
+    return unless $res;
+    return $res if $res->{success};
+
+    my $url     = $res->{url};
+    my $content = decode_json( $res->{content} );
+    my $error   = $content->{error};
+    $self->log->error("Failed to request $url: $error");
+    return;
+}
+
+=head2 trim_code
+
+trim clothes code
+
+    % trim_code('0J001')
+    # J001
+
+=cut
+
+sub trim_code {
+    my ( $self, $clothes_or_code ) = @_;
+    return '' unless $clothes_or_code;
+
+    my $code;
+    if ( ref $clothes_or_code ) {
+        $code = $clothes_or_code->code;
+    }
+    else {
+        $code = $clothes_or_code;
+    }
+
+    $code =~ s/^0//;
+    return $code;
+}
+
+=head2 clothes2desc
+
+    % clothes2desc($clothes)
+    # 가슴 99 / 허리 88 black
+
+Support only a suit of top bottom set.
+
+=cut
+
+sub clothes2desc {
+    my ( $self, $clothes ) = @_;
+    return '' unless $clothes;
+
+    my $top    = $clothes->top;
+    my $bottom = $clothes->bottom;
+
+    return '' unless $top;
+    return '' unless $bottom;
+
+    my $bust  = $top->bust      || 'Unknown';
+    my $waist = $bottom->waist  || 'Unknown';
+    my $color = $clothes->color || 'Unknown';
+
+    return sprintf "가슴 %s / 허리 %s %s", $bust, $waist, $color;
 }
 
 1;

@@ -22,4 +22,4 @@ sub index {
     $self->render( user => $user, user_info => $user_info );
 }
 
-1
+1;

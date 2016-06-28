@@ -1,0 +1,20 @@
+<div class="list-group">
+  % for my $recommend (@$recommends) {
+  % my ($top, $bottom, $count) = @$recommend;
+  <a href="#" class="list-group-item">
+    <div class="row">
+      <!--<div class="col-md-4">-->
+      <div>
+        <div class="thumbnail">
+          <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
+          <div class="caption">
+            <p>
+              %= clothes2desc($top)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+  % }
+</ul>
