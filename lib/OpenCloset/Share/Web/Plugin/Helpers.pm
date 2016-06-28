@@ -91,7 +91,7 @@ sub current_user {
 print error log unless C<$res->{success}>
 
     my $res = $agent->get('somewhere');
-    return unless $self->is_success($res);
+    return $self->error(xxx, 'blahblah') unless $self->is_success($res);
 
     # do something
 
