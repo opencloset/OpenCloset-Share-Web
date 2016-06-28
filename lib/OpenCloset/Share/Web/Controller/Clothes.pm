@@ -20,20 +20,25 @@ sub recommend {
     my $user = $self->current_user;
     return $self->error( 500, 'Not found current user' ) unless $user;
 
-    my $agent = $self->agent;
-    return $self->error( 500, "Couldn't get agent" ) unless $agent;
+    my $data = $self->session('recommend');
+    unless ($data) {
+        my $agent = $self->agent;
+        return $self->error( 500, "Couldn't get agent" ) unless $agent;
 
-    my $user_id = $user->id;
-    my $url     = Mojo::URL->new( $self->config->{opencloset}{root} );
-    $url->path("/api/user/$user_id/search/clothes");
+        my $user_id = $user->id;
+        my $url     = Mojo::URL->new( $self->config->{opencloset}{root} );
+        $url->path("/api/user/$user_id/search/clothes");
 
-    my $res = $agent->get($url);
-    return $self->error( 500, "Couldn't get recommended clothes from API server" )
-        unless $self->is_success($res);
+        my $res = $agent->get($url);
+        return $self->error( 500, "Couldn't get recommended clothes from API server" )
+            unless $self->is_success($res);
+
+        $data = decode_json( $res->{content} );
+        $self->session( 'recommend' => $data );
+    }
 
     my @recommends;
-    my $rs   = $self->schema->resultset('Clothes');
-    my $data = decode_json( $res->{content} );
+    my $rs = $self->schema->resultset('Clothes');
     for my $recommend ( @{ $data->{result} } ) {
         my ( $top, $bottom, $count ) = @$recommend;
         my $code;
