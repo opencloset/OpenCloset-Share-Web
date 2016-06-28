@@ -29,6 +29,7 @@ sub register {
     $app->helper( agent        => \&agent );
     $app->helper( current_user => \&current_user );
     $app->helper( is_success   => \&is_success );
+    $app->helper( trim_code    => \&trim_code );
 }
 
 =head1 HELPERS
@@ -107,6 +108,31 @@ sub is_success {
     my $error   = $content->{error};
     $self->log->error("Failed to request $url: $error");
     return;
+}
+
+=head2 trim_code
+
+trim clothes code
+
+    %= trim_code('0J001')
+    # J001
+
+=cut
+
+sub trim_code {
+    my ( $self, $clothes_or_code ) = @_;
+    return '' unless $clothes_or_code;
+
+    my $code;
+    if ( ref $clothes_or_code ) {
+        $code = $clothes_or_code->code;
+    }
+    else {
+        $code = $clothes_or_code;
+    }
+
+    $code =~ s/^0//;
+    return $code;
 }
 
 1;
