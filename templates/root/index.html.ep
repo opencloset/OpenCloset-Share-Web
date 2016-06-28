@@ -1,10 +1,10 @@
 % layout 'default';
-% title '김열린님을 위한 맞춤 추천', jses => [
+% title $user->name . '님을 위한 맞춤 추천', jses => [
 %   '/assets/dist/js/root-index.min.js'
 % ];
 
 <h2>
-  김열린
+  %= $user->name
   <small>님을 위한 맞춤 추천</small>
 </h2>
 
