@@ -3,6 +3,7 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 use Mojo::Base 'Mojolicious::Plugin';
 
 use HTTP::Tiny;
+use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
 
@@ -27,6 +28,7 @@ sub register {
 
     $app->helper( agent        => \&agent );
     $app->helper( current_user => \&current_user );
+    $app->helper( is_success   => \&is_success );
 }
 
 =head1 HELPERS
@@ -82,6 +84,29 @@ sub current_user {
     }
 
     return $user;
+}
+
+=head2 is_success
+
+print error log unless C<$res->{success}>
+
+    my $res = $agent->get('somewhere');
+    return unless $self->is_success($res);
+
+    # do something
+
+=cut
+
+sub is_success {
+    my ( $self, $res ) = @_;
+    return unless $res;
+    return $res if $res->{success};
+
+    my $url     = $res->{url};
+    my $content = decode_json( $res->{content} );
+    my $error   = $content->{error};
+    $self->log->error("Failed to request $url: $error");
+    return;
 }
 
 1;
