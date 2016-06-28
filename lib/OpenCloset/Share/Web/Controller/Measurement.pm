@@ -1,7 +1,6 @@
 package OpenCloset::Share::Web::Controller::Measurement;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Mojo::JSON qw/decode_json/;
 use Mojo::URL;
 
 has schema => sub { shift->app->schema };
@@ -57,21 +56,13 @@ sub update {
     my $params = $agent->www_form_urlencode($input);
     my $url    = Mojo::URL->new( $self->config->{opencloset}{root} . "?$params" );
     $url->path( '/api/user/' . $user->id );
-
-    $self->log->info("PUT $url");
-
     my $res = $agent->request( 'PUT', $url );
-    unless ( $res->{success} ) {
-        my $content = decode_json( $res->{content} );
-        my $error   = $content->{error};
-        my $message = "Failed to request $url: $error";
-        $self->log->info($message);
-        $self->flash( message => $message, has_error => 1 );
+
+    if ( $self->is_success($res) ) {
+        $self->flash( message => 'Successfully update measurements' );
     }
     else {
-        my $message = 'Successfully updated measurements';
-        $self->log->info($message);
-        $self->flash( message => $message );
+        $self->flash( message => 'Failed to update measurements', has_error => 1 );
     }
 
     $self->redirect_to('/measurements');
