@@ -69,6 +69,9 @@ sub _private_routes {
     $measurements->post('/')->to('measurement#update');
 
     $clothes->get('/recommend')->to('clothes#recommend');
+
+    my $clothes_code = $clothes->under('/:code')->to('clothes#code');
+    $clothes_code->get('/')->to('clothes#detail');
 }
 
 1;

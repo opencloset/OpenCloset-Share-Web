@@ -1,7 +1,7 @@
 <div class="list-group">
   % for my $recommend (@$recommends) {
   % my ($top, $bottom, $count) = @$recommend;
-  <a href="#" class="list-group-item">
+  <a href="<%= url_for('/clothes/' . $top->code) %>" class="list-group-item">
     <div class="row">
       <!--<div class="col-md-4">-->
       <div>

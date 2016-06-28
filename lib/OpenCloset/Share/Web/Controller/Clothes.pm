@@ -54,4 +54,29 @@ sub recommend {
     $self->render( recommends => \@recommends );
 }
 
+=head2 code
+
+    under /clothes/:code
+
+=cut
+
+sub code {
+    my $self = shift;
+    my $code = $self->param('code');
+
+    my $clothes = $self->schema->resultset('Clothes')->find( { code => sprintf( '%05s', $code ) } );
+    $self->stash( clothes => $clothes );
+}
+
+=head2 detail
+
+    GET /clothes/:code
+
+=cut
+
+sub detail {
+    my $self    = shift;
+    my $clothes = $self->stash('clothes');
+}
+
 1;
