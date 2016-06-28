@@ -36,7 +36,7 @@ sub update {
     $v->optional('bust')->size( 2, 3 );
     $v->optional('waist')->size( 2, 3 );
     $v->optional('belly')->size( 2, 3 );
-    $v->optional('arm')->size( 1, 3 ); # blouse, onepiece 는 0 일 수도 있음
+    $v->optional('arm')->size( 2, 3 );
     $v->optional('pants')->size( 2, 3 );
     $v->optional('hip')->size( 2, 3 );
 
