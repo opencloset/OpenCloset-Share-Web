@@ -33,6 +33,8 @@ sub update {
 
     ## API 와 중복된 validation 이지만 1차 filter 로써 넣어주자
     my $v = $self->validation;
+    $v->optional('height')->size( 2, 3 );
+    $v->optional('weight')->size( 2, 3 );
     $v->optional('bust')->size( 2, 3 );
     $v->optional('waist')->size( 2, 3 );
     $v->optional('belly')->size( 2, 3 );
