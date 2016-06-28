@@ -13,4 +13,9 @@
   <abbr class="timeago" title="2016-03-06T00:00:00Z">2016-03-06T00:00:00</abbr>
 </p>
 
-<div id="clothes-recommend"></div>
+<div id="clothes-recommend">
+  <div id="loading-img">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
