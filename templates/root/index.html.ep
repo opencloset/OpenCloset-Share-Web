@@ -1,6 +1,7 @@
 % layout 'default';
 % title $user->name . '님을 위한 맞춤 추천';
 % use OpenCloset::Constants::Category ();
+% use OpenCloset::Constants::Measurement ();
 
 <h2>
   <%= $user->name %>님
@@ -16,6 +17,22 @@
   % }
 </ul>
 
+<hr>
+
+% unless ($failed) {
 <p>
   <a class="btn btn-default" href="<%= url_for('/order/new') %>">대여 주문서 작성</a>
 </p>
+% } else {
+<p>
+  대여에 필요한 정보를 입력하지 않으셨습니다.
+  <a class="btn btn-primary btn-sm" href="<%= url_for('/measurements') %>">치수입력</a>
+  <ul class="list-inline text-muted">
+    % for my $fail (@$failed) {
+    <li><%= $OpenCloset::Constants::Measurement::LABEL_MAP{$fail} %></li>
+    % }
+  </ul>
+</p>
+
+% }
+
