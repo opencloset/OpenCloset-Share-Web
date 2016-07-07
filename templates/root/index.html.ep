@@ -1,6 +1,21 @@
 % layout 'default';
 % title $user->name . '님을 위한 맞춤 추천';
+% use OpenCloset::Constants::Category ();
 
 <h2>
   <%= $user->name %>님
 </h2>
+
+<p>
+  <strong>대여가능한 의류</strong>
+</p>
+
+<ul class="list-inline">
+  % for my $label (@OpenCloset::Constants::Category::ALL_LABEL) {
+  <li><%= $label %></li>
+  % }
+</ul>
+
+<p>
+  <a class="btn btn-default" href="<%= url_for('/order/new') %>">대여 주문서 작성</a>
+</p>
