@@ -29,7 +29,11 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="<%= url_for('/measurements') %>">신체치수</a></li>
+            <li>
+              <a href="<%= url_for('/measurements') %>">
+                <samp><%= $user_info->height || '?' %>cm <%= $user_info->weight || '?' %>kg</samp>
+              </a>
+            </li>
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
