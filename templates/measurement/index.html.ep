@@ -41,7 +41,7 @@
   <div class="form-group">
     <label class="col-sm-2 control-label">배꼽둘레</label>
     <div class="col-sm-10">
-      <input name="belly" type="text" class="form-control" placeholder="배꼽둘레 cm" value="<%= $user_info->belly || '' %>">
+      <input name="topbelly" type="text" class="form-control" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>">
     </div>
   </div>
   <div class="form-group">
@@ -50,18 +50,45 @@
       <input name="arm" type="text" class="form-control" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>">
     </div>
   </div>
+
+  % my $gender = $user_info->gender || '';
+  % if ($gender eq 'male') {
+  <!-- male -->
   <div class="form-group">
-    <label class="col-sm-2 control-label">바지길이</label>
+    <label class="col-sm-2 control-label">허벅지둘레</label>
     <div class="col-sm-10">
-      <input name="pants" type="text" class="form-control" placeholder="바지길이 cm" value="<%= $user_info->pants || '' %>">
+      <input name="thigh" type="text" class="form-control" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>">
     </div>
   </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">다리길이</label>
+    <div class="col-sm-10">
+      <input name="leg" type="text" class="form-control" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>">
+    </div>
+  </div>
+  % } elsif ($gender eq 'female') {
+  <!-- female -->
   <div class="form-group">
     <label class="col-sm-2 control-label">엉덩이둘레</label>
     <div class="col-sm-10">
       <input name="hip" type="text" class="form-control" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>">
     </div>
   </div>
+  <div class="form-group">
+    <label class="col-sm-2 control-label">무릎길이</label>
+    <div class="col-sm-10">
+      <input name="knee" type="text" class="form-control" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>">
+    </div>
+  </div>
+  % }
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label">발크기</label>
+    <div class="col-sm-10">
+      <input name="foot" type="text" class="form-control" placeholder="발크기 mm" value="<%= $user_info->foot || '' %>">
+    </div>
+  </div>
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" class="btn btn-default">저장</button>
