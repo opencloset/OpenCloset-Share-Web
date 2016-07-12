@@ -36,10 +36,13 @@ sub update {
     $v->optional('weight')->size( 2, 3 );
     $v->optional('bust')->size( 2, 3 );
     $v->optional('waist')->size( 2, 3 );
-    $v->optional('belly')->size( 2, 3 );
+    $v->optional('topbelly')->size( 2, 3 );
     $v->optional('arm')->size( 2, 3 );
-    $v->optional('pants')->size( 2, 3 );
+    $v->optional('thigh')->size( 2, 2 );
+    $v->optional('leg')->size( 2, 3 );
     $v->optional('hip')->size( 2, 3 );
+    $v->optional('knee')->size( 2, 3 );
+    $v->optional('foot')->size( 3, 3 );
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
