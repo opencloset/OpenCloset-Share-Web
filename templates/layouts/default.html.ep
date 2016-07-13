@@ -31,7 +31,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li>
               <a href="<%= url_for('/measurements') %>">
-                <samp><%= $user_info->height || '?' %>cm <%= $user_info->weight || '?' %>kg</samp>
+                신체치수
               </a>
             </li>
           </ul>

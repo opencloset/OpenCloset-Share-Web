@@ -1,5 +1,5 @@
 % layout 'default';
-% title $user->name . '님을 위한 맞춤 추천';
+% title $user->name . '님';
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Measurement ();
 
