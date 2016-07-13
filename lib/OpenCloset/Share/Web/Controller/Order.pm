@@ -2,6 +2,7 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use OpenCloset::Constants::Category;
+use OpenCloset::Constants::Status qw/$PAYMENT/;
 
 has schema => sub { shift->app->schema };
 
@@ -27,6 +28,7 @@ sub add {
 
 sub create {
     my $self = shift;
+    my $user = $self->stash('user');
 
     my @categories;
     for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $TIE ) {
@@ -35,9 +37,42 @@ sub create {
     }
 
     $self->session( order => { categories => [@categories] } );
-    # 주문서를 만들자 그리고 UUID 로 연결?
+    my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $PAYMENT } );
 
-    $self->redirect_to('order.recommend');
+    return $self->error( 500, "Couldn't create a new order" ) unless $order;
+    $self->redirect_to( 'order.order', order_id => $order->id );
+}
+
+=head2 order_id
+
+    under /order/:order_id
+
+=cut
+
+sub order_id {
+    my $self     = shift;
+    my $order_id = $self->param('order_id');
+    my $order    = $self->schema->resultset('Order')->find( { id => $order_id } );
+
+    return unless $order;
+
+    $self->stash( order => $order );
+    return 1;
+}
+
+=head2 order
+
+    # order.order
+    GET /order/:order_id
+
+=cut
+
+sub order {
+    my $self  = shift;
+    my $order = $self->stash('order');
+
+    my $categories = $self->session('order')->{categories};
+    $self->stash( categories => $categories );
 }
 
 1;

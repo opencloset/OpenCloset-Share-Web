@@ -1,0 +1,12 @@
+% layout 'default';
+% title $order->id;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
+
+<h2><%= $order->id %></h2>
+<ul class="list-inline">
+  % for my $c (@$categories) {
+  <li>
+    %= $LABEL_MAP{$c}
+  </li>
+  % }
+</ul>
