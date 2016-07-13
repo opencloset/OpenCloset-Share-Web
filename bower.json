@@ -22,6 +22,7 @@
     "bootstrap": "~3.3.6",
     "font-awesome": "~4.5.0",
     "opencloset.css": "https://github.com/opencloset/opencloset.css.git",
-    "jquery-timeago": "^1.5.2"
+    "jquery-timeago": "^1.5.2",
+    "bootstrap-toggle": "^2.2.2"
   }
 }
