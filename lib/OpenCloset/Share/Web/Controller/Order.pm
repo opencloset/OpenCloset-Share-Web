@@ -70,9 +70,11 @@ sub order_id {
 sub order {
     my $self  = shift;
     my $order = $self->stash('order');
+    my $user  = $self->stash('user');
 
     my $categories = $self->session('order')->{categories};
-    $self->stash( categories => $categories );
+    my $title = sprintf( '%s님 %s 주문서', $user->name, $order->create_date->ymd );
+    $self->stash( categories => $categories, title => $title );
 }
 
 1;
