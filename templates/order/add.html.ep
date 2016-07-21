@@ -19,7 +19,7 @@
   % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $TIE) {
   <li>
     %= $LABEL_MAP{$category}
-    <samp><%= commify($PRICE{$category}) %></samp>
+    <code><%= commify($PRICE{$category}) %></code>
   </li>
   % }
 </ul>
