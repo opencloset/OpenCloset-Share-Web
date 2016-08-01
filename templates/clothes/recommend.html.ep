@@ -1,20 +1,20 @@
-<div class="list-group">
-  % for my $recommend (@$recommends) {
-  % my ($top, $bottom, $count) = @$recommend;
-  <a href="<%= url_for('/clothes/' . $top->code) %>" class="list-group-item">
-    <div class="row">
-      <!--<div class="col-md-4">-->
-      <div>
-        <div class="thumbnail">
-          <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
-          <div class="caption">
-            <p>
-              %= clothes2desc($top)
-            </p>
-          </div>
-        </div>
-      </div>
+% my $cnt = 0;
+% while (1) {
+  % my $last;
+  <div class="row">
+    % for my $i (0 .. 3) {
+    %   my $recommend = $recommends->[$cnt++];
+    %   unless ($recommend) {
+    %     $last = 1;
+    %     last;
+    %   }
+    %   my ($top, $bottom, $count) = @$recommend;
+    <div class="col-xs-6 col-md-3">
+      <a class="thumbnail" href="<%= url_for('/clothes/' . $top->code) %>">
+        <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
+      </a>
     </div>
-  </a>
-  % }
-</ul>
+    % }
+  </div>
+  % last if $last;
+% }
