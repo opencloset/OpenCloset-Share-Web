@@ -27,7 +27,7 @@
 
 <hr>
 
-<h3>대여이력</h3>
+<h3>주문서이력</h3>
 <div class="list-group">
   % while (my $order = $orders->next) {
     %= order2link($order, 'list-group-item')
