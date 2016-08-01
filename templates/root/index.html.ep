@@ -4,16 +4,37 @@
 % use OpenCloset::Constants::Measurement ();
 
 <h2>
+  <i class="fa fa-<%= $user_info->gender %>" aria-hidden="true"></i>
   <%= $user->name %>님
 </h2>
-
 <p>
-  <strong>대여가능한 의류</strong>
+  xx세 남성, x회 대여
 </p>
+
+<hr>
+
+<h3>대여가능한 의류</h3>
 
 <ul class="list-inline">
   % for my $label (@OpenCloset::Constants::Category::ALL_LABEL) {
-  <li><%= $label %></li>
+  <li>
+    <span class="label label-success">
+      <%= $label %>
+    </span>
+  </li>
+  % }
+</ul>
+
+<hr>
+
+<h3>대여이력</h3>
+<ul>
+  % while (my $order = $orders->next) {
+  <li>
+    <a href="<%= url_for('order.order', order_id => $order->id) %>">
+      %= $order->create_date->ymd
+    </a>
+  </li>
   % }
 </ul>
 
@@ -21,7 +42,7 @@
 
 % unless ($failed) {
 <p>
-  <a class="btn btn-default" href="<%= url_for('/order/new') %>">대여 주문서 작성</a>
+  <a class="btn btn-default" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
 </p>
 % } else {
 <p>
@@ -33,6 +54,4 @@
     % }
   </ul>
 </p>
-
 % }
-

@@ -13,12 +13,27 @@ has schema => sub { shift->app->schema };
 =cut
 
 sub index {
+    my $self = shift;
+    my $user = $self->stash('user');
+
+    my $failed = $self->_check_measurement;
+    my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
+    $self->render( failed => $failed, orders => $orders );
+}
+
+=head3 _check_measurement
+
+    my $failed = $self->_check_measurement;
+
+=cut
+
+sub _check_measurement {
     my $self      = shift;
     my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
 
     my $user_id = $user->id;
-    my $gender = $user_info->gender || 'male'; # 원래 없으면 안됨
+    my $gender = $user_info->gender || 'male'; # TODO: 원래 없으면 안됨
 
     my $input = {};
     map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh leg hip knee/;
@@ -43,18 +58,11 @@ sub index {
     else {
         my $msg = "Wrong user gender: $gender($user_id)";
         $self->log->error($msg);
-        return $self->error( 500, $msg );
+        return ["gender($msg)"];
     }
 
-    if ( $v->has_error ) {
-        my $failed = $v->failed;
-        $self->stash( failed => $failed );
-    }
-    else {
-        $self->stash( failed => undef );
-    }
-
-    $self->render;
+    return $v->failed if $v->has_error;
+    return;
 }
 
 1;
