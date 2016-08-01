@@ -28,15 +28,11 @@
 <hr>
 
 <h3>대여이력</h3>
-<ul>
+<div class="list-group">
   % while (my $order = $orders->next) {
-  <li>
-    <a href="<%= url_for('order.order', order_id => $order->id) %>">
-      %= $order->create_date->ymd
-    </a>
-  </li>
+    %= order2link($order, 'list-group-item')
   % }
-</ul>
+</div>
 
 <hr>
 
