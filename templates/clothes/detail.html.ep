@@ -5,4 +5,34 @@
   %= clothes2desc($clothes)
 </h2>
 
+<hr>
+
+% my $cnt = 0;
+% while (1) {
+  % my $last;
+  <div class="row">
+    % for my $i (0 .. 3) {
+    %   my $image = $images->[$cnt++];
+    %   unless ($image) {
+    %     $last = 1;
+    %     last;
+    %   }
+    <div class="col-xs-6 col-md-3">
+      <a class="thumbnail" href="<%= $image %>" target="_blank">
+        <img alt="<%= $clothes->code %>" src="<%= $image %>">
+      </a>
+    </div>
+    % }
+  </div>
+  % last if $last;
+% }
+
+% unless (@$images) {
+<p>
+  No images
+</p>
+% }
+
+<hr>
+
 <a href="#">대여하기</a>

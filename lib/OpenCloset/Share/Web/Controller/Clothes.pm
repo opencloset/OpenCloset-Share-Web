@@ -1,8 +1,9 @@
 package OpenCloset::Share::Web::Controller::Clothes;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Mojo::URL;
+use HTTP::Tiny;
 use Mojo::JSON qw/decode_json/;
+use Mojo::URL;
 
 has schema => sub { shift->app->schema };
 
@@ -77,6 +78,23 @@ sub code {
 sub detail {
     my $self    = shift;
     my $clothes = $self->stash('clothes');
+
+    my $code = $clothes->code =~ s/^0//r;
+    my $url  = $self->oavatar_url($code) . '/images';
+
+    my $http = HTTP::Tiny->new;
+    my $res = $http->get( $url, { headers => { Accept => 'application/json' } } );
+
+    my @images;
+    if ( $res->{success} ) {
+        my $urls = decode_json( $res->{content} );
+        @images = @$urls;
+    }
+    else {
+        $self->log->error("Failed to get $code images: $res->{reason}");
+    }
+
+    $self->render( images => \@images );
 }
 
 1;
