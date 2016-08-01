@@ -3,9 +3,11 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 use Mojo::Base 'Mojolicious::Plugin';
 
 use HTTP::Tiny;
+use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
+use OpenCloset::Constants::Status;
 
 =encoding utf8
 
@@ -31,6 +33,7 @@ sub register {
     $app->helper( is_success   => \&is_success );
     $app->helper( trim_code    => \&trim_code );
     $app->helper( clothes2desc => \&clothes2desc );
+    $app->helper( order2link   => \&order2link );
 }
 
 =head1 HELPERS
@@ -160,6 +163,37 @@ sub clothes2desc {
     my $color = $clothes->color || 'Unknown';
 
     return sprintf "가슴 %s / 허리 %s %s", $bust, $waist, $color;
+}
+
+=head2 order2link
+
+    % order2link($order, @class)
+    # <a href="/order/35155" class="btn btn-link">
+    #   2016-08-01
+    #   <small>결제대기</small>
+    # </a>
+
+=cut
+
+sub order2link {
+    my ( $self, $order, @class ) = @_;
+    return '' unless $order;
+
+    push @class, 'btn btn-link' unless @class;
+
+    my $order_id  = $order->id;
+    my $status_id = $order->status_id;
+    my $ymd       = $order->create_date->ymd;
+    my $dom       = Mojo::DOM::HTML->new;
+
+    my $status = $OpenCloset::Constants::Status::LABEL_MAP{$status_id} || 'Unknown';
+    my $html = qq{<a href="/order/$order_id" class="@class">
+  $ymd
+  <small>$status</small>
+</a>};
+    $dom->parse($html);
+    my $tree = $dom->tree;
+    return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
 }
 
 1;
