@@ -2,14 +2,12 @@
 % title $user->name . '님';
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Measurement ();
+% my $gender = $user_info->gender;
 
 <h2>
-  <i class="fa fa-<%= $user_info->gender %>" aria-hidden="true"></i>
+  <i class="fa fa-<%= $gender %>" aria-hidden="true"></i>
   <%= $user->name %>님
 </h2>
-<p>
-  xx세 남성, x회 대여
-</p>
 
 <hr>
 
@@ -28,17 +26,13 @@
 <hr>
 
 <h3>주문서이력</h3>
-<div class="list-group">
-  % while (my $order = $orders->next) {
-    %= order2link($order, 'list-group-item')
-  % }
-</div>
+%= include 'partials/orders', orders => $orders;
 
 <hr>
 
 % unless ($failed) {
 <p>
-  <a class="btn btn-default" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
+  <a class="btn btn-primary" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
 </p>
 % } else {
 <p>
