@@ -11,7 +11,7 @@ has schema => sub { shift->app->schema };
 =head2 add
 
     # order.add
-    GET /order/new
+    GET /orders/new
 
 =cut
 
@@ -22,7 +22,7 @@ sub add {
 =head2 create
 
     # order.create
-    POST /order
+    POST /orders
 
 =cut
 
@@ -45,7 +45,7 @@ sub create {
 
 =head2 order_id
 
-    under /order/:order_id
+    under /orders/:order_id
 
 =cut
 
@@ -63,7 +63,7 @@ sub order_id {
 =head2 order
 
     # order.order
-    GET /order/:order_id
+    GET /orders/:order_id
 
 =cut
 
