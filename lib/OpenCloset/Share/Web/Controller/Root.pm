@@ -65,4 +65,19 @@ sub _check_measurement {
     return;
 }
 
+=head2 import_hook
+
+    GET /webhooks/import
+
+=cut
+
+sub import_hook {
+    my $self = shift;
+
+    my $url = $self->req->url->to_abs;
+    $self->log->debug($url);
+
+    $self->render( text => $url );
+}
+
 1;
