@@ -67,17 +67,21 @@ sub _check_measurement {
 
 =head2 import_hook
 
-    GET /webhooks/import
+    POST /webhooks/import
 
 =cut
 
 sub import_hook {
     my $self = shift;
 
-    my $url = $self->req->url->to_abs;
-    $self->log->debug($url);
+    my $v     = $self->validation;
+    my $input = $v->input;
 
-    $self->render( text => $url );
+    while ( my ( $key, $value ) = each %$input ) {
+        $self->log->debug("$key: $value");
+    }
+
+    $self->render( text => 'OK' );
 }
 
 1;

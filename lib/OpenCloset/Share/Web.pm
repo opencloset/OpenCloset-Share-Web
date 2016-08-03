@@ -53,7 +53,7 @@ sub _public_routes {
     my $r    = $self->routes;
 
     $r->get('/welcome')->to('welcome#index')->name('welcome');
-    $r->get('/webhooks/import')->to('root#import_hook');
+    $r->post('/webhooks/import')->to('root#import_hook');
 }
 
 sub _private_routes {
