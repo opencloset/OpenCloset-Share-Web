@@ -28,12 +28,13 @@ OpenCloset::Share::Web::Plugin::Helpers - opencloset share web mojo helper
 sub register {
     my ( $self, $app, $conf ) = @_;
 
-    $app->helper( agent        => \&agent );
-    $app->helper( current_user => \&current_user );
-    $app->helper( is_success   => \&is_success );
-    $app->helper( trim_code    => \&trim_code );
-    $app->helper( clothes2desc => \&clothes2desc );
-    $app->helper( order2link   => \&order2link );
+    $app->helper( agent            => \&agent );
+    $app->helper( current_user     => \&current_user );
+    $app->helper( is_success       => \&is_success );
+    $app->helper( trim_code        => \&trim_code );
+    $app->helper( clothes2desc     => \&clothes2desc );
+    $app->helper( order2link       => \&order2link );
+    $app->helper( order_categories => \&order_categories );
 }
 
 =head1 HELPERS
@@ -194,6 +195,23 @@ sub order2link {
     $dom->parse($html);
     my $tree = $dom->tree;
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
+}
+
+=head2 order_categories
+
+    my @categories = $self->order_categories($order);
+
+=cut
+
+sub order_categories {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my @categories;
+    my @details = $order->order_details;
+    map { push @categories, $_->name } @details;
+
+    return @categories;
 }
 
 1;
