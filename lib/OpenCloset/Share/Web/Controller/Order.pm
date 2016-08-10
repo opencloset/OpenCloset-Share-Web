@@ -87,7 +87,14 @@ sub order {
     my @details = $order->order_details;
     map { push @categories, $_->name } @details;
 
-    my $title = sprintf( '%s님 %s 주문서', $user->name, $order->create_date->ymd );
+    ## when you create DateTime object without time zone specified, "floating" time zone is set
+    ## first call of set_time_zone change time zone to UTC without conversion
+    ## second call of set_time_zone change UTC to $timezone
+    my $create_date = $order->create_date;
+    $create_date->set_time_zone('UTC');
+    $create_date->set_time_zone( $self->config->{timezone} );
+
+    my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
     $self->stash( categories => \@categories, title => $title );
 }
 
