@@ -1,15 +1,38 @@
+%#
+%# requires OpenCloset::Constants::Status, OpenCloset::Constants::Category
+%#
+
+% our %STATUS2CLASS = ( $PAYMENT => 'list-group-item-danger', $CHOOSE_CLOTHES => 'list-group-item-success' );
+
 % if ($orders->count) {
 <div class="list-group">
+  % my $timezone = $self->config->{timezone};
   % while (my $order = $orders->next) {
-  % my $ymd = $order->create_date->ymd;
-  <a href="<%= url_for('/orders/' . $order->id) %>" class="list-group-item list-group-item-success">
-    <h4><%= $ymd %></h4>
-    <p>
-      session 에만 넣을 것이 아니라 order_detail 에 넣어두자
-    </p>
-    <p>
-      상태에 따라서 배경색을 달리해주자
-    </p>
+  % my @categories = order_categories($order);
+  % my $create_date = $order->create_date;
+  % $create_date->set_time_zone('UTC');
+  % $create_date->set_time_zone($timezone);
+  <a href="<%= url_for('/orders/' . $order->id) %>" class="list-group-item <%= $STATUS2CLASS{$order->status_id} || '' %>">
+
+    <h4>
+      <%= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id} %>
+      <small>
+        %= $create_date->ymd
+        <small>
+          %= $create_date->hms
+        </small>
+      </small>
+    </h4>
+
+    <ul class="list-inline">
+      % for my $category (@categories) {
+      <li>
+        <span class="label label-success">
+          %= $OpenCloset::Constants::Category::LABEL_MAP{$category}
+        </span>
+      </li>
+      % }
+    </ul>
   </a>
   % }
 </div>

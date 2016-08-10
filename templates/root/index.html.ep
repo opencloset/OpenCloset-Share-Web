@@ -1,5 +1,6 @@
 % layout 'default';
 % title $user->name . '님';
+% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Measurement ();
 % my $gender = $user_info->gender;
