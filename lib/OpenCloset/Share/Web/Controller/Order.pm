@@ -1,7 +1,7 @@
 package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
-use OpenCloset::Constants::Category;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
 use OpenCloset::Constants::Status qw/$PAYMENT/;
 
 has schema => sub { shift->app->schema };
@@ -36,10 +36,21 @@ sub create {
         push @categories, $c if $p eq 'on';
     }
 
-    $self->session( order => { categories => [@categories] } );
     my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $PAYMENT } );
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
+
+    for my $category (@categories) {
+        $order->create_related(
+            'order_details',
+            {
+                name        => $category,
+                price       => $PRICE{$category},
+                final_price => $PRICE{$category},
+            }
+        );
+    }
+
     $self->redirect_to( 'order.order', order_id => $order->id );
 }
 
@@ -72,9 +83,12 @@ sub order {
     my $order = $self->stash('order');
     my $user  = $self->stash('user');
 
-    my $categories = $self->session('order')->{categories};
+    my @categories;
+    my @details = $order->order_details;
+    map { push @categories, $_->name } @details;
+
     my $title = sprintf( '%s님 %s 주문서', $user->name, $order->create_date->ymd );
-    $self->stash( categories => $categories, title => $title );
+    $self->stash( categories => \@categories, title => $title );
 }
 
 1;
