@@ -1,5 +1,5 @@
 % layout 'default';
-% title $user->name . '님';
+% title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
 % use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Measurement ();
@@ -12,21 +12,20 @@
 
 <hr>
 
-<h3>대여가능한 의류</h3>
-
-<ul class="list-inline">
-  % for my $label (@OpenCloset::Constants::Category::ALL_LABEL) {
+<h3>대여방법</h3>
+<ol>
   <li>
-    <span class="label label-success">
-      <%= $label %>
-    </span>
+    <a href="<%= url_for('/measurements') %>">신체치수</a>를 입력합니다.
   </li>
-  % }
-</ul>
+  <li>대여주문서를 작성합니다.</li>
+  <li>대여할 의류를 선택합니다.</li>
+  <li>배송지를 입력합니다.</li>
+  <li>결제합니다.</li>
+</ol>
 
 <hr>
 
-<h3>주문서이력</h3>
+<h3>대여이력</h3>
 %= include 'partials/orders', orders => $orders;
 
 <hr>
