@@ -1,17 +1,13 @@
 % layout 'default';
 % title $title, jses => ['/assets/dist/js/order-id.min.js'];
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
-<h2><%= $order->id %></h2>
-<ul class="list-inline">
-  % for my $c (@$categories) {
-  <li>
-    <span class="label label-success">
-      %= $LABEL_MAP{$c}
-    </span>
-  </li>
-  % }
-</ul>
+%= include 'partials/guide';
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
 
 <div id="clothes-recommend">
   <div id="loading-img" class="text-center">

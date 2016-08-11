@@ -6,13 +6,9 @@
 % ];
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
-<h2>대여방법</h2>
-<ol>
-  <li>대여품목과 수량을 선택</li>
-  <li>추천되는 의류중에 선택</li>
-  <li>배송지를 선택</li>
-  <li>결제</li>
-</ol>
+%= include 'partials/guide';
+
+<hr>
 
 <h3>대여가격 안내</h3>
 <ul class="list-inline">
