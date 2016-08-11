@@ -27,4 +27,7 @@
   % }
 </ul>
 
-<h3><code><%= commify $price %></code></h3>
+<h3>
+  <code><%= commify $price %></code>
+  <small>원</small>
+</h3>

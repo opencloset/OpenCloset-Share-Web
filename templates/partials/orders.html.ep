@@ -42,7 +42,10 @@
       % }
     </ul>
 
-    <h4><code><%= commify $price %></code></h4>
+    <h4>
+      <code><%= commify $price %></code>
+      <small>원</small>
+    </h4>
   </li>
   % }
 </ul>
