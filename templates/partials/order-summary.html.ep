@@ -1,0 +1,30 @@
+% use OpenCloset::Constants::Status;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
+
+% my $timezone = $self->config->{timezone};
+% my $create_date = $order->create_date;
+% $create_date->set_time_zone('UTC');
+% $create_date->set_time_zone($timezone);
+<h2>
+  %= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id}
+  <small>
+    %= $create_date->ymd
+    <small>
+      %= $create_date->hms
+    </small>
+  </small>
+</h2>
+
+<ul class="list-inline">
+  % my $price = 0;
+  % for my $c (@$categories) {
+  % $price += $PRICE{$c};
+  <li>
+    <span class="label label-success">
+      %= $LABEL_MAP{$c}
+    </span>
+  </li>
+  % }
+</ul>
+
+<h3><code><%= commify $price %></code></h3>
