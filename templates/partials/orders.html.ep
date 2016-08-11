@@ -2,17 +2,23 @@
 %# requires OpenCloset::Constants::Status, OpenCloset::Constants::Category
 %#
 
-% our %STATUS2CLASS = ( $PAYMENT => 'list-group-item-danger', $CHOOSE_CLOTHES => 'list-group-item-success' );
-
 % if ($orders->count) {
-<div class="list-group">
+<ul class="list-group">
   % my $timezone = $self->config->{timezone};
   % while (my $order = $orders->next) {
   % my @categories = order_categories($order);
   % my $create_date = $order->create_date;
   % $create_date->set_time_zone('UTC');
   % $create_date->set_time_zone($timezone);
-  <a href="<%= url_for('/orders/' . $order->id) %>" class="list-group-item <%= $STATUS2CLASS{$order->status_id} || '' %>">
+  <li class="list-group-item">
+    <ul class="list-inline pull-right">
+      <li>
+        <a class="btn btn-default btn-sm" href="<%= url_for('/orders/' . $order->id) %>">자세히</a>
+      </li>
+      <li>
+        <button class="btn btn-danger btn-sm btn-cancel" data-url="<%= url_for('/orders/' . $order->id) %>" title="주문서를 취소하고, 삭제합니다">취소</button>
+      </li>
+    </ul>
 
     <h4>
       <%= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id} %>
@@ -33,9 +39,9 @@
       </li>
       % }
     </ul>
-  </a>
+  </li>
   % }
-</div>
+</ul>
 % } else {
 <p>대여이력이 없습니다</p>
 % }
