@@ -19,4 +19,5 @@
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
 
     opencloset => { login => 'http://localhost:5001/login', root => 'http://localhost:5001' },
+    timezone   => 'Asia/Seoul',
 };

@@ -1,48 +1,38 @@
 % layout 'default';
-% title $user->name . '님';
+% title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
+% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Measurement ();
+% my $gender = $user_info->gender;
 
 <h2>
-  <i class="fa fa-<%= $user_info->gender %>" aria-hidden="true"></i>
+  <i class="fa fa-<%= $gender %>" aria-hidden="true"></i>
   <%= $user->name %>님
 </h2>
-<p>
-  xx세 남성, x회 대여
-</p>
 
 <hr>
 
-<h3>대여가능한 의류</h3>
-
-<ul class="list-inline">
-  % for my $label (@OpenCloset::Constants::Category::ALL_LABEL) {
+<h3>대여방법</h3>
+<ol>
   <li>
-    <span class="label label-success">
-      <%= $label %>
-    </span>
+    <a href="<%= url_for('/measurements') %>">신체치수</a>를 입력합니다.
   </li>
-  % }
-</ul>
+  <li>대여주문서를 작성합니다.</li>
+  <li>대여할 의류를 선택합니다.</li>
+  <li>배송지를 입력합니다.</li>
+  <li>결제합니다.</li>
+</ol>
 
 <hr>
 
 <h3>대여이력</h3>
-<ul>
-  % while (my $order = $orders->next) {
-  <li>
-    <a href="<%= url_for('order.order', order_id => $order->id) %>">
-      %= $order->create_date->ymd
-    </a>
-  </li>
-  % }
-</ul>
+%= include 'partials/orders', orders => $orders;
 
 <hr>
 
 % unless ($failed) {
 <p>
-  <a class="btn btn-default" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
+  <a class="btn btn-primary" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
 </p>
 % } else {
 <p>
