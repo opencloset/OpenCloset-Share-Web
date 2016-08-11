@@ -31,7 +31,9 @@
     </h4>
 
     <ul class="list-inline">
+      % my $price = 0;
       % for my $category (@categories) {
+      % $price += $OpenCloset::Constants::Category::PRICE{$category};
       <li>
         <span class="label label-success">
           %= $OpenCloset::Constants::Category::LABEL_MAP{$category}
@@ -39,6 +41,8 @@
       </li>
       % }
     </ul>
+
+    <h4><code><%= commify $price %></code></h4>
   </li>
   % }
 </ul>
