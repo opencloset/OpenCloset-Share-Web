@@ -98,4 +98,19 @@ sub order {
     $self->stash( categories => \@categories, title => $title );
 }
 
+=head2 delete_order
+
+    # order.delete
+    DELETE /orders/:order_id
+
+=cut
+
+sub delete_order {
+    my $self  = shift;
+    my $order = $self->stash('order');
+
+    $order->delete;
+    $self->render( json => { message => 'Deleted order successfully' } );
+}
+
 1;
