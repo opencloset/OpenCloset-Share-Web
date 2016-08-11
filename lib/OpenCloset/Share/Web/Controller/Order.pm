@@ -2,7 +2,7 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
-use OpenCloset::Constants::Status qw/$PAYMENT/;
+use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
 
 has schema => sub { shift->app->schema };
 
@@ -36,7 +36,11 @@ sub create {
         push @categories, $c if $p eq 'on';
     }
 
-    my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $PAYMENT } );
+    my $status_id = $CHOOSE_CLOTHES;
+    my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
+    $status_id = $PAYMENT if $pair != 2;
+
+    my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $status_id } );
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
