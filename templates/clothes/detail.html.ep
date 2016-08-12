@@ -1,11 +1,17 @@
 % layout 'default';
 % title clothes2desc($clothes);
 
-<h2>
-  %= clothes2desc($clothes)
-</h2>
+% use OpenCloset::Constants::Category ();
 
-<hr>
+% my %SIZE_MAP = (
+%   black        => '검정색',
+%   navy         => '짙은감색',
+%   charcoalgray => '차콜그레이',
+%   male         => '남성용',
+%   female       => '여성용',
+% );
+
+<h2>의류사진</h2>
 
 % my $cnt = 0;
 % while (1) {
@@ -34,5 +40,34 @@
 % }
 
 <hr>
+
+<h3>의류정보</h3>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>상태</th>
+      <th>종류</th>
+      % for my $part (@$parts) {
+      <th>
+        %= $part
+      </th>
+      % }
+    </tr>
+  </thead>
+  <tbody>
+    <td><%= clothes2status($clothes) %></td>
+    <td>
+      <span class="label label-primary">
+        %= $OpenCloset::Constants::Category::LABEL_MAP{$clothes->category}
+      </span>
+    </td>
+    % for my $size (@$sizes) {
+    <td>
+      %= $SIZE_MAP{$size} || $size
+    </td>
+    % }
+  </tbody>
+</table>
 
 <a href="#">대여하기</a>

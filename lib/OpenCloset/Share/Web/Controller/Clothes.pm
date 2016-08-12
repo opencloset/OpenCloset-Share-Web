@@ -82,6 +82,8 @@ sub detail {
     my $code = $clothes->code =~ s/^0//r;
     my $url  = $self->oavatar_url($code) . '/images';
 
+    $self->log->debug("Clothes images URL: $url");
+
     my $http = HTTP::Tiny->new;
     my $res = $http->get( $url, { headers => { Accept => 'application/json' } } );
 
@@ -94,7 +96,14 @@ sub detail {
         $self->log->error("Failed to get $code images: $res->{reason}");
     }
 
-    $self->render( images => \@images );
+    my @measurements = $self->clothes_measurements($clothes);
+    my ( @parts, @sizes );
+    while ( my ( $part, $size ) = splice( @measurements, 0, 2 ) ) {
+        push @parts, $part;
+        push @sizes, $size;
+    }
+
+    $self->render( images => \@images, parts => \@parts, sizes => \@sizes );
 }
 
 1;
