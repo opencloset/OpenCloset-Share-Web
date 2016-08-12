@@ -16,7 +16,8 @@ has schema => sub { shift->app->schema };
 =cut
 
 sub recommend {
-    my $self = shift;
+    my $self     = shift;
+    my $order_id = $self->param('order_id');
 
     my $user = $self->current_user;
     return $self->error( 500, 'Not found current user' ) unless $user;
@@ -52,7 +53,7 @@ sub recommend {
         push @recommends, [ $t, $b, $count ];
     }
 
-    $self->render( recommends => \@recommends );
+    $self->render( recommends => \@recommends, order_id => $order_id );
 }
 
 =head2 code

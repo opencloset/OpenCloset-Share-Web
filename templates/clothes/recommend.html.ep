@@ -10,7 +10,9 @@
     %   }
     %   my ($top, $bottom, $count) = @$recommend;
     <div class="col-xs-6 col-md-3">
-      <a class="thumbnail" href="<%= url_for('/clothes/' . $top->code) %>">
+      % my $url = url_for('/clothes/' . $top->code);
+      % $url = $url->query(order_id => $order_id) if $order_id;
+      <a class="thumbnail" href="<%= $url %>">
         <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
       </a>
     </div>
