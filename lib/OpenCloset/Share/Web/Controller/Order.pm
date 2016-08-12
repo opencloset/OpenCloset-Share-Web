@@ -69,7 +69,16 @@ sub order_id {
     my $order_id = $self->param('order_id');
     my $order    = $self->schema->resultset('Order')->find( { id => $order_id } );
 
-    return unless $order;
+    unless ($order) {
+        $self->error( 404, "Order not found: $order_id" );
+        return;
+    }
+
+    my $user = $self->stash('user');
+    if ( $user->id != $order->user_id ) {
+        $self->error( 400, "Permission denied" );
+        return;
+    }
 
     $self->stash( order => $order );
     return 1;
