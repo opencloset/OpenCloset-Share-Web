@@ -35,7 +35,7 @@
       % for my $category (@categories) {
       % $price += $OpenCloset::Constants::Category::PRICE{$category};
       <li>
-        <span class="label label-success">
+        <span class="label label-primary">
           %= $OpenCloset::Constants::Category::LABEL_MAP{$category}
         </span>
       </li>

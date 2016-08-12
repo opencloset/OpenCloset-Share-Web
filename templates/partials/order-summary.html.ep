@@ -20,7 +20,7 @@
   % for my $c (@$categories) {
   % $price += $PRICE{$c};
   <li>
-    <span class="label label-success">
+    <span class="label label-primary">
       %= $LABEL_MAP{$c}
     </span>
   </li>
