@@ -7,7 +7,8 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Status;
+use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL/;
+use OpenCloset::Constants::Measurement;
 
 =encoding utf8
 
@@ -28,13 +29,15 @@ OpenCloset::Share::Web::Plugin::Helpers - opencloset share web mojo helper
 sub register {
     my ( $self, $app, $conf ) = @_;
 
-    $app->helper( agent            => \&agent );
-    $app->helper( current_user     => \&current_user );
-    $app->helper( is_success       => \&is_success );
-    $app->helper( trim_code        => \&trim_code );
-    $app->helper( clothes2desc     => \&clothes2desc );
-    $app->helper( order2link       => \&order2link );
-    $app->helper( order_categories => \&order_categories );
+    $app->helper( agent                => \&agent );
+    $app->helper( current_user         => \&current_user );
+    $app->helper( is_success           => \&is_success );
+    $app->helper( trim_code            => \&trim_code );
+    $app->helper( clothes2desc         => \&clothes2desc );
+    $app->helper( clothes2status       => \&clothes2status );
+    $app->helper( clothes_measurements => \&clothes_measurements );
+    $app->helper( order2link           => \&order2link );
+    $app->helper( order_categories     => \&order_categories );
 }
 
 =head1 HELPERS
@@ -164,6 +167,69 @@ sub clothes2desc {
     my $color = $clothes->color || 'Unknown';
 
     return sprintf "가슴 %s / 허리 %s %s", $bust, $waist, $color;
+}
+
+=head2 clothes2status
+
+    % clothes2status($clothes)
+    # <span class="label label-primary">
+    #   J001
+    #   <small>대여가능</small>
+    # </span>
+
+=cut
+
+sub clothes2status {
+    my ( $self, $clothes ) = @_;
+    return '' unless $clothes;
+
+    my $dom  = Mojo::DOM::HTML->new;
+    my $code = $clothes->code =~ s/^0//r;
+
+    my $status    = $clothes->status;
+    my $name      = $status->name;
+    my $status_id = $status->id;
+
+    my @class = qw/label/;
+    if ( $status_id == $RENTABLE ) {
+        push @class, 'label-success';
+    }
+    elsif ( $status_id == $RENTAL ) {
+        push @class, 'label-danger';
+    }
+    else {
+        push @class, 'label-default';
+    }
+
+    my $html = qq{<span class="@class">$name</span>};
+
+    $dom->parse($html);
+    my $tree = $dom->tree;
+    return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
+}
+
+=head2 clothes_measurements
+
+    my @measurements = $self->clothes_measurements($clothes);
+    # ('가슴둘레' => 90, '허리둘레' => 80, ...);
+
+=cut
+
+sub clothes_measurements {
+    my ( $self, $clothes ) = @_;
+    return unless $clothes;
+
+    my @parts = ( $COLOR, $GENDER, $NECK, $BUST, $WAIST, $HIP, $TOPBELLY, $BELLY, $ARM, $THIGH, $LENGTH, $CUFF );
+
+    my @sizes;
+    for my $part (@parts) {
+        my $size = $clothes->get_column($part);
+        next unless $size;
+        my $label = $OpenCloset::Constants::Measurement::LABEL_MAP{$part} || $part;
+        push @sizes, $label, $size;
+    }
+
+    return @sizes;
 }
 
 =head2 order2link
