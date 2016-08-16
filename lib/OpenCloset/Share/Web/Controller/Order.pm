@@ -105,6 +105,14 @@ sub order {
 
     my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
     $self->stash( categories => \@categories, title => $title );
+
+    my $status_id = $order->status_id;
+    if ( $status_id == $CHOOSE_CLOTHES ) {
+        $self->render( template => 'order/order.choose_clothes' );
+    }
+    elsif ( $status_id == $PAYMENT ) {
+        $self->render( template => 'order/order.payment' );
+    }
 }
 
 =head2 update_order

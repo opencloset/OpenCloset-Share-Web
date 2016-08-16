@@ -1,0 +1,37 @@
+% layout 'default';
+% title $title;
+
+%= include 'partials/guide';
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<h3>
+  배송지
+  <button class="btn btn-default btn-sm">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    주소검색
+  </button>
+</h3>
+
+<ul id="address">
+  <li class="radio">
+    <label>
+      <input name="" type="radio" value="">
+      서울시 광진구 화양동 48-3
+    </label>
+    <a href="">상세주소</a>
+    <button class="btn btn-danger btn-xs">삭제</button>
+  </li>
+  <li class="radio">
+    <label>
+      <input name="" type="radio" value="">
+      서울시 광진구 화양동 48-3
+    </label>
+    <a href="">상세주소</a>
+    <button class="btn btn-danger btn-xs">삭제</button>
+  </li>
+</ul>
