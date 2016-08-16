@@ -1,5 +1,5 @@
 % layout 'default';
-% title $title, jses => ['/assets/dist/js/order-id.min.js'];
+% title $title, jses => ['/assets/dist/js/order-id-choose-clothes.min.js'];
 
 %= include 'partials/guide';
 
