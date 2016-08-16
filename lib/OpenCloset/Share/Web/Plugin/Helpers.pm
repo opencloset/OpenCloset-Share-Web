@@ -38,6 +38,7 @@ sub register {
     $app->helper( clothes_measurements => \&clothes_measurements );
     $app->helper( order2link           => \&order2link );
     $app->helper( order_categories     => \&order_categories );
+    $app->helper( timezone             => \&timezone );
 }
 
 =head1 HELPERS
@@ -278,6 +279,29 @@ sub order_categories {
     map { push @categories, $_->name } @details;
 
     return @categories;
+}
+
+=head2 timezone
+
+    % $order->create_date->hms    # 06:56:43
+    % timezone($order->create_date);
+    % $order->create_date->hms    # 15:56:43
+
+=cut
+
+sub timezone {
+    my ( $self, $dt ) = @_;
+    my $tz = $self->config->{timezone};
+
+    return $tz unless $dt;
+    return $dt unless $tz;
+
+    ## when you create DateTime object without time zone specified, "floating" time zone is set
+    ## first call of set_time_zone change time zone to UTC without conversion
+    ## second call of set_time_zone change UTC to $timezone
+    $dt->set_time_zone('UTC');
+    $dt->set_time_zone($tz);
+    return $dt;
 }
 
 1;

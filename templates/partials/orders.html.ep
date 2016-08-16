@@ -7,9 +7,7 @@
   % my $timezone = $self->config->{timezone};
   % while (my $order = $orders->next) {
   % my @categories = order_categories($order);
-  % my $create_date = $order->create_date;
-  % $create_date->set_time_zone('UTC');
-  % $create_date->set_time_zone($timezone);
+  % my $create_date = timezone($order->create_date);
   <li class="list-group-item">
     <ul class="list-inline pull-right">
       <li>
