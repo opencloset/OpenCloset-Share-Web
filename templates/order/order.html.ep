@@ -16,12 +16,12 @@
 
 <p>
   <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-  마음에 드는 자켓사진을 선택해서 진행하시거나 <a class="btn btn-success btn-xs" href="">추천대여</a> 버튼을 눌러주세요.
+  마음에 드는 자켓사진을 선택해서 진행하시거나 <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a> 버튼을 눌러주세요.
 </p>
 
 <p>
   <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-  추천된 의류가 없으면 <a class="btn btn-success btn-xs" href="">추천대여</a> 버튼을 눌러주세요.
+  추천된 의류가 없으면 <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a> 버튼을 눌러주세요.
 </p>
 
 <p>

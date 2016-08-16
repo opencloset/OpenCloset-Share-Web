@@ -100,15 +100,35 @@ sub order {
     my @details = $order->order_details;
     map { push @categories, $_->name } @details;
 
-    ## when you create DateTime object without time zone specified, "floating" time zone is set
-    ## first call of set_time_zone change time zone to UTC without conversion
-    ## second call of set_time_zone change UTC to $timezone
     my $create_date = $order->create_date;
-    $create_date->set_time_zone('UTC');
-    $create_date->set_time_zone( $self->config->{timezone} );
+    $self->timezone($create_date);
 
     my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
     $self->stash( categories => \@categories, title => $title );
+}
+
+=head2 update_order
+
+    # order.update
+    PUT /orders/:order_id
+
+=cut
+
+sub update_order {
+    my $self  = shift;
+    my $order = $self->stash('order');
+
+    my $v = $self->validation;
+    $v->optional('status_id')->in(@OpenCloset::Constants::Status::ALL);
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $input = $v->input;
+    $order->update($input);
+    $self->render( json => { $order->get_columns }, status => 201 );
 }
 
 =head2 delete_order

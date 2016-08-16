@@ -2,9 +2,7 @@
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
 % my $timezone = $self->config->{timezone};
-% my $create_date = $order->create_date;
-% $create_date->set_time_zone('UTC');
-% $create_date->set_time_zone($timezone);
+% my $create_date = timezone($order->create_date);
 <h2>
   %= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id}
   <small>
