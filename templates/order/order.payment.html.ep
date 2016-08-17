@@ -64,19 +64,3 @@
     <button class="btn btn-danger btn-xs">삭제</button>
   </li>
 </ul>
-
-<script id="address" type="text/x-handlebars-template">
-  <li class="radio">
-    <label>
-      <input name="address" type="radio" value="">
-      {{address2}}
-    </label>
-    <a href="">
-      {{address4}}
-    </a>
-    <small class="text-muted">
-      {{address3}}
-    </small>
-    <button class="btn btn-danger btn-xs btn-delete">삭제</button>
-  </li>
-</script>

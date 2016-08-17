@@ -10,7 +10,8 @@ $ ->
     address2 = $(@).val()
     address3 = $('.postcodify_jibeon_address').val()
 
-    source   = $('#tpl-address').html()
     template = JST['address']
     html     = template({ address1: address1, address2: address2, address3: address3 })
+
     console.log html
+    $('#address').append(html)
