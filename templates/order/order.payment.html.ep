@@ -1,8 +1,8 @@
 % layout 'default';
 % title $title, jses => [
 %   '//cdn.poesis.kr/post/search.min.js',
-%   '/assets/components/handlebars/handlebars.min.js',
 %   '/assets/components/handlebars/handlebars.runtime.min.js',
+%   '/assets/dist/js/templates.min.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ];
 
@@ -65,7 +65,7 @@
   </li>
 </ul>
 
-<script id="tpl-address" type="text/x-handlebars-template">
+<script id="address" type="text/x-handlebars-template">
   <li class="radio">
     <label>
       <input name="address" type="radio" value="">
