@@ -1,5 +1,10 @@
 % layout 'default';
-% title $title;
+% title $title, jses => [
+%   '//cdn.poesis.kr/post/search.min.js',
+%   '/assets/components/handlebars/handlebars.min.js',
+%   '/assets/components/handlebars/handlebars.runtime.min.js',
+%   '/assets/dist/js/order-id-payment.min.js'
+% ];
 
 %= include 'partials/guide';
 
@@ -10,28 +15,68 @@
 <hr>
 
 <h3>
-  배송지
-  <button class="btn btn-default btn-sm">
+  배송주소
+  <button id="address-search" class="btn btn-default btn-sm">
     <i class="fa fa-search" aria-hidden="true"></i>
     주소검색
   </button>
 </h3>
 
+<input class="postcodify_building_id" name="address1" type="hidden" value="">
+<input class="postcodify_address" name="address2" type="hidden" value="">
+<input class="postcodify_jibeon_address" name="address3" type="hidden" value="">
+
 <ul id="address">
   <li class="radio">
     <label>
-      <input name="" type="radio" value="">
-      서울시 광진구 화양동 48-3
+      <input name="user_address" type="radio" value="0">
+      %= $user_info->address2
+      %= $user_info->address4
     </label>
-    <a href="">상세주소</a>
-    <button class="btn btn-danger btn-xs">삭제</button>
+    <small class="text-muted">
+      %= $user_info->address3
+    </small>
   </li>
+  % while (my $address = $user->user_addresses->next) {
   <li class="radio">
     <label>
-      <input name="" type="radio" value="">
-      서울시 광진구 화양동 48-3
+      <input name="user_address" type="radio" value="<%= $address->id %>">
+      %= $address->address2
+    </label>
+    <a href="">
+      %= $address->address4 || '상세주소'
+    </a>
+    <small class="text-muted">
+      %= $address->address3
+    </small>
+    <button class="btn btn-danger btn-xs" data-id="<%= $address->id %>">삭제</button>
+  </li>
+  % }
+  <li class="radio">
+    <label>
+      <input name="user_address" type="radio" value="">
+      서울특별시 광진구 아차산로 213
     </label>
     <a href="">상세주소</a>
+    <small class="text-muted">
+      서울특별시 광진구 화양동 48-3
+    </small>
     <button class="btn btn-danger btn-xs">삭제</button>
   </li>
 </ul>
+
+<script id="tpl-address" type="text/x-handlebars-template">
+  <li class="radio">
+    <label>
+      <input name="address" type="radio" value="">
+      {{address2}}
+    </label>
+    <a href="">
+      {{address4}}
+    </a>
+    <small class="text-muted">
+      {{address3}}
+    </small>
+    <button class="btn btn-danger btn-xs btn-delete">삭제</button>
+  </li>
+</script>
