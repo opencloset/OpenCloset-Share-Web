@@ -26,6 +26,12 @@ module.exports = (grunt) ->
         src: ['**/*.js', '!**/*.min.js']
         dest: 'public/assets/dist/js'
         ext: '.min.js'
+      jst:
+        expand: true
+        cwd: 'public/assets/dist/js'
+        src: ['templates.js']
+        dest: 'public/assets/dist/js'
+        ext: '.min.js'
 
     csscomb:
       options:
@@ -78,7 +84,7 @@ module.exports = (grunt) ->
         tasks: ['dist-css']
       jst:
         files: ['public/assets/jst/*.hbs', 'public/assets/jst/*.html', 'public/assets/jst/*.jst']
-        tasks: ['dist-template']
+        tasks: ['dist-template', 'uglify:jst']
 
   require('load-grunt-tasks')(grunt, { scope: 'devDependencies' })
   require('time-grunt')(grunt)
