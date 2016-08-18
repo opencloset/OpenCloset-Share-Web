@@ -75,7 +75,7 @@ sub update_address {
     map { delete $input->{$_} } qw/name pk value/; # delete x-editable params
 
     $address->update($input);
-    $self->render( json => { $address->get_columns }, status => 201 );
+    $self->render( json => { $address->get_columns } );
 }
 
 =head2 delete_address
@@ -94,7 +94,7 @@ sub delete_address {
     return $self->error( 400, "Permission denied" ) if $user->id != $address->user_id;
 
     $address->delete;
-    $self->render( json => {}, status => 201 );
+    $self->render( json => {} );
 }
 
 1;
