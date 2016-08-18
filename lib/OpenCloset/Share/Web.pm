@@ -64,6 +64,7 @@ sub _private_routes {
     my $measurements = $root->under('/measurements')->to('user#auth');
     my $clothes      = $root->under('/clothes')->to('user#auth');
     my $orders       = $root->under('/orders')->to('user#auth');
+    my $address      = $root->under('/address')->to('user#auth');
 
     $r->get('/')->to('root#index')->name('index');
     $r->get('/logout')->to('user#logout')->name('logout');
@@ -83,6 +84,10 @@ sub _private_routes {
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');
+
+    $address->post('/')->to('address#create');
+    $address->put('/:address_id')->to('address#update_address');
+    $address->delete('/:address_id')->to('address#delete_address');
 }
 
 1;
