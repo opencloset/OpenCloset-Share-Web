@@ -24,6 +24,7 @@
     "opencloset.css": "https://github.com/opencloset/opencloset.css.git",
     "jquery-timeago": "^1.5.2",
     "bootstrap-toggle": "^2.2.2",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "x-editable": "^1.5.1"
   }
 }

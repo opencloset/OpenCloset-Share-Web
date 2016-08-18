@@ -1,3 +1,9 @@
+$.fn.editable.defaults.mode = 'inline'
+$.fn.editable.defaults.emptytext = '상세주소'
+$.fn.editable.defaults.ajaxOptions =
+  type: "PUT"
+  dataType: 'json'
+
 $ ->
   $('#address-search').postcodifyPopUp
     api: "http://localhost:5001/api/postcode/search.json"
@@ -10,8 +16,32 @@ $ ->
     address2 = $(@).val()
     address3 = $('.postcodify_jibeon_address').val()
 
-    template = JST['address']
-    html     = template({ address1: address1, address2: address2, address3: address3 })
+    $.ajax '/address',
+      type: 'POST'
+      data: { address1: address1, address2: address2, address3: address3 }
+      success: (data, textStatus, jqXHR) ->
+        template = JST['address']
+        html     = template(data)
+        $('#address').append(html).find('li:last-child .address-editable').editable
+          params: (params) ->
+            params[params.name] = params.value
+            params
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
 
-    console.log html
-    $('#address').append(html)
+  $('.address-editable').editable
+    params: (params) ->
+      params[params.name] = params.value
+      params
+
+  $('#address').on 'click', '.btn-delete-address:not(.disabled)', (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax $this.prop('href'),
+      type: 'DELETE'
+      success: (data, textStatus, jqXHR) ->
+        $this.closest('li').remove()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled') if $this

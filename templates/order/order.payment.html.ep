@@ -1,9 +1,12 @@
 % layout 'default';
 % title $title, jses => [
 %   '//cdn.poesis.kr/post/search.min.js',
+%   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
 %   '/assets/components/handlebars/handlebars.runtime.min.js',
 %   '/assets/dist/js/templates.min.js',
 %   '/assets/dist/js/order-id-payment.min.js'
+% ], csses => [
+%   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
 % ];
 
 %= include 'partials/guide';
@@ -29,7 +32,7 @@
 <ul id="address">
   <li class="radio">
     <label>
-      <input name="user_address" type="radio" value="0">
+      <input name="user_address" type="radio" value="0" checked>
       %= $user_info->address2
       %= $user_info->address4
     </label>
@@ -37,30 +40,19 @@
       %= $user_info->address3
     </small>
   </li>
-  % while (my $address = $user->user_addresses->next) {
+  % while (my $address = $addresses->next) {
   <li class="radio">
     <label>
       <input name="user_address" type="radio" value="<%= $address->id %>">
       %= $address->address2
     </label>
-    <a href="">
-      %= $address->address4 || '상세주소'
+    <a href="#" class="address-editable" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
+      %= $address->address4 || ''
     </a>
     <small class="text-muted">
       %= $address->address3
     </small>
-    <button class="btn btn-danger btn-xs" data-id="<%= $address->id %>">삭제</button>
+    <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
   </li>
   % }
-  <li class="radio">
-    <label>
-      <input name="user_address" type="radio" value="">
-      서울특별시 광진구 아차산로 213
-    </label>
-    <a href="">상세주소</a>
-    <small class="text-muted">
-      서울특별시 광진구 화양동 48-3
-    </small>
-    <button class="btn btn-danger btn-xs">삭제</button>
-  </li>
 </ul>

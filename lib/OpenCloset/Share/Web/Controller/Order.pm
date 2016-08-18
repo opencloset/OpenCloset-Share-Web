@@ -111,7 +111,10 @@ sub order {
         $self->render( template => 'order/order.choose_clothes' );
     }
     elsif ( $status_id == $PAYMENT ) {
-        $self->render( template => 'order/order.payment' );
+        $self->render(
+            addresses => scalar $user->user_addresses,
+            template  => 'order/order.payment',
+        );
     }
 }
 
