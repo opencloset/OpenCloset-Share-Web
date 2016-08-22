@@ -42,6 +42,24 @@ $ ->
       type: 'DELETE'
       success: (data, textStatus, jqXHR) ->
         $this.closest('li').remove()
+        $('#user_profile_address').prop('checked', true)
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled') if $this
+
+
+  STATUS =
+    payment: 19
+
+  $('#btn-next-step').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax $this.prop('href'),
+      type: 'PUT'
+      data: { status_id: STATUS.payment }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')

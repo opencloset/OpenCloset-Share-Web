@@ -4,7 +4,7 @@
 %   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
 %   '/assets/components/handlebars/handlebars.runtime.min.js',
 %   '/assets/dist/js/templates.min.js',
-%   '/assets/dist/js/order-id-payment.min.js'
+%   '/assets/dist/js/order-id-choose-address.min.js'
 % ], csses => [
 %   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
 % ];
@@ -32,7 +32,7 @@
 <ul id="address">
   <li class="radio">
     <label>
-      <input name="user_address" type="radio" value="0" checked>
+      <input id="user_profile_address" name="user_address" type="radio" value="0" checked>
       %= $user_info->address2
       %= $user_info->address4
     </label>
@@ -56,3 +56,5 @@
   </li>
   % }
 </ul>
+
+<a id="btn-next-step" class="btn btn-success" href="<%= url_for %>">다음</a>
