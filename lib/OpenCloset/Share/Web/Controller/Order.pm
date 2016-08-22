@@ -2,7 +2,7 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
-use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
+use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
 
 has schema => sub { shift->app->schema };
 
@@ -110,10 +110,10 @@ sub order {
     if ( $status_id == $CHOOSE_CLOTHES ) {
         $self->render( template => 'order/order.choose_clothes' );
     }
-    elsif ( $status_id == $PAYMENT ) {
+    elsif ( $status_id == $CHOOSE_ADDRESS ) {
         $self->render(
             addresses => scalar $user->user_addresses,
-            template  => 'order/order.payment',
+            template  => 'order/order.choose_address',
         );
     }
 }

@@ -3,7 +3,7 @@ $ ->
   $('#clothes-recommend').load "/clothes/recommend?order_id=#{order_id}"
 
   STATUS =
-    payment: 19
+    choose_address: 49
 
   $('.btn-recommend:not(.disabled)').click (e) ->
     e.preventDefault()
@@ -11,7 +11,7 @@ $ ->
     $this.addClass('disabled')
     $.ajax $this.prop('href'),
       type: 'PUT'
-      data: { status_id: STATUS.payment }
+      data: { status_id: STATUS.choose_address }
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
