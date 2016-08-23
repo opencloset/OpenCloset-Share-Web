@@ -19,7 +19,9 @@
     </ul>
 
     <h4>
-      <%= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id} %>
+      % my $sts = $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id};
+      % $sts =~ s/중$//;
+      %= $sts . '중'
       <small>
         %= $create_date->ymd
         <small>
