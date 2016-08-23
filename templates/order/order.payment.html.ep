@@ -1,5 +1,8 @@
 % layout 'default';
-% title $title, jses => ['/assets/dist/js/order-id-choose-clothes.min.js'];
+% title $title, jses => [
+%   'https://service.iamport.kr/js/iamport.payment-1.1.1.js',
+%   '/assets/dist/js/order-id-payment.min.js'
+% ];
 
 %= include 'partials/guide';
 
