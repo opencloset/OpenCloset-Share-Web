@@ -23,6 +23,7 @@
     <span class="label label-primary">
       %= $LABEL_MAP{$c}
     </span>
+    <code><%= commify($PRICE{$c}) %></code>
   </li>
   % }
 </ul>
