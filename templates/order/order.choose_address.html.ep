@@ -29,32 +29,34 @@
 <input class="postcodify_address" name="address2" type="hidden" value="">
 <input class="postcodify_jibeon_address" name="address3" type="hidden" value="">
 
-<ul id="address">
-  <li class="radio">
-    <label>
-      <input id="user_profile_address" name="user_address" type="radio" value="0" checked>
-      %= $user_info->address2
-      %= $user_info->address4
-    </label>
-    <small class="text-muted">
-      %= $user_info->address3
-    </small>
-  </li>
-  % while (my $address = $addresses->next) {
-  <li class="radio">
-    <label>
-      <input name="user_address" type="radio" value="<%= $address->id %>">
-      %= $address->address2
-    </label>
-    <a href="#" class="address-editable" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
-      %= $address->address4 || ''
-    </a>
-    <small class="text-muted">
-      %= $address->address3
-    </small>
-    <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
-  </li>
-  % }
-</ul>
+<form id="form-address" action="<%= url_for %>">
+  <ul id="address">
+    <li class="radio">
+      <label>
+        <input id="user_profile_address" name="user_address" type="radio" value="0" checked>
+        %= $user_info->address2
+        %= $user_info->address4
+      </label>
+      <small class="text-muted">
+        %= $user_info->address3
+      </small>
+    </li>
+    % while (my $address = $addresses->next) {
+    <li class="radio">
+      <label>
+        <input name="user_address" type="radio" value="<%= $address->id %>">
+        %= $address->address2
+      </label>
+      <a href="#" class="address-editable" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
+        %= $address->address4 || ''
+      </a>
+      <small class="text-muted">
+        %= $address->address3
+      </small>
+      <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
+    </li>
+    % }
+  </ul>
 
-<a id="btn-next-step" class="btn btn-success" href="<%= url_for %>">다음</a>
+  <a id="btn-next-step" class="btn btn-success" href="<%= url_for %>">다음</a>
+</form>

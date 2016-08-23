@@ -1,0 +1,12 @@
+% layout 'default';
+% title $title, jses => ['/assets/dist/js/order-id-choose-clothes.min.js'];
+
+%= include 'partials/guide';
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<h3>결제</h3>

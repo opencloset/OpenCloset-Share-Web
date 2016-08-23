@@ -116,6 +116,9 @@ sub order {
             template  => 'order/order.choose_address',
         );
     }
+    elsif ( $status_id == $PAYMENT ) {
+        $self->render( template => 'order/order.payment' );
+    }
 }
 
 =head2 update_order
@@ -131,6 +134,7 @@ sub update_order {
 
     my $v = $self->validation;
     $v->optional('status_id')->in(@OpenCloset::Constants::Status::ALL);
+    $v->optional('user_address');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -138,6 +142,11 @@ sub update_order {
     }
 
     my $input = $v->input;
+    if ( exists $input->{user_address} ) {
+        my $user_address = delete $input->{user_address};
+        $input->{user_address_id} = $user_address || undef; # 0 이면 기본주소 사용을 위해 NULL
+    }
+
     $order->update($input);
     $self->render( json => { $order->get_columns }, status => 201 );
 }

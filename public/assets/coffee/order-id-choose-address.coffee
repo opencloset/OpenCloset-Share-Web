@@ -57,7 +57,7 @@ $ ->
     $this.addClass('disabled')
     $.ajax $this.prop('href'),
       type: 'PUT'
-      data: { status_id: STATUS.payment }
+      data: "#{$('#form-address').serialize()}&status_id=#{STATUS.payment}"
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
