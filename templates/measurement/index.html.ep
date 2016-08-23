@@ -15,37 +15,37 @@
 
 <form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
   <div class="form-group">
-    <label class="col-sm-2 control-label">키</label>
+    <label class="col-sm-2 control-label">키 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="height" type="text" class="form-control" placeholder="키 cm" value="<%= $user_info->height || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">몸무게</label>
+    <label class="col-sm-2 control-label">몸무게 <small>kg</small></label>
     <div class="col-sm-10">
       <input name="weight" type="text" class="form-control" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">가슴둘레</label>
+    <label class="col-sm-2 control-label">가슴둘레 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="bust" type="text" class="form-control" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">허리둘레</label>
+    <label class="col-sm-2 control-label">허리둘레 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="waist" type="text" class="form-control" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">윗배둘레</label>
+    <label class="col-sm-2 control-label">윗배둘레 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="topbelly" type="text" class="form-control" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">팔길이</label>
+    <label class="col-sm-2 control-label">팔길이 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="arm" type="text" class="form-control" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>">
     </div>
@@ -55,13 +55,13 @@
   % if ($gender eq 'male') {
   <!-- male -->
   <div class="form-group">
-    <label class="col-sm-2 control-label">허벅지둘레</label>
+    <label class="col-sm-2 control-label">허벅지둘레 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="thigh" type="text" class="form-control" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">다리길이</label>
+    <label class="col-sm-2 control-label">다리길이 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="leg" type="text" class="form-control" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>">
     </div>
@@ -69,13 +69,13 @@
   % } elsif ($gender eq 'female') {
   <!-- female -->
   <div class="form-group">
-    <label class="col-sm-2 control-label">엉덩이둘레</label>
+    <label class="col-sm-2 control-label">엉덩이둘레 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="hip" type="text" class="form-control" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">무릎길이</label>
+    <label class="col-sm-2 control-label">무릎길이 <small>cm</small></label>
     <div class="col-sm-10">
       <input name="knee" type="text" class="form-control" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>">
     </div>
@@ -83,7 +83,7 @@
   % }
 
   <div class="form-group">
-    <label class="col-sm-2 control-label">신발크기</label>
+    <label class="col-sm-2 control-label">신발크기 <small>mm</small></label>
     <div class="col-sm-10">
       <input name="foot" type="text" class="form-control" placeholder="신발크기 mm" value="<%= $user_info->foot || '' %>">
     </div>
