@@ -29,6 +29,6 @@
 </ul>
 
 <h3>
-  <code><%= commify $price %></code>
+  <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
   <small>원</small>
 </h3>

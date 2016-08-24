@@ -117,7 +117,8 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        $self->render( template => 'order/order.payment' );
+        my $user_address = $order->user_address;
+        $self->render( template => 'order/order.payment', user_address => $user_address );
     }
 }
 
