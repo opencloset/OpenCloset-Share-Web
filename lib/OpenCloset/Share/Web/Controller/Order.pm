@@ -2,7 +2,7 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
-use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
+use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE/;
 
 has schema => sub { shift->app->schema };
 
@@ -117,7 +117,12 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        $self->render( template => 'order/order.payment' );
+        my $user_address = $order->user_address;
+        $self->render( template => 'order/order.payment', user_address => $user_address );
+    }
+    else {
+        ## 결제완료, 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
+        $self->render( template => 'order/order.misc' );
     }
 }
 
@@ -145,6 +150,11 @@ sub update_order {
     if ( exists $input->{user_address} ) {
         my $user_address = delete $input->{user_address};
         $input->{user_address_id} = $user_address || undef; # 0 이면 기본주소 사용을 위해 NULL
+    }
+
+    if ( exists $input->{status_id} ) {
+        my $status_id = $input->{status_id};
+        $self->payment_done($order) if $status_id == $PAYMENT_DONE; # 결제대기 -> 결제완료
     }
 
     $order->update($input);

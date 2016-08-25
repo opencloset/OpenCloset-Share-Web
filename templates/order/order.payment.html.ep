@@ -1,5 +1,10 @@
 % layout 'default';
-% title $title, jses => ['/assets/dist/js/order-id-choose-clothes.min.js'];
+% title $title, jses => [
+%   'https://service.iamport.kr/js/iamport.payment-1.1.1.js',
+%   '/assets/dist/js/order-id-payment.min.js'
+% ];
+
+% use OpenCloset::Constants::Category qw/%PRICE/;
 
 %= include 'partials/guide';
 
@@ -10,3 +15,23 @@
 <hr>
 
 <h3>결제</h3>
+% my ($addr, $addr2);
+% if ($user_address) {
+%   $addr  = $user_address->address2 . ' ' . $user_address->address4;
+%   $addr2 = $user_address->address3 . ' ' . $user_address->address4;
+% } else {
+%   $addr  = $user_info->address2 . ' ' . $user_info->address4;
+%   $addr2 = $user_info->address3 . ' ' . $user_info->address4;
+% }
+<div id="payment-info" data-email="<%= $user->email %>" data-name="<%= $user->name %>" data-phone="<%= $user_info->phone %>" data-address1="<%= $addr %>" data-address2="<%= $addr2 %>"></div>
+
+<div class="form-group col-md-4">
+  <select id="payment-method" name="pay_method" class="form-control">
+    <option value="card" selected>신용카드</option>
+    <option value="trans">실시간계좌이체</option>
+    <option value="vbank">가상계좌</option>
+    <option value="phone">휴대폰소액결제</option>
+  </select>
+</div>
+
+<button id="btn-payment" class="btn btn-primary" type="button">결제</button>
