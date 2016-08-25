@@ -1,0 +1,10 @@
+% layout 'default';
+% title $title;
+
+%= include 'partials/guide';
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
