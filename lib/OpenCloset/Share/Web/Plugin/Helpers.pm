@@ -339,7 +339,7 @@ sub payment_done {
     }
     elsif ( $j_status_id == $RENTAL ) {
         ## 대여중이라면 기록을 남기고 추천의류 방식으로 진행
-        my $desc = sprintf( "%04s|%s", $jacket->code, $jacket->status->name );
+        my $desc = sprintf( "%s|%s", $jacket->code, $jacket->status->name );
         $detail->update( { clothes_code => undef } );
     }
 

@@ -1,5 +1,5 @@
 % layout 'default';
-% title clothes2desc($clothes);
+% title clothes2desc($clothes), jses => ['/assets/dist/js/clothes-detail.min.js'];
 
 % use OpenCloset::Constants::Category ();
 
@@ -10,6 +10,16 @@
 %   male         => '남성용',
 %   female       => '여성용',
 % );
+
+%= include 'partials/guide';
+
+<div class="alert alert-warning" role="alert">
+  <strong>주의!</strong>
+  열린옷장의 특성상 주문하시려는 의류가 오프라인 매장에서 대여될 수 있습니다.<br>
+  이럴때에는 옷장지기가 선택하신 의류를 고려해서 비슷한 의류를 보내드립니다.
+</div>
+
+<hr>
 
 <h2>의류사진</h2>
 
@@ -43,7 +53,7 @@
 
 <h3>의류정보</h3>
 
-<table class="table table-bordered">
+<table class="table table-condensed">
   <thead>
     <tr>
       <th>상태</th>
@@ -70,4 +80,7 @@
   </tbody>
 </table>
 
-<a href="#">대여하기</a>
+% if ($order) {
+<hr>
+<a id="btn-choose-clothes" class="btn btn-primary" href="<%= url_for('/orders/' . $order->id) %>" data-clothes-code="<%= $clothes->code %>">이 의류를 대여합니다</a>
+% }

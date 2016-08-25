@@ -30,3 +30,16 @@
   <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
   <small>원</small>
 </h3>
+
+<hr>
+
+<h4>배송주소</h4>
+<address class="well">
+  % my $address = $order->user_address || $user_info;
+  <strong><%= $user->name %></strong><br>
+  %= $address->address2
+  <%= $address->address4 %><br>
+  <small><%= $address->address3 %></small><br>
+  <abbr title="Phone">P:</abbr>
+  %= $user_info->phone
+</address>
