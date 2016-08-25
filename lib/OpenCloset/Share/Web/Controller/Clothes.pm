@@ -77,8 +77,9 @@ sub code {
 =cut
 
 sub detail {
-    my $self    = shift;
-    my $clothes = $self->stash('clothes');
+    my $self     = shift;
+    my $clothes  = $self->stash('clothes');
+    my $order_id = $self->param('order_id');
 
     my $code = $clothes->code =~ s/^0//r;
     my $url  = $self->oavatar_url($code) . '/images';
@@ -104,7 +105,16 @@ sub detail {
         push @sizes, $size;
     }
 
-    $self->render( images => \@images, parts => \@parts, sizes => \@sizes );
+    my $order;
+    if ($order_id) {
+        $order = $self->schema->resultset('Order')->find( { id => $order_id } );
+        return $self->error( 404, "Order not found: $order_id" ) unless $order;
+
+        my $user = $self->stash('user');
+        return $self->error( 400, "Permission denied" ) if $user->id != $order->user_id;
+    }
+
+    $self->render( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
 }
 
 1;
