@@ -140,6 +140,7 @@ sub update_order {
     my $v = $self->validation;
     $v->optional('status_id')->in(@OpenCloset::Constants::Status::ALL);
     $v->optional('user_address');
+    $v->optional('clothes_code');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -155,6 +156,16 @@ sub update_order {
     if ( exists $input->{status_id} ) {
         my $status_id = $input->{status_id};
         $self->payment_done($order) if $status_id == $PAYMENT_DONE; # 결제대기 -> 결제완료
+    }
+
+    if ( my $code = delete $input->{clothes_code} ) {
+        my $detail = $order->order_details( { name => 'jacket' } )->next;
+        if ($detail) {
+            $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+        }
+        else {
+            $self->log->info("Not found clothes_code: $code");
+        }
     }
 
     $order->update($input);
