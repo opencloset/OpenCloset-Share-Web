@@ -7,7 +7,7 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL/;
+use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $PAYMENT_DONE $WAITING_SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -39,6 +39,7 @@ sub register {
     $app->helper( order2link           => \&order2link );
     $app->helper( order_categories     => \&order_categories );
     $app->helper( timezone             => \&timezone );
+    $app->helper( payment_done         => \&payment_done );
 }
 
 =head1 HELPERS
@@ -302,6 +303,47 @@ sub timezone {
     $dt->set_time_zone('UTC');
     $dt->set_time_zone($tz);
     return $dt;
+}
+
+=head2 payment_done($order)
+
+    # 결제대기 -> 결제완료
+    $self->payment_done($order);
+
+선택했던 의류가 있는지 확인하고, 이에 따라 주문서와 의류의 상태를 변경함
+
+=cut
+
+sub payment_done {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $detail = $order->order_details( { name => 'jacket' } )->next;
+    $order->update( { status_id => $PAYMENT_DONE } );
+
+    ## 선택한 의류가 있는지 확인
+    return $order unless $detail;
+    return $order unless $detail->clothes_code;
+
+    ## 의류의 상태를 확인
+    my $jacket = $detail->clothes;
+    unless ($jacket) {
+        $self->log->error( "Couldn't find a clothes: " . $detail->clothes_code );
+        return $order;
+    }
+
+    my $j_status_id = $jacket->status_id;
+    if ( $j_status_id == $RENTABLE ) {
+        ## 의류들을 발송대기 상태로 변경
+        $jacket->update( { status_id => $WAITING_SHIPPED } );
+    }
+    elsif ( $j_status_id == $RENTAL ) {
+        ## 대여중이라면 기록을 남기고 추천의류 방식으로 진행
+        my $desc = sprintf( "%04s|%s", $jacket->code, $jacket->status->name );
+        $detail->update( { clothes_code => undef } );
+    }
+
+    return $order;
 }
 
 1;
