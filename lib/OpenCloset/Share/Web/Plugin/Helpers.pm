@@ -40,6 +40,8 @@ sub register {
     $app->helper( order_categories     => \&order_categories );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
+    $app->helper( admin_auth           => \&admin_auth );
+    $app->helper( status2label         => \&status2label );
 }
 
 =head1 HELPERS
@@ -344,6 +346,47 @@ sub payment_done {
     }
 
     return $order;
+}
+
+=head2 admin_auth
+
+    return unless $self->admin_auth;
+
+=cut
+
+sub admin_auth {
+    my $self      = shift;
+    my $user_info = $self->stash('user_info');
+    return unless $user_info;
+    return $user_info->staff == 1;
+}
+
+=head2 status2label($status, $active)
+
+    %= status2label($order->status);
+    # <span class="label label-default status-accept">승인</span>
+    # <span class="label label-default status-accept active"><i class="fa fa-archive"></i>$str</span>    # $active is true
+
+=cut
+
+sub status2label {
+    my ( $self, $order, $active ) = @_;
+    my $status = $order->status;
+    my $name   = $status->name;
+    my $id     = $status->id;
+    my $html   = Mojo::DOM::HTML->new;
+
+    if ($active) {
+        $html->parse(
+            qq{<span class="label label-default active status-$id" title="$status" data-status="$status"><i class="fa fa-archive fa-fw"></i>$name</span>}
+        );
+    }
+    else {
+        $html->parse(qq{<span class="label label-default status-$id" title="$status" data-status="$status">$name</span>});
+    }
+
+    my $tree = $html->tree;
+    return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
 }
 
 1;
