@@ -3,7 +3,7 @@
 
 % my $timezone = $self->config->{timezone};
 % my $create_date = timezone($order->create_date);
-<h2>
+<h2 class="text-success">
   %= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id}
   <small>
     %= $create_date->ymd
@@ -13,20 +13,32 @@
   </small>
 </h2>
 
-<ul class="list-inline">
-  % my $price = 0;
-  % for my $c (@$categories) {
-  % $price += $PRICE{$c};
-  <li>
-    <span class="label label-primary">
-      %= $LABEL_MAP{$c}
-    </span>
-    <code><%= commify($PRICE{$c}) %></code>
-  </li>
+<div class="row">
+  % my $detail = $order->order_details( { name => $JACKET } )->next;
+  % if ($detail && $detail->clothes_code) {
+  <p class="col-xs-2 col-md-1">
+    % my $code = trim_code($detail->clothes_code);
+    <a class="thumbnail" href="<%= url_for('/clothes/' . $code) %>">
+      <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
+    </a>
+  </p>
   % }
-</ul>
 
-<h3>
+  <ul class="list-inline">
+    % my $price = 0;
+    % for my $c (@$categories) {
+    % $price += $PRICE{$c};
+    <li>
+      <span class="label label-primary">
+        %= $LABEL_MAP{$c}
+      </span>
+      <code><%= commify($PRICE{$c}) %></code>
+    </li>
+    % }
+  </ul>
+</div>
+
+<h3 class="no-margin">
   <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
   <small>원</small>
 </h3>

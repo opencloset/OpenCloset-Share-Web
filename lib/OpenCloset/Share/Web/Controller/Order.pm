@@ -159,7 +159,7 @@ sub update_order {
     }
 
     if ( my $code = delete $input->{clothes_code} ) {
-        my $detail = $order->order_details( { name => 'jacket' } )->next;
+        my $detail = $order->order_details( { name => $JACKET } )->next;
         if ($detail) {
             $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
         }
