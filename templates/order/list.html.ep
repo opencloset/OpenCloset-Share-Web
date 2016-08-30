@@ -1,0 +1,43 @@
+% layout 'default';
+% title '주문서 목록';
+
+% use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
+
+<h2>주문서 목록</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>이름</th>
+      <th>종류</th>
+      <th>희망의류</th>
+      <th>상태</th>
+    </tr>
+  </thead>
+  <tbody>
+    % while (my $order = $orders->next) {
+    % my $user = $order->user;
+    % my $user_info = $user->user_info;
+    % my @details = $order->order_details;
+    % my $parcel = $order->order_parcel;
+    % my $detail = $order->order_details( { name => $JACKET } )->next;
+    <tr>
+      <td>
+        %= $order->id
+      </td>
+      <td><%= $user->name %></td>
+      <td>
+        %= join ", ", map { $LABEL_MAP{$_->name} } @details;
+      </td>
+      <td>
+        % if ($detail && $detail->clothes_code) {
+        % my $clothes = $detail->clothes;
+        %= clothes2link($clothes, { with_status => 1 })
+        % }
+      </td>
+      <td><%= status2label($order) %></td>
+    </tr>
+    % }
+  </tbody>
+</table>

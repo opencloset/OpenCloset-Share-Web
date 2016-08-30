@@ -1,6 +1,8 @@
 package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
+use Data::Pageset;
+
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
 use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE/;
 
@@ -56,6 +58,40 @@ sub create {
     }
 
     $self->redirect_to( 'order.order', order_id => $order->id );
+}
+
+=head2 list
+
+    # order.list
+    GET /orders?s=19
+
+=cut
+
+sub list {
+    my $self = shift;
+
+    return $self->error( 400, "Permission denied" ) unless $self->admin_auth;
+
+    my $p = $self->param('p') || 1;
+    my $s = $self->param('s') || $PAYMENT_DONE;
+    my $q = $self->param('q');
+
+    ## TODO: $q 처리
+    my $cond = { status_id => $s };
+    my $attr = { page => $p, rows => 20, order_by => { -desc => 'update_date' } };
+
+    my $rs      = $self->schema->resultset('Order')->search( $cond, $attr );
+    my $pager   = $rs->pager;
+    my $pageset = Data::Pageset->new(
+        {
+            total_entries    => $pager->total_entries,
+            entries_per_page => $pager->entries_per_page,
+            pages_per_set    => 5,
+            current_page     => $p,
+        }
+    );
+
+    $self->render( orders => $rs, pageset => $pageset );
 }
 
 =head2 order_id
