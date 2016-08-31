@@ -205,7 +205,7 @@ sub clothes2status {
         push @class, 'label-default';
     }
 
-    my $html = qq{<span class="@class">$name</span>};
+    my $html = qq{<span class="@class">$code <small>$name</small></span>};
 
     $dom->parse($html);
     my $tree = $dom->tree;
