@@ -5,7 +5,7 @@
 
 <h2>주문서 목록</h2>
 
-<table class="table">
+<table class="table table-bordered">
   <thead>
     <tr>
       <th>id</th>
@@ -24,7 +24,9 @@
     % my $detail = $order->order_details( { name => $JACKET } )->next;
     <tr>
       <td>
-        %= $order->id
+        <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
+          %= $order->id
+        </a>
       </td>
       <td><%= $user->name %></td>
       <td>
@@ -34,6 +36,8 @@
         % if ($detail && $detail->clothes_code) {
         % my $clothes = $detail->clothes;
         %= clothes2link($clothes, { with_status => 1 })
+        % } else {
+        없음
         % }
       </td>
       <td><%= status2label($order) %></td>
