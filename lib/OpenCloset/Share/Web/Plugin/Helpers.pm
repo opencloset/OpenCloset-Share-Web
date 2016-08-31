@@ -376,15 +376,24 @@ sub admin_auth {
 =cut
 
 sub status2label {
-    my ( $self, $order, $active ) = @_;
-    my $status = $order->status;
-    my $name   = $status->name;
-    my $id     = $status->id;
-    my $html   = Mojo::DOM::HTML->new;
+    my ( $self, $status, $active ) = @_;
+
+    my ( $name, $id );
+    if ( ref $status ) {
+        $name = $status->name;
+        $id   = $status->id;
+    }
+    else {
+        $id   = $status;
+        $name = $OpenCloset::Constants::Status::LABEL_MAP{$id};
+    }
+
+    my $html = Mojo::DOM::HTML->new;
 
     if ($active) {
         $html->parse(
-            qq{<span class="label label-default active status-$id" title="$name" data-status="$id"><i class="fa fa-archive fa-fw"></i>$name</span>});
+            qq{<span class="label label-default active status-$id" title="$name" data-status="$id"><i class="fa fa-circle fa-fw" aria-hidden="true"></i>$name</span>}
+        );
     }
     else {
         $html->parse(qq{<span class="label label-default status-$id" title="$name" data-status="$id">$name</span>});
