@@ -1,0 +1,8 @@
+% layout 'default';
+% title '구매내역';
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<h2>주문내역</h2>

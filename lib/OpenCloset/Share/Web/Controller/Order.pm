@@ -234,4 +234,22 @@ sub delete_order {
     $self->render( json => { message => 'Deleted order successfully' } );
 }
 
+=head2 purchase
+
+    # order.purchase
+    GET /orders/:order_id/purchase
+
+=cut
+
+sub purchase {
+    my $self  = shift;
+    my $order = $self->stash('order');
+
+    my @categories;
+    my @details = $order->order_details;
+    map { push @categories, $_->name } @details;
+
+    $self->render( categories => \@categories );
+}
+
 1;

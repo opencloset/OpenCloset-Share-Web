@@ -82,6 +82,7 @@ sub _private_routes {
     $order->get('/')->to('order#order')->name('order.order');
     $order->put('/')->to('order#update_order')->name('order.update');
     $order->delete('/')->to('order#delete_order')->name('order.delete');
+    $order->get('/purchase')->to('order#purchase')->name('order.purchase');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');
