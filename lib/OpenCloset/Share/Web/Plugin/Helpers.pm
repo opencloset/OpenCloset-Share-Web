@@ -358,7 +358,13 @@ sub admin_auth {
     my $self      = shift;
     my $user_info = $self->stash('user_info');
     return unless $user_info;
-    return $user_info->staff == 1;
+
+    if ( $user_info->staff != 1 ) {
+        $self->error( 400, "Permission denied" );
+        return;
+    }
+
+    return 1;
 }
 
 =head2 status2label($status, $active)

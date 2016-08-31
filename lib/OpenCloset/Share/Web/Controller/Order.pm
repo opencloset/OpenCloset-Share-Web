@@ -70,7 +70,7 @@ sub create {
 sub list {
     my $self = shift;
 
-    return $self->error( 400, "Permission denied" ) unless $self->admin_auth;
+    return unless $self->admin_auth;
 
     my $p = $self->param('p') || 1;
     my $s = $self->param('s') || $PAYMENT_DONE;
