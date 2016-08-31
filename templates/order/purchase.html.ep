@@ -1,8 +1,30 @@
 % layout 'default';
-% title '구매내역';
+% title '구매내역', jses => ['/assets/dist/js/order-id-purchase.min.js'];
 
-%= include 'partials/order-summary', order => $order;
+<div class="order-info">
+  %= include 'partials/order-info';
+</div>
 
 <hr>
 
-<h2>주문내역</h2>
+<h4>최근주문내역</h4>
+% my $recents = recent_orders($order);
+% my $limit = 10 - scalar @$recents;
+<div class="pre_order">
+  <ul class="list-inline">
+    % for my $order (@$recents) {
+      %= include 'partials/recent-clothes', order => $order;
+    % }
+    % unless (@$recents) {
+    <li>없음</li>
+    % }
+  </ul>
+</div>
+
+<hr>
+
+<h4>추천의류</h4>
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;

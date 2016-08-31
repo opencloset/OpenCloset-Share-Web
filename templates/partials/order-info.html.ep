@@ -1,0 +1,99 @@
+% use OpenCloset::Constants::Category qw/%LABEL_MAP/;
+% my $user = $order->user;
+% my $user_info = $user->user_info;
+% my $gender = $user_info->gender;
+
+<h2 class="name">
+  <i class="fa fa-<%= $gender %>"></i>
+  %= $user->name
+  <small>
+    %= age($user_info->birth)
+  </small>
+</h2>
+
+<div class="size well">
+  <ul>
+    <li>
+      <span class="label label-success" title="중동">
+        윗배
+        %= $user_info->topbelly || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-default" title="가슴">
+        가슴
+        %= $user_info->bust || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-default" title="팔">
+        팔
+        %= $user_info->arm || 0
+      </span>
+    </li>
+  </ul>
+
+  <ul>
+    <li>
+      % if ($gender eq 'male') {
+      <span class="label <%= $gender eq 'male' ? 'label-success' : 'label-default' %>" title="허리">
+        허리
+        %= $user_info->waist || 0
+      </span>
+      % } else {
+      <span class="label label-success" title="엉덩이">
+        엉덩이
+        %= $user_info->hip || 0
+      </span>
+      % }
+    </li>
+    % if ($gender eq 'male') {
+    <li>
+      <span class="label label-default" title="허벅지">
+        허벅지
+        %= $user_info->thigh || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-default" title="다리">
+        다리
+        %= $user_info->leg || 0
+      </span>
+    </li>
+    % } else {
+    <li>
+      <span class="label label-default" title="허리">
+        허리
+        %= $user_info->waist || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-default" title="무릎">
+        무릎
+        %= $user_info->knee || 0
+      </span>
+    </li>
+    % }
+  </ul>
+
+  <ul>
+    <li>
+      <span class="label label-info" title="목둘레">
+        %= $user_info->neck || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-info" title="발">
+        %= $user_info->foot || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-info" title="키/몸무게">
+        %= $user_info->height || 0
+        /
+        %= $user_info->weight || 0
+      </span>
+    </li>
+  </ul>
+</div>
+
