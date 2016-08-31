@@ -1,5 +1,9 @@
 % layout 'default';
-% title '구매내역', jses => ['/assets/dist/js/order-id-purchase.min.js'];
+% title '구매내역', jses => [
+%   '/assets/components/handlebars/handlebars.runtime.min.js',
+%   '/assets/dist/js/templates.min.js',
+%   '/assets/dist/js/order-id-purchase.min.js'
+% ];
 
 <div class="order-info">
   %= include 'partials/order-info';
@@ -24,6 +28,7 @@
 <hr>
 
 <h4>추천의류</h4>
+<ul id="recommend-clothes" class="list-inline"></ul>
 
 <hr>
 

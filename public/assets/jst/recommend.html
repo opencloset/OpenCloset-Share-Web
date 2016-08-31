@@ -1,0 +1,9 @@
+{{#each this}}
+<li>
+  <a href="/clothes/{{#detachZero}}{{this.[0]}}{{/detachZero}}">
+    <span class="label label-success">
+      {{#detachZero}}{{this.[0]}}{{/detachZero}}
+    </span>
+  </a>
+</li>
+{{/each}}
