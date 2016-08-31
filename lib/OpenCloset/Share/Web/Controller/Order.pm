@@ -78,7 +78,14 @@ sub list {
 
     ## TODO: $q 처리
     my $cond = { status_id => $s };
-    my $attr = { page => $p, rows => 20, order_by => { -desc => 'update_date' } };
+    my $attr = {
+        page      => $p,
+        rows      => 20,
+        order_by  => { -desc => 'update_date' },
+        join      => 'order_parcel',
+        '+select' => ['order_parcel.comment'],
+        '+as'     => ['parcel_comment'],
+    };
 
     my $rs      = $self->schema->resultset('Order')->search( $cond, $attr );
     my $pager   = $rs->pager;
