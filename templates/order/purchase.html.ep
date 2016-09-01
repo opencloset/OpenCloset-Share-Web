@@ -2,8 +2,13 @@
 % title '구매내역', jses => [
 %   '/assets/components/handlebars/handlebars.runtime.min.js',
 %   '/assets/dist/js/templates.min.js',
+%   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
 %   '/assets/dist/js/order-id-purchase.min.js'
+% ], csses => [
+%   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
 % ];
+
+% use Mojo::JSON qw/to_json/;
 
 <div class="order-info">
   %= include 'partials/order-info';
@@ -11,7 +16,10 @@
 
 <hr>
 
-<h4>최근주문내역</h4>
+<h4>
+  <i class="fa fa-files-o fa-fw" aria-hidden="true"></i>
+  최근주문내역
+</h4>
 % my $recents = recent_orders($order);
 % my $limit = 10 - scalar @$recents;
 <div class="pre_order">
@@ -27,8 +35,52 @@
 
 <hr>
 
-<h4>추천의류</h4>
+<h4>
+  <i class="fa fa-thumbs-o-up fa-fw" aria-hidden="true"></i>
+  추천의류
+</h4>
 <ul id="recommend-clothes" class="list-inline"></ul>
+
+<hr>
+
+<h4>
+  <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+  주문서정보
+</h4>
+<table class="table">
+  <tbody>
+    <tr>
+      <th>담당자</th>
+      <td>
+        <a id="staff-list" href="#" data-type="select" data-pk="1" data-emptytext="비어있음" data-mode="inline" data-url="<%= url_for('/orders/' . $order->id) %>" data-name="staff_id" data-source="<%= to_json($staff) %>" data-value="<%= $order->staff_id || q{} %>"></a>
+      </td>
+    </tr>
+    <tr>
+      <th>대여기간</th>
+      <td>4박5일</td>
+    </tr>
+    <tr>
+      <th>대여일</th>
+      <td>2016-09-01</td>
+    </tr>
+    <tr>
+      <th>반납예정일</th>
+      <td>2016-09-05</td>
+    </tr>
+    <tr>
+      <th>대여비</th>
+      <td>
+        <code>30,000</code>
+      </td>
+    </tr>
+    <tr>
+      <th>대여횟수</th>
+      <td>
+        <samp><%= scalar @$recents %></samp>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <hr>
 

@@ -1,3 +1,7 @@
+$.fn.editable.defaults.ajaxOptions =
+  type: "PUT"
+  dataType: 'json'
+
 $ ->
   Handlebars.registerHelper 'detachZero', (opts) ->
     opts.fn(this).replace(/^0/, '')
@@ -12,3 +16,8 @@ $ ->
       $('#recommend-clothes').append(html)
     error: (jqXHR, textStatus, errorThrown) ->
     complete: (jqXHR, textStatus) ->
+
+  $('#staff-list').editable
+    params: (params) ->
+      params[params.name] = params.value
+      params

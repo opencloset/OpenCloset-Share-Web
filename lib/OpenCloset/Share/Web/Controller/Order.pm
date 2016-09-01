@@ -191,6 +191,8 @@ sub update_order {
     }
 
     my $input = $v->input;
+    map { delete $input->{$_} } qw/name pk value/; # delete x-editable params
+
     if ( exists $input->{user_address} ) {
         my $user_address = delete $input->{user_address};
         $input->{user_address_id} = $user_address || undef; # 0 이면 기본주소 사용을 위해 NULL
@@ -249,7 +251,11 @@ sub purchase {
     my @details = $order->order_details;
     map { push @categories, $_->name } @details;
 
-    $self->render( categories => \@categories );
+    my @staff;
+    my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
+    push @staff, { value => $_->id, text => $_->name } for @users;
+
+    $self->render( categories => \@categories, staff => \@staff );
 }
 
 1;
