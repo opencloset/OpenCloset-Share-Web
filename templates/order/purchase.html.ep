@@ -3,9 +3,13 @@
 %   '/assets/components/handlebars/handlebars.runtime.min.js',
 %   '/assets/dist/js/templates.min.js',
 %   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
+%   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
+%   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
+%   '/assets/components/moment/moment.js',
 %   '/assets/dist/js/order-id-purchase.min.js'
 % ], csses => [
-%   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
+%   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css',
+%   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css'
 % ];
 
 % use Mojo::JSON qw/to_json/;
@@ -61,11 +65,19 @@
     </tr>
     <tr>
       <th>대여일</th>
-      <td>2016-09-01</td>
+      <td>
+        <div class="input-group">
+          <input type="text" id="from-date" class="form-control datepicker">
+        </div>
+      </td>
     </tr>
     <tr>
       <th>반납예정일</th>
-      <td>2016-09-05</td>
+      <td>
+        <div class="input-group">
+          <input type="text" id="to-date" class="form-control datepicker">
+        </div>
+      </td>
     </tr>
     <tr>
       <th>대여비</th>

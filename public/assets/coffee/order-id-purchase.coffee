@@ -21,3 +21,19 @@ $ ->
     params: (params) ->
       params[params.name] = params.value
       params
+
+  from = moment().add(1, 'days').format('YYYY-MM-DD')
+  to   = moment().add(5, 'days').format('YYYY-MM-DD')
+  $('#from-date').val(from)
+  $('#to-date').val(to)
+  $('.datepicker').datepicker
+    language: 'kr'
+    startDate: '+1d'
+    todayHighlight: true
+    autoclose: true
+    format: 'yyyy-mm-dd'
+
+  $('#from-date').on 'change', ->
+    from = $(@).val()
+    to   = moment(from).add(4, 'days').format('YYYY-MM-DD')
+    $('#to-date').val(to)
