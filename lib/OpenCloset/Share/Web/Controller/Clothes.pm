@@ -122,7 +122,14 @@ sub detail {
         return $self->error( 400, "Permission denied" ) if $user->id != $order->user_id;
     }
 
-    $self->render( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
+    $self->stash( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
+    $self->respond_to(
+        html => { template => 'clothes/detail' },
+        json => sub {
+            my %columns = $clothes->get_columns;
+            $self->render( json => \%columns );
+        }
+    );
 }
 
 1;

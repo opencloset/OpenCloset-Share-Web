@@ -34,3 +34,24 @@ $ ->
     from = $(@).val()
     to   = moment(from).add(4, 'days').format('YYYY-MM-DD')
     $('#to-date').val(to)
+
+  $('#form-clothes-code').submit (e) ->
+    e.preventDefault()
+    $this  = $(@)
+    $input = $this.find('input[name="code"]')
+    code   = $input.val().toUpperCase()
+    url    = $this.prop('action').replace(/xxx/, code)
+
+    $.ajax url,
+      type: 'GET'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        data.category = OpenCloset.category[data.category]
+        data.status   = OpenCloset.status[data.status_id]
+        template = JST['clothes-item']
+        html     = template(data)
+        $('#table-clothes tbody').append(html)
+      error: (jqXHR, textStatus, errorThrown) ->
+        $.growl.error({ message: textStatus })
+      complete: (jqXHR, textStatus) ->
+        $input.val('')
