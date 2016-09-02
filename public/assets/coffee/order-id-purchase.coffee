@@ -3,9 +3,6 @@ $.fn.editable.defaults.ajaxOptions =
   dataType: 'json'
 
 $ ->
-  Handlebars.registerHelper 'detachZero', (opts) ->
-    opts.fn(this).replace(/^0/, '')
-
   order_id = location.pathname.split('/')[2]
   $.ajax "/clothes/recommend?order_id=#{order_id}",
     type: 'GET'
