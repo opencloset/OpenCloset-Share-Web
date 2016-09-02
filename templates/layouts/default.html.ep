@@ -51,6 +51,9 @@
     <script src="/assets/components/jquery-timeago/jquery.timeago.js"></script>
     <script src="/assets/components/jquery-timeago/locales/jquery.timeago.ko.js"></script>
     <script src="/assets/components/growl/javascripts/jquery.growl.js"></script>
+    <script src="/assets/components/handlebars/handlebars.runtime.min.js"></script>
+    <script src="/assets/dist/js/templates.min.js"></script>
+    <script src="/assets/dist/js/bundle.min.js"></script>
     % for my $js (@$jses) {
     <script src="<%= $js %>"></script>
     % }

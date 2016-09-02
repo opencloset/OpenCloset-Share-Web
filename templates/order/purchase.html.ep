@@ -1,7 +1,5 @@
 % layout 'default';
 % title '구매내역', jses => [
-%   '/assets/components/handlebars/handlebars.runtime.min.js',
-%   '/assets/dist/js/templates.min.js',
 %   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
