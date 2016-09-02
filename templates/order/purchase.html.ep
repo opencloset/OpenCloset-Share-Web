@@ -47,6 +47,10 @@
 
 <hr>
 
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
 <h4>
   <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
   주문서정보
@@ -93,7 +97,3 @@
     </tr>
   </tbody>
 </table>
-
-<hr>
-
-%= include 'partials/order-summary', order => $order;
