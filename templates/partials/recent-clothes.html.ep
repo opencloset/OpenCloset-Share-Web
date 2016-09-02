@@ -5,7 +5,9 @@
 
 <ul class="list-inline">
   % my $rental_date = $order->rental_date;
-  <span class="label label-default<%= $bestfit ? ' bestfit' : '' %>"><%= $rental_date ? $rental_date->ymd : '????-??-??' %></span>
+  <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
+    <span class="label label-default<%= $bestfit ? ' bestfit' : '' %>"><%= $rental_date ? $rental_date->ymd : '????-??-??' %></span>
+  </a>
   % for my $detail (@details) {
   %   my $clothes = $detail->clothes;
   %   next unless $clothes;
