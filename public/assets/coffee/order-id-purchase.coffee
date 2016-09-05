@@ -46,8 +46,12 @@ $ ->
       type: 'GET'
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
-        data.category = OpenCloset.category[data.category]
-        data.status   = OpenCloset.status[data.status_id]
+        data.category   = OpenCloset.category[data.category]
+        data.status     = OpenCloset.status[data.status_id]
+        data.labelColor = OpenCloset.status.color[data.status_id]
+        data.disabled   = switch data.status_id
+          when "2", "3", "7", "8" then true
+          else false
         template = JST['clothes-item']
         html     = template(data)
         $('#table-clothes tbody').append(html)

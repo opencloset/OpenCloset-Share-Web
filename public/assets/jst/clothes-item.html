@@ -1,7 +1,14 @@
 <tr>
   <td>
+    {{#if disabled}}
+    <input name="code" class="checkbox disabled" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" disabled>
+    {{else}}
+    <input name="code" class="checkbox" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" checked>
+    {{/if}}
+  </td>
+  <td>
     <a href="/clothes/{{#clothesCode}}{{code}}{{/clothesCode}}">
-      <span class="label label-default">
+      <span class="label {{#if labelColor}}{{labelColor}}{{else}}label-default{{/if}}">
         {{#clothesCode}}{{code}}{{/clothesCode}}
         <small>{{status}}</small>
       </span>
