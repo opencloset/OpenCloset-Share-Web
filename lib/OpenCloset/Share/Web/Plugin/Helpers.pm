@@ -40,6 +40,7 @@ sub register {
     $app->helper( order_categories     => \&order_categories );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
+    $app->helper( waiting_shipped      => \&waiting_shipped );
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
 }
@@ -346,6 +347,26 @@ sub payment_done {
     }
 
     return $order;
+}
+
+=head2 waiting_shipped($order, $codes)
+
+    # 결제완료 -> 발송대기
+    $self->waiting_shipped($order, ['J001', 'P001']);
+
+선택했던 의류가 있는지 확인하고, 이에 따라 주문서와 의류의 상태를 변경함
+
+=cut
+
+sub waiting_shipped {
+    my ( $self, $order, $codes ) = @_;
+    return unless $order;
+
+    ## $WAITING_SHIPPED
+    ## 1. $codes 에 선택했던 의류가 잇는지 확인
+    ## 2. 주문서와 의류 모두 상태를 변경
+    ## 3. 배송비와 에누리 비용을 order_detail 에 추가
+    ## 4. 이 모든 것은 transaction
 }
 
 =head2 admin_auth
