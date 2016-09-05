@@ -76,3 +76,10 @@ window.OpenCloset =
     53:'배송중'
     54:'배송완료'
     55:'반송신청'
+    color:
+      1:  'label-success'
+      2:  'label-danger'
+      3:  'label-danger'
+      7:  'label-danger'
+      8:  'label-danger'
+      52: 'label-success'

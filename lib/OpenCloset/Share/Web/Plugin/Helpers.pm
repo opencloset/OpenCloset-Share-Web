@@ -7,7 +7,7 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $PAYMENT_DONE $WAITING_SHIPPED/;
+use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -195,10 +195,10 @@ sub clothes2status {
     my $status_id = $status->id;
 
     my @class = qw/label/;
-    if ( $status_id == $RENTABLE ) {
+    if ( $status_id == $RENTABLE || $status_id == $WAITING_SHIPPED ) {
         push @class, 'label-success';
     }
-    elsif ( $status_id == $RENTAL ) {
+    elsif ( $status_id == $RENTAL || $status_id == $RENTALESS || $status_id == $LOST || $status_id == $DISCARD ) {
         push @class, 'label-danger';
     }
     else {
