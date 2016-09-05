@@ -214,7 +214,7 @@ sub update_order {
     }
 
     $order->update($input);
-    $self->render( json => { $order->get_columns }, status => 201 );
+    $self->render( json => { $order->get_columns } );
 }
 
 =head2 delete_order
