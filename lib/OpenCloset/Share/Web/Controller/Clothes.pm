@@ -75,7 +75,13 @@ sub code {
     my $code = $self->param('code');
 
     my $clothes = $self->schema->resultset('Clothes')->find( { code => sprintf( '%05s', $code ) } );
+    unless ($clothes) {
+        $self->error( 404, "Not found clothes: $code" );
+        return;
+    }
+
     $self->stash( clothes => $clothes );
+    return 1;
 }
 
 =head2 detail
