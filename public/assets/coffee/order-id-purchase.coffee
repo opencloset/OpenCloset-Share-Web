@@ -56,6 +56,20 @@ $ ->
         html     = template(data)
         $('#table-clothes tbody').append(html)
       error: (jqXHR, textStatus, errorThrown) ->
-        $.growl.error({ message: textStatus })
+        $.growl.error({ title:textStatus, message: jqXHR.responseJSON.error })
       complete: (jqXHR, textStatus) ->
         $input.val('')
+
+  $('#btn-update-order:not(.disabled)').click (e) ->
+    $this = $(@)
+    $this.addClass('disabled')
+    url = $('#form-update-order').prop('action')
+    $.ajax url,
+      type: 'PUT'
+      data: $('#form-update-order').serialize()
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
