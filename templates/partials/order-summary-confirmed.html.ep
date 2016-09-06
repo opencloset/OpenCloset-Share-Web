@@ -1,0 +1,45 @@
+% use OpenCloset::Constants::Status;
+
+% my $timezone = $self->config->{timezone};
+% my $create_date = timezone($order->create_date);
+<h2 class="text-success">
+  %= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id}
+  <small>
+    %= $create_date->ymd
+    <small>
+      %= $create_date->hms
+    </small>
+  </small>
+</h2>
+
+<div class="row">
+  % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
+  % while (my $detail = $details->next) {
+  <p>
+    % my $code = trim_code($detail->clothes_code);
+    <div class="thumbnail col-xs-2 col-md-1">
+      <a href="<%= url_for('/clothes/' . $code) %>">
+        <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
+      </a>
+      <div class="caption">
+        <p>
+          %= clothes2status($detail->clothes)
+        </p>
+      </div>
+    </div>
+  </p>
+  % }
+</div>
+
+<hr>
+
+<h4>배송주소</h4>
+<address class="well">
+  % my $address = $order->user_address || $user_info;
+  <strong><%= $user->name %></strong><br>
+  %= $address->address2
+  <%= $address->address4 %><br>
+  <small><%= $address->address3 %></small><br>
+  <abbr title="Phone">P:</abbr>
+  %= $user_info->phone
+</address>
