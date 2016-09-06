@@ -1,0 +1,6 @@
+% layout 'default';
+% title '구매내역';
+
+%= include 'partials/order-summary-confirmed', order => $order;
+
+<hr>
