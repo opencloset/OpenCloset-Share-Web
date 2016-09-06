@@ -7,6 +7,7 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
+use OpenCloset::Constants::Category ();
 use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
@@ -367,6 +368,85 @@ sub waiting_shipped {
     ## 2. 주문서와 의류 모두 상태를 변경
     ## 3. 배송비와 에누리 비용을 order_detail 에 추가
     ## 4. 이 모든 것은 transaction
+
+    ## 대여자가 선택한 의류가 대여품목에 있는지 확인
+    map { $_ = sprintf( '%05s', $_ ) } @$codes;
+    $self->log->debug("@$codes");
+    my $detail = $order->order_details( { name => 'jacket' } )->next;
+    if ($detail) {
+        if ( my $code = $detail->clothes_code ) {
+            my $found = grep { /$code/ } @$codes;
+            unless ($found) {
+                ## 없으면 알려만 주고 계속해서 진행
+                my $msg = "대여자가 선택한 의류가 대여품목에 없습니다: $code";
+                $self->log->info($msg);
+                $self->flash( alert => $msg );
+            }
+        }
+    }
+
+    ## 대여품목과 주문서품목을 비교확인
+    my @clothes = $self->schema->resultset('Clothes')->search( { code => { -in => $codes } } );
+    my @details = $order->order_details;
+
+    my ( %source, %target );
+    for my $detail (@details) {
+        my $name = $detail->name;
+        $source{$name} = $detail;
+    }
+
+    for my $clothes (@clothes) {
+        my $category = $clothes->category;
+        $target{$category} = $clothes;
+    }
+
+    my @source = sort keys %source;
+    my @target = sort keys %target;
+
+    if ( "@source" ne "@target" ) {
+        ## 일치하지 않으면 진행하면 아니됨
+        $self->log->error("주문서 품목과 대여품목이 일치하지 않습니다.");
+        $self->log->error("주문서품목: @source");
+        $self->log->error("대여품목: @target");
+        return;
+    }
+
+    my $guard = $self->schema->txn_scope_guard;
+    for my $category ( keys %source ) {
+        my $detail  = $source{$category};
+        my $clothes = $target{$category};
+
+        my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
+        $detail->update(
+            {
+                name         => $name,
+                status_id    => $RENTAL,
+                clothes_code => $clothes->code,
+            }
+        );
+        $clothes->update( { status_id => $RENTAL } );
+    }
+
+    $order->add_to_order_details(
+        {
+            name        => '배송비',
+            price       => 0,
+            final_price => 0,
+        }
+    ) or die "failed to create a new order_detail for delivery_fee\n";
+
+    $order->add_to_order_details(
+        {
+            name        => '에누리',
+            price       => 0,
+            final_price => 0,
+        }
+    ) or die "failed to create a new order_detail for discount\n";
+
+    $order->update( { status_id => $WAITING_SHIPPED } );
+    $guard->commit;
+
+    return $order;
 }
 
 =head2 admin_auth
