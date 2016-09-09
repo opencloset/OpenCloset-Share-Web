@@ -4,7 +4,7 @@
 % use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
 
 <div class="pull-right text-muted">
-  %= include 'partials/sms-help';
+  %= include 'partials/sms-help', parcel => $parcel;
 </div>
 
 %= include 'partials/order-summary', order => $order;

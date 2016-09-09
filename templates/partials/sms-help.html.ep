@@ -1,18 +1,13 @@
+% my $mask = $parcel->sms_bitmask;
 <span>
   <i class="fa fa-lightbulb-o fa-fw"></i>
   <small>SMS 가 전송될때</small>
 </span>
 <ul class="sms-help">
-  <li title="oops">
-    <i class="fa fa-envelope fa-fw"></i>
-    %= status2label(52)
+  <li title="<%= include('sms/waiting_shipped2shipped', format => 'txt', order => $order) %>">
+    <i class="fa fa-envelope<%= $mask & 2**0 ? '' : '-o' %> fa-fw"></i>
+    %= status2label($WAITING_SHIPPED)
     <i class="fa fa-arrow-right"></i>
-    %= status2label(53)
-  </li>
-  <li title="oops">
-    <i class="fa fa-envelope-o fa-fw"></i>
-    %= status2label(53)
-    <i class="fa fa-arrow-right"></i>
-    %= status2label(54)
+    %= status2label($SHIPPED)
   </li>
 </ul>

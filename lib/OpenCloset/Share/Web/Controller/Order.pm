@@ -4,7 +4,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Data::Pageset;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
-use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED/;
+use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 
 has schema => sub { shift->app->schema };
 
@@ -292,6 +292,12 @@ sub update_parcel {
     my $input = $v->input;
     if ( defined $input->{'parcel-service'} ) {
         $input->{parcel_service} = delete $input->{'parcel-service'};
+    }
+
+    my $waybill = $parcel->waybill;
+    if ( !$waybill && $input->{waybill} ) {
+        ## 운송장이 입력되면 배송중으로 변경한다
+        $self->update_status( $order, $SHIPPED );
     }
 
     $parcel->update($input);
