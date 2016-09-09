@@ -8,7 +8,7 @@
 
 % my $status = param('s') || $PAYMENT_DONE;
 <ul class="order-status list-inline">
-  % for my $sts ($PAYMENT_DONE, $DEPOSIT_CONFIRMED, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
   <li>
     <a href="<%= url_for->query(s => $sts) %>">
       %= status2label($sts, $status == $sts)

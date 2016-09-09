@@ -1,6 +1,18 @@
 % layout 'default';
 % title '구매내역';
 
+% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
+
 %= include 'partials/order-summary-confirmed', order => $order;
+
+<hr>
+
+<ul class="order-status list-inline">
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
+  <li>
+    %= status2label($sts, $order->status_id == $sts)
+  </li>
+  % }
+</ul>
 
 <hr>

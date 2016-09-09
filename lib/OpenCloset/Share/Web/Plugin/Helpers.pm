@@ -472,7 +472,7 @@ sub admin_auth {
 
     %= status2label($order->status);
     # <span class="label label-default status-accept">승인</span>
-    # <span class="label label-default status-accept active"><i class="fa fa-archive"></i>$str</span>    # $active is true
+    # <span class="label label-default status-accept active">$str</span>    # $active is true
 
 =cut
 
@@ -492,9 +492,7 @@ sub status2label {
     my $html = Mojo::DOM::HTML->new;
 
     if ($active) {
-        $html->parse(
-            qq{<span class="label label-default active status-$id" title="$name" data-status="$id"><i class="fa fa-circle fa-fw" aria-hidden="true"></i>$name</span>}
-        );
+        $html->parse(qq{<span class="label label-default active status-$id" title="$name" data-status="$id">$name</span>});
     }
     else {
         $html->parse(qq{<span class="label label-default status-$id" title="$name" data-status="$id">$name</span>});
