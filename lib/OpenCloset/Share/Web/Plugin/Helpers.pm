@@ -8,7 +8,7 @@ use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category ();
-use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED/;
+use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -44,6 +44,7 @@ sub register {
     $app->helper( waiting_shipped      => \&waiting_shipped );
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
+    $app->helper( update_status        => \&update_status );
 }
 
 =head1 HELPERS
@@ -500,6 +501,35 @@ sub status2label {
 
     my $tree = $html->tree;
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
+}
+
+=head2 update_status($order, $to)
+
+    $self->update_status($order, $SHIPPED);
+
+=cut
+
+sub update_status {
+    my ( $self, $order, $to ) = @_;
+    return unless $order;
+    return unless $to;
+
+    my $parcel    = $order->order_parcel;
+    my $from      = $order->status_id;
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    $order->update( { status_id => $to } );
+
+    if ( $from == $WAITING_SHIPPED && $to == $SHIPPED ) {
+        ## 발송대기 -> 배송중
+        my $msg = $self->render_to_string( 'sms/waiting_shipped2shipped', format => 'txt', order => $order );
+        chomp $msg;
+        $self->sms( $user_info->phone, $msg );
+        my $bitmask = $parcel->sms_bitmask;
+        $parcel->update( { sms_bitmask => $bitmask | 2**0 } );
+    }
+
+    return 1;
 }
 
 1;
