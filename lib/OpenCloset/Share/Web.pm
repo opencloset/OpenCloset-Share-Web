@@ -65,6 +65,7 @@ sub _private_routes {
     my $clothes      = $root->under('/clothes')->to('user#auth');
     my $orders       = $root->under('/orders')->to('user#auth');
     my $address      = $root->under('/address')->to('user#auth');
+    my $sms          = $root->under('/sms')->to('user#auth');
 
     $r->get('/')->to('root#index')->name('index');
     $r->get('/logout')->to('user#logout')->name('logout');
@@ -83,6 +84,7 @@ sub _private_routes {
     $order->put('/')->to('order#update_order')->name('order.update');
     $order->delete('/')->to('order#delete_order')->name('order.delete');
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
+    $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');
@@ -90,6 +92,8 @@ sub _private_routes {
     $address->post('/')->to('address#create');
     $address->put('/:address_id')->to('address#update_address');
     $address->delete('/:address_id')->to('address#delete_address');
+
+    $sms->post('/')->to('sms#create')->name('sms.create');
 }
 
 1;
