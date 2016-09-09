@@ -493,7 +493,7 @@ sub status2label {
     my $html = Mojo::DOM::HTML->new;
 
     if ($active) {
-        $html->parse(qq{<span class="label label-default active status-$id" title="$name" data-status="$id">$name</span>});
+        $html->parse(qq{<span class="label label-success active status-$id" title="$name" data-status="$id">$name</span>});
     }
     else {
         $html->parse(qq{<span class="label label-default status-$id" title="$name" data-status="$id">$name</span>});
