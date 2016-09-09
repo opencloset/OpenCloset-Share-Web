@@ -139,15 +139,11 @@ sub order {
     my $order = $self->stash('order');
     my $user  = $self->stash('user');
 
-    my @categories;
-    my @details = $order->order_details;
-    map { push @categories, $_->name } @details;
-
     my $create_date = $order->create_date;
     $self->timezone($create_date);
 
     my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
-    $self->stash( categories => \@categories, title => $title );
+    $self->stash( title => $title );
 
     my $status_id = $order->status_id;
     if ( $status_id == $CHOOSE_CLOTHES ) {

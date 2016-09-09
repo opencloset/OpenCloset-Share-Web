@@ -7,7 +7,7 @@
   %= include 'partials/sms-help';
 </div>
 
-%= include 'partials/order-summary-confirmed', order => $order;
+%= include 'partials/order-summary', order => $order;
 
 <hr>
 
