@@ -254,18 +254,51 @@ sub purchase {
 
     my $status_id = $order->status_id;
     if ( $status_id == $PAYMENT_DONE ) {
-        my ( @categories, @staff );
-        my @details = $order->order_details;
-        map { push @categories, $_->name } @details;
-
+        my @staff;
         my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
         push @staff, { value => $_->id, text => $_->name } for @users;
-        $self->stash( categories => \@categories, staff => \@staff );
+        $self->stash( staff => \@staff );
         $self->render( template => 'order/purchase.payment_done' );
     }
     else {
-        $self->render( template => 'order/purchase.waiting_shipped' );
+        my $parcel = $self->schema->resultset('OrderParcel')->find_or_create( { order_id => $order->id } );
+        $self->render( template => 'order/purchase.waiting_shipped', parcel => $parcel );
     }
+}
+
+=head2 update_parcel
+
+    # order.update_parcel
+    PUT  /orders/:order_id/parcel
+    POST /orders/:order_id/parcel
+
+=cut
+
+sub update_parcel {
+    my $self   = shift;
+    my $order  = $self->stash('order');
+    my $parcel = $order->order_parcel;
+
+    my $v = $self->validation;
+    $v->optional('parcel-service');
+    $v->optional('waybill')->like(qr/^\d+$/);
+    $v->optional('comment');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $input = $v->input;
+    if ( defined $input->{'parcel-service'} ) {
+        $input->{parcel_service} = delete $input->{'parcel-service'};
+    }
+
+    $parcel->update($input);
+    $self->respond_to(
+        html => sub    { shift->redirect_to('order.purchase') },
+        json => { json => { $parcel->get_columns } }
+    );
 }
 
 1;
