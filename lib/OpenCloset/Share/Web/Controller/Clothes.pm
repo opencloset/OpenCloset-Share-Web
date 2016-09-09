@@ -26,7 +26,7 @@ sub recommend {
     return $self->error( 404, 'Not found user' ) unless $user;
 
     my $user_id = $user->id;
-    my $data    = $self->session('recommend');
+    my $data = $self->session('recommend') || {};
     unless ( $data->{$user_id} ) {
         my $agent = $self->agent;
         return $self->error( 500, "Couldn't get agent" ) unless $agent;
@@ -38,8 +38,8 @@ sub recommend {
         return $self->error( 500, "Couldn't get recommended clothes from API server" )
             unless $self->is_success($res);
 
-        $data = decode_json( $res->{content} );
-        $self->session( 'recommend' => { $user_id => $data } );
+        $data->{$user_id} = decode_json( $res->{content} );
+        $self->session( 'recommend' => $data );
     }
 
     my @recommends;
