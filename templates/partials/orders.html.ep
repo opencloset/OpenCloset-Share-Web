@@ -28,14 +28,28 @@
       </small>
     </h4>
 
+    % my @categories;
+    % my $status_id = $order->status_id;
+    % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" =~ m/\b$status_id\b/) {
+    %   my $order_details = $order->order_details;
+    %   while (my $detail = $order_details->next) {
+    %     push @categories, $detail->name;
+    %   }
+    % } else {
+    %   my $details = $order->order_details({ clothes_code => { '!=' => undef } });
+    %   while (my $detail = $details->next) {
+    %     push @categories, $detail->clothes->category;
+    %   }
+    % }
     <ul class="list-inline">
       % my $price = 0;
-      % for my $category (@categories) {
-      % $price += $OpenCloset::Constants::Category::PRICE{$category};
+      % for my $c (@categories) {
+      % $price += $PRICE{$c};
       <li>
         <span class="label label-primary">
-          %= $OpenCloset::Constants::Category::LABEL_MAP{$category}
+          %= $LABEL_MAP{$c}
         </span>
+        <code><%= commify($PRICE{$c}) %></code>
       </li>
       % }
     </ul>

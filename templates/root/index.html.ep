@@ -1,7 +1,7 @@
 % layout 'default';
 % title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
-% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES/;
-% use OpenCloset::Constants::Category ();
+% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
+% use OpenCloset::Constants::Category qw/%PRICE %LABEL_MAP/;
 % use OpenCloset::Constants::Measurement ();
 % my $gender = $user_info->gender;
 
