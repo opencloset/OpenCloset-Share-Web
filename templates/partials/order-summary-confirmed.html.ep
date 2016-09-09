@@ -1,5 +1,9 @@
 % use OpenCloset::Constants::Status;
 
+%= include 'partials/user-info';
+
+<hr>
+
 % my $timezone = $self->config->{timezone};
 % my $create_date = timezone($order->create_date);
 <h2 class="text-success">

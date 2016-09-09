@@ -1,6 +1,10 @@
 % use OpenCloset::Constants::Status;
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
+%= include 'partials/user-info';
+
+<hr>
+
 % my $timezone = $self->config->{timezone};
 % my $create_date = timezone($order->create_date);
 <h2 class="text-success">
