@@ -35,7 +35,7 @@ sub run {
     my $schema = $self->app->schema;
 
     while (1) {
-        my $rs = $schema->resultset('Order')->search( { status_id => $RETURN_REQUESTED } );
+        my $rs = $schema->resultset('Order')->search( { status_id => { -in => qw[$RETURN_REQUESTED $RETURNING] } } );
         while ( my $order = $rs->next ) {
             my $parcel = $order->order_parcel;
             next unless $parcel;
@@ -43,12 +43,15 @@ sub run {
             my $waybill = $parcel->waybill;
             next unless $waybill;
 
+            my $return_waybill = $parcel->return_waybill;
+            next if $return_waybill;
+
             my $tracker = Parcel::Track->new( $self->driver, $waybill );
             my $result = $tracker->track;
             next unless $result;
 
             my $html = shift @{ $result->{htmls} ||= [] };
-            my ($return_waybill) = $html =~ /반품:(\d+)/;
+            ($return_waybill) = $html =~ /반품:(\d+)/;
 
             $parcel->update( { return_waybill => $return_waybill } );
             $self->app->update_status( $order, $RETURNING );
