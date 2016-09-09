@@ -1,0 +1,18 @@
+<span>
+  <i class="fa fa-lightbulb-o fa-fw"></i>
+  <small>SMS 가 전송될때</small>
+</span>
+<ul class="sms-help">
+  <li title="oops">
+    <i class="fa fa-envelope fa-fw"></i>
+    %= status2label(52)
+    <i class="fa fa-arrow-right"></i>
+    %= status2label(53)
+  </li>
+  <li title="oops">
+    <i class="fa fa-envelope-o fa-fw"></i>
+    %= status2label(53)
+    <i class="fa fa-arrow-right"></i>
+    %= status2label(54)
+  </li>
+</ul>

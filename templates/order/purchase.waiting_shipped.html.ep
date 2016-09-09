@@ -3,6 +3,10 @@
 
 % use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
 
+<div class="pull-right text-muted">
+  %= include 'partials/sms-help';
+</div>
+
 %= include 'partials/order-summary-confirmed', order => $order;
 
 <hr>
