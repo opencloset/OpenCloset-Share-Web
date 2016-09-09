@@ -1,5 +1,9 @@
-% use OpenCloset::Constants::Status;
+% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
+
+%= include 'partials/user-info';
+
+<hr>
 
 % my $timezone = $self->config->{timezone};
 % my $create_date = timezone($order->create_date);
@@ -13,20 +17,34 @@
   </small>
 </h2>
 
-<div class="row">
+<div class="row choose-clothes-panel">
   % my $detail = $order->order_details( { name => $JACKET } )->next;
   % if ($detail && $detail->clothes_code) {
-  <p class="col-xs-2 col-md-1">
+  <p>
     % my $code = trim_code($detail->clothes_code);
-    <a class="thumbnail" href="<%= url_for('/clothes/' . $code) %>">
-      <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
-    </a>
+    <div class="thumbnail col-xs-2 col-md-1">
+      <a href="<%= url_for('/clothes/' . $code) %>">
+        <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
+      </a>
+      <div class="caption">
+        <p>
+          %= clothes2status($detail->clothes)
+        </p>
+      </div>
+    </div>
   </p>
   % }
 
+  % my $status_id = $order->status_id;
+  % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" =~ m/\b$status_id\b/) {
+  % my @categories;
+  % my $order_details = $order->order_details;
+  % while (my $detail = $order_details->next) {
+  %   push @categories, $detail->name;
+  % }
   <ul class="list-inline">
     % my $price = 0;
-    % for my $c (@$categories) {
+    % for my $c (@categories) {
     % $price += $PRICE{$c};
     <li>
       <span class="label label-primary">
@@ -36,12 +54,30 @@
     </li>
     % }
   </ul>
-</div>
 
-<h3 class="no-margin">
-  <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
-  <small>원</small>
-</h3>
+  <h3 class="no-margin">
+    <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
+    <small>원</small>
+  </h3>
+  % } else {
+    % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
+    % while (my $detail = $details->next) {
+    <p>
+      % my $code = trim_code($detail->clothes_code);
+      <div class="thumbnail col-xs-2 col-md-1">
+        <a href="<%= url_for('/clothes/' . $code) %>">
+          <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
+        </a>
+        <div class="caption">
+          <p>
+            %= clothes2status($detail->clothes)
+          </p>
+        </div>
+      </div>
+    </p>
+    % }
+  % }
+</div>
 
 <hr>
 

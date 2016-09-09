@@ -1,0 +1,66 @@
+% layout 'default';
+% title '주문서 목록';
+
+% use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
+% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
+
+<h2>주문서 목록</h2>
+
+% my $status = param('s') || $PAYMENT_DONE;
+<ul class="order-status list-inline">
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
+  <li>
+    <a href="<%= url_for->query(s => $sts) %>">
+      %= status2label($sts, $status == $sts)
+    </a>
+  </li>
+  % }
+</ul>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>이름</th>
+      <th>희망의류</th>
+      <th>코멘트</th>
+      <th>상태</th>
+    </tr>
+  </thead>
+  <tbody>
+    % while (my $order = $orders->next) {
+    % my $user = $order->user;
+    % my $user_info = $user->user_info;
+    % my @details = $order->order_details;
+    % my $detail = $order->order_details( { name => $JACKET } )->next;
+    <tr>
+      <td>
+        <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
+          %= $order->id
+        </a>
+      </td>
+      <td><%= $user->name %></td>
+      <td>
+        % if ($detail && $detail->clothes_code) {
+        % my $clothes = $detail->clothes;
+        %= clothes2link($clothes, { with_status => 1 })
+        % } else {
+        없음
+        % }
+      </td>
+      <td>
+        % if (my $comment = $order->get_column('parcel_comment')) {
+        <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
+        % } else {
+        <i class="fa fa-comment-o fa-fw"></i>
+        % }
+      </td>
+      <td><%= status2label($order->status) %></td>
+    </tr>
+    % }
+  </tbody>
+</table>
+
+<div>
+  %= include 'partials/pagination';
+</div>

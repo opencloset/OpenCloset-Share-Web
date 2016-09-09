@@ -7,7 +7,8 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $PAYMENT_DONE $WAITING_SHIPPED/;
+use OpenCloset::Constants::Category ();
+use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -40,6 +41,10 @@ sub register {
     $app->helper( order_categories     => \&order_categories );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
+    $app->helper( waiting_shipped      => \&waiting_shipped );
+    $app->helper( admin_auth           => \&admin_auth );
+    $app->helper( status2label         => \&status2label );
+    $app->helper( update_status        => \&update_status );
 }
 
 =head1 HELPERS
@@ -193,17 +198,17 @@ sub clothes2status {
     my $status_id = $status->id;
 
     my @class = qw/label/;
-    if ( $status_id == $RENTABLE ) {
+    if ( $status_id == $RENTABLE || $status_id == $WAITING_SHIPPED ) {
         push @class, 'label-success';
     }
-    elsif ( $status_id == $RENTAL ) {
+    elsif ( $status_id == $RENTAL || $status_id == $RENTALESS || $status_id == $LOST || $status_id == $DISCARD ) {
         push @class, 'label-danger';
     }
     else {
         push @class, 'label-default';
     }
 
-    my $html = qq{<span class="@class">$name</span>};
+    my $html = qq{<span class="@class">$code <small>$name</small></span>};
 
     $dom->parse($html);
     my $tree = $dom->tree;
@@ -344,6 +349,187 @@ sub payment_done {
     }
 
     return $order;
+}
+
+=head2 waiting_shipped($order, $codes)
+
+    # 결제완료 -> 발송대기
+    $self->waiting_shipped($order, ['J001', 'P001']);
+
+선택했던 의류가 있는지 확인하고, 이에 따라 주문서와 의류의 상태를 변경함
+
+=cut
+
+sub waiting_shipped {
+    my ( $self, $order, $codes ) = @_;
+    return unless $order;
+
+    ## $WAITING_SHIPPED
+    ## 1. $codes 에 선택했던 의류가 잇는지 확인
+    ## 2. 주문서와 의류 모두 상태를 변경
+    ## 3. 배송비와 에누리 비용을 order_detail 에 추가
+    ## 4. 이 모든 것은 transaction
+
+    ## 대여자가 선택한 의류가 대여품목에 있는지 확인
+    map { $_ = sprintf( '%05s', $_ ) } @$codes;
+    $self->log->debug("@$codes");
+    my $detail = $order->order_details( { name => 'jacket' } )->next;
+    if ($detail) {
+        if ( my $code = $detail->clothes_code ) {
+            my $found = grep { /$code/ } @$codes;
+            unless ($found) {
+                ## 없으면 알려만 주고 계속해서 진행
+                my $msg = "대여자가 선택한 의류가 대여품목에 없습니다: $code";
+                $self->log->info($msg);
+                $self->flash( alert => $msg );
+            }
+        }
+    }
+
+    ## 대여품목과 주문서품목을 비교확인
+    my @clothes = $self->schema->resultset('Clothes')->search( { code => { -in => $codes } } );
+    my @details = $order->order_details;
+
+    my ( %source, %target );
+    for my $detail (@details) {
+        my $name = $detail->name;
+        $source{$name} = $detail;
+    }
+
+    for my $clothes (@clothes) {
+        my $category = $clothes->category;
+        $target{$category} = $clothes;
+    }
+
+    my @source = sort keys %source;
+    my @target = sort keys %target;
+
+    if ( "@source" ne "@target" ) {
+        ## 일치하지 않으면 진행하면 아니됨
+        $self->log->error("주문서 품목과 대여품목이 일치하지 않습니다.");
+        $self->log->error("주문서품목: @source");
+        $self->log->error("대여품목: @target");
+        return;
+    }
+
+    my $guard = $self->schema->txn_scope_guard;
+    for my $category ( keys %source ) {
+        my $detail  = $source{$category};
+        my $clothes = $target{$category};
+
+        my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
+        $detail->update(
+            {
+                name         => $name,
+                status_id    => $RENTAL,
+                clothes_code => $clothes->code,
+            }
+        );
+        $clothes->update( { status_id => $RENTAL } );
+    }
+
+    $order->add_to_order_details(
+        {
+            name        => '배송비',
+            price       => 0,
+            final_price => 0,
+        }
+    ) or die "failed to create a new order_detail for delivery_fee\n";
+
+    $order->add_to_order_details(
+        {
+            name        => '에누리',
+            price       => 0,
+            final_price => 0,
+        }
+    ) or die "failed to create a new order_detail for discount\n";
+
+    $order->update( { status_id => $WAITING_SHIPPED } );
+    $guard->commit;
+
+    return $order;
+}
+
+=head2 admin_auth
+
+    return unless $self->admin_auth;
+
+=cut
+
+sub admin_auth {
+    my $self      = shift;
+    my $user_info = $self->stash('user_info');
+    return unless $user_info;
+
+    if ( $user_info->staff != 1 ) {
+        $self->error( 400, "Permission denied" );
+        return;
+    }
+
+    return 1;
+}
+
+=head2 status2label($status, $active)
+
+    %= status2label($order->status);
+    # <span class="label label-default status-accept">승인</span>
+    # <span class="label label-default status-accept active">$str</span>    # $active is true
+
+=cut
+
+sub status2label {
+    my ( $self, $status, $active ) = @_;
+
+    my ( $name, $id );
+    if ( ref $status ) {
+        $name = $status->name;
+        $id   = $status->id;
+    }
+    else {
+        $id   = $status;
+        $name = $OpenCloset::Constants::Status::LABEL_MAP{$id};
+    }
+
+    my $html = Mojo::DOM::HTML->new;
+
+    if ($active) {
+        $html->parse(qq{<span class="label label-default active status-$id" title="$name" data-status="$id">$name</span>});
+    }
+    else {
+        $html->parse(qq{<span class="label label-default status-$id" title="$name" data-status="$id">$name</span>});
+    }
+
+    my $tree = $html->tree;
+    return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
+}
+
+=head2 update_status($order, $to)
+
+    $self->update_status($order, $SHIPPED);
+
+=cut
+
+sub update_status {
+    my ( $self, $order, $to ) = @_;
+    return unless $order;
+    return unless $to;
+
+    my $parcel    = $order->order_parcel;
+    my $from      = $order->status_id;
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    $order->update( { status_id => $to } );
+
+    if ( $from == $WAITING_SHIPPED && $to == $SHIPPED ) {
+        ## 발송대기 -> 배송중
+        my $msg = $self->render_to_string( 'sms/waiting_shipped2shipped', format => 'txt', order => $order );
+        chomp $msg;
+        $self->sms( $user_info->phone, $msg );
+        my $bitmask = $parcel->sms_bitmask;
+        $parcel->update( { sms_bitmask => $bitmask | 2**0 } );
+    }
+
+    return 1;
 }
 
 1;

@@ -19,29 +19,32 @@ sub recommend {
     my $self     = shift;
     my $order_id = $self->param('order_id');
 
-    my $user = $self->current_user;
-    return $self->error( 500, 'Not found current user' ) unless $user;
+    my $order = $self->schema->resultset('Order')->find( { id => $order_id } );
+    return $self->error( 404, "Not found order: $order_id" ) unless $order;
 
-    my $data = $self->session('recommend');
-    unless ($data) {
+    my $user = $order->user;
+    return $self->error( 404, 'Not found user' ) unless $user;
+
+    my $user_id = $user->id;
+    my $data = $self->session('recommend') || {};
+    unless ( $data->{$user_id} ) {
         my $agent = $self->agent;
         return $self->error( 500, "Couldn't get agent" ) unless $agent;
 
-        my $user_id = $user->id;
-        my $url     = Mojo::URL->new( $self->config->{opencloset}{root} );
+        my $url = Mojo::URL->new( $self->config->{opencloset}{root} );
         $url->path("/api/user/$user_id/search/clothes");
 
         my $res = $agent->get($url);
         return $self->error( 500, "Couldn't get recommended clothes from API server" )
             unless $self->is_success($res);
 
-        $data = decode_json( $res->{content} );
+        $data->{$user_id} = decode_json( $res->{content} );
         $self->session( 'recommend' => $data );
     }
 
     my @recommends;
     my $rs = $self->schema->resultset('Clothes');
-    for my $recommend ( @{ $data->{result} } ) {
+    for my $recommend ( @{ $data->{$user_id}{result} } ) {
         my ( $top, $bottom, $count ) = @$recommend;
         my $code;
         $code = sprintf( '%05s', $top );
@@ -53,7 +56,12 @@ sub recommend {
         push @recommends, [ $t, $b, $count ];
     }
 
-    $self->render( recommends => \@recommends, order_id => $order_id );
+    $self->respond_to(
+        html => sub {
+            $self->render( recommends => \@recommends, order_id => $order_id );
+        },
+        json => { json => $data->{$user_id}{result} },
+    );
 }
 
 =head2 code
@@ -67,7 +75,13 @@ sub code {
     my $code = $self->param('code');
 
     my $clothes = $self->schema->resultset('Clothes')->find( { code => sprintf( '%05s', $code ) } );
+    unless ($clothes) {
+        $self->error( 404, "Not found clothes: $code" );
+        return;
+    }
+
     $self->stash( clothes => $clothes );
+    return 1;
 }
 
 =head2 detail
@@ -114,7 +128,14 @@ sub detail {
         return $self->error( 400, "Permission denied" ) if $user->id != $order->user_id;
     }
 
-    $self->render( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
+    $self->stash( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
+    $self->respond_to(
+        html => { template => 'clothes/detail' },
+        json => sub {
+            my %columns = $clothes->get_columns;
+            $self->render( json => \%columns );
+        }
+    );
 }
 
 1;

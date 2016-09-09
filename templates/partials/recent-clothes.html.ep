@@ -1,0 +1,18 @@
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SKIRT $LABEL_JACKET %LABEL_MAP/;
+% use OpenCloset::Constants::Status qw/$RENTABLE/;
+% my $bestfit = $order->bestfit;
+% my @details = $order->order_details(undef, { order_by => 'clothes_code' });
+
+<ul class="list-inline">
+  % my $rental_date = $order->rental_date;
+  <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
+    <span class="label label-default<%= $bestfit ? ' bestfit' : '' %>"><%= $rental_date ? $rental_date->ymd : '????-??-??' %></span>
+  </a>
+  % for my $detail (@details) {
+  %   my $clothes = $detail->clothes;
+  %   next unless $clothes;
+  <li>
+    %= clothes2status($clothes)
+  </li>
+  % }
+</ul>

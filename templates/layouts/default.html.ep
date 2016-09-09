@@ -7,6 +7,7 @@
     <title><%= title %> &middot; 열린옷장</title>
     <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/components/growl/stylesheets/jquery.growl.css">
     <link rel="stylesheet" href="/assets/components/opencloset.css/dist/css/opencloset.min.css">
     % for my $css (@$csses) {
     <link rel="stylesheet" href="<%= $css %>">
@@ -49,6 +50,10 @@
     <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/assets/components/jquery-timeago/jquery.timeago.js"></script>
     <script src="/assets/components/jquery-timeago/locales/jquery.timeago.ko.js"></script>
+    <script src="/assets/components/growl/javascripts/jquery.growl.js"></script>
+    <script src="/assets/components/handlebars/handlebars.runtime.min.js"></script>
+    <script src="/assets/dist/js/templates.min.js"></script>
+    <script src="/assets/dist/js/bundle.min.js"></script>
     % for my $js (@$jses) {
     <script src="<%= $js %>"></script>
     % }

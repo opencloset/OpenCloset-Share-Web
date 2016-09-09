@@ -1,0 +1,9 @@
+{{#each this}}
+<li>
+  <a href="/clothes/{{#clothesCode}}{{this.[0]}}{{/clothesCode}}">
+    <span class="label label-success">
+      {{#clothesCode}}{{this.[0]}}{{/clothesCode}}
+    </span>
+  </a>
+</li>
+{{/each}}

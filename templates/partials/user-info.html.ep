@@ -1,0 +1,5 @@
+<h2>
+  <i class="fa fa-<%= $user_info->gender %>" aria-hidden="true"></i>
+  <%= $user->name %>님
+  <small><%= age($user_info->birth) %></small>
+</h2>

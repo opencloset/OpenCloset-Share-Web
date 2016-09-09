@@ -2,8 +2,6 @@
 % title $title, jses => [
 %   '//cdn.poesis.kr/post/search.min.js',
 %   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
-%   '/assets/components/handlebars/handlebars.runtime.min.js',
-%   '/assets/dist/js/templates.min.js',
 %   '/assets/dist/js/order-id-choose-address.min.js'
 % ], csses => [
 %   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
