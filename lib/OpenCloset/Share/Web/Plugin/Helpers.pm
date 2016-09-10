@@ -8,7 +8,8 @@ use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category ();
-use OpenCloset::Constants::Status qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+use OpenCloset::Constants::Status
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -45,6 +46,7 @@ sub register {
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
     $app->helper( update_status        => \&update_status );
+    $app->helper( categories           => \&categories );
 }
 
 =head1 HELPERS
@@ -530,6 +532,36 @@ sub update_status {
     }
 
     return 1;
+}
+
+=head2 categories($order)
+
+    % my @categories = categories($order)
+    # 자켓, 팬츠, 셔츠, 타이
+    # clothes2status($clothes), ...
+
+=cut
+
+sub categories {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my @categories;
+    my $status_id = $order->status_id;
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
+        my $details = $order->order_details;
+        while ( my $detail = $details->next ) {
+            push @categories, $detail->name;
+        }
+    }
+    else {
+        my $details = $order->order_details( { clothes_code => { '!=' => undef } } );
+        while ( my $detail = $details->next ) {
+            push @categories, $detail->clothes->category;
+        }
+    }
+
+    return @categories;
 }
 
 1;
