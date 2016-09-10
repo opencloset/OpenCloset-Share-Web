@@ -3,14 +3,6 @@
 % my $user_info = $user->user_info;
 % my $gender = $user_info->gender;
 
-<h2 class="name">
-  <i class="fa fa-<%= $gender %>"></i>
-  %= $user->name
-  <small>
-    %= age($user_info->birth)
-  </small>
-</h2>
-
 <div class="size well">
   <ul>
     <li>

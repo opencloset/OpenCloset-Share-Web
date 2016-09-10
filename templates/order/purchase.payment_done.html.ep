@@ -13,6 +13,10 @@
 % use Mojo::JSON qw/to_json/;
 % use OpenCloset::Constants::Status qw/$WAITING_SHIPPED/;
 
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
 <div class="order-info">
   %= include 'partials/order-info';
 </div>
@@ -43,10 +47,6 @@
   추천의류
 </h4>
 <ul id="recommend-clothes" class="list-inline"></ul>
-
-<hr>
-
-%= include 'partials/order-summary', order => $order;
 
 <hr>
 
