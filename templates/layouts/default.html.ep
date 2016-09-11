@@ -55,6 +55,7 @@
     %= footer
     <script src="/assets/components/jquery/dist/jquery.min.js"></script>
     <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/assets/components/underscore/underscore-min.js"></script>
     <script src="/assets/components/jquery-timeago/jquery.timeago.js"></script>
     <script src="/assets/components/jquery-timeago/locales/jquery.timeago.ko.js"></script>
     <script src="/assets/components/growl/javascripts/jquery.growl.js"></script>
