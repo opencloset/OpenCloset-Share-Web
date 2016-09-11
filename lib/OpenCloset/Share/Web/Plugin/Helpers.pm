@@ -370,8 +370,6 @@ sub waiting_shipped {
     ## $WAITING_SHIPPED
     ## 1. $codes 에 선택했던 의류가 잇는지 확인
     ## 2. 주문서와 의류 모두 상태를 변경
-    ## 3. 배송비와 에누리 비용을 order_detail 에 추가
-    ## 4. 이 모든 것은 transaction
 
     ## 대여자가 선택한 의류가 대여품목에 있는지 확인
     map { $_ = sprintf( '%05s', $_ ) } @$codes;
@@ -431,22 +429,6 @@ sub waiting_shipped {
         );
         $clothes->update( { status_id => $RENTAL } );
     }
-
-    $order->add_to_order_details(
-        {
-            name        => '배송비',
-            price       => 0,
-            final_price => 0,
-        }
-    ) or die "failed to create a new order_detail for delivery_fee\n";
-
-    $order->add_to_order_details(
-        {
-            name        => '에누리',
-            price       => 0,
-            final_price => 0,
-        }
-    ) or die "failed to create a new order_detail for discount\n";
 
     $order->update( { status_id => $WAITING_SHIPPED } );
     $guard->commit;
