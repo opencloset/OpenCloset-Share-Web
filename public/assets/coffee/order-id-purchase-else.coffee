@@ -25,3 +25,41 @@ $ ->
       complete: (jqXHR, textStatus) ->
         $this.find('textarea').val('')
         $this.find('.btn-cancel').trigger('click')
+
+  checked = {}
+  $('.checkbox-code').each ->
+    id  = $(@).prop('id')
+    val = $(@).prop('checked')
+    checked[id] = val
+    true
+
+  $('#form-clothes-code').submit (e) ->
+    e.preventDefault()
+
+    $input = $('#input-code')
+    code = $input.val()
+    $input.val('')
+    return unless code
+
+    code = code.toUpperCase()
+    $("#code-#{code}").trigger('click')
+
+  $('.checkbox-code').change (e) ->
+    id  = $(@).prop('id')
+    val = $(@).prop('checked')
+    checked[id] = val
+    values = _.values checked
+
+    if _.every values
+      # 전체반납
+      $('#btn-return-all').removeClass('disabled')
+      $('#btn-return-partial').addClass('disabled')
+      $('#input-status-id').val(9)
+    else if _.every(values, (b) -> not b)
+      $('#btn-return-all').addClass('disabled')
+      $('#btn-return-partial').addClass('disabled')
+    else
+      # 부분반납
+      $('#btn-return-all').addClass('disabled')
+      $('#btn-return-partial').removeClass('disabled')
+      $('#input-status-id').val(10)

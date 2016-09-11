@@ -2,7 +2,7 @@
 % title '구매내역', jses => ['/assets/dist/js/order-id-purchase-else.min.js'];
 
 % use OpenCloset::Constants::Category ();
-% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
+% use OpenCloset::Constants::Status qw/$RETURNED $PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
 
 <div class="pull-right text-muted">
   %= include 'partials/sms-help', parcel => $parcel;
@@ -89,4 +89,55 @@
   </div>
   <button class="btn btn-primary" type="submit">전송</button>
   <button class="btn btn-danger btn-cancel" type="button">취소</button>
+</form>
+
+<hr>
+
+<h4>
+  <i class="fa fa-barcode fa-fw" aria-hidden="true"></i>
+  의류코드입력
+  <small>반납할 옷을 선택해주세요</small>
+</h4>
+
+<form id="form-clothes-code" class="form-inline">
+  <div class="form-group">
+    <input id="input-code" type="text" name="code" class="form-control" tabindex="1" placeholder="의류코드">
+  </div>
+  <button type="submit" class="btn btn-primary">검색</button>
+</form>
+
+<form id="form-update-order" action="<%= url_for('/orders/' . $order->id) %>">
+  <input id="input-status-id" name="status_id" type="hidden" value="<%= $RETURNED %>">
+  <table id="table-clothes" class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>의류코드</th>
+        <th>종류</th>
+      </tr>
+    </thead>
+    <tbody>
+      % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
+      % while (my $detail = $details->next) {
+      % my $clothes = $detail->clothes;
+      % my $code = trim_code($clothes->code);
+      <tr>
+        <td>
+          <input id="code-<%= $code %>" name="clothes_code" class="checkbox checkbox-code" type="checkbox" value="<%= $code %>">
+        </td>
+        <td>
+          <a href="<%= url_for('/clothes/' . $code) %>">
+            %= clothes2status($clothes)
+          </a>
+        </td>
+        <td>
+          %= $OpenCloset::Constants::Category::LABEL_MAP{$clothes->category}
+        </td>
+      </tr>
+      % }
+    </tbody>
+  </table>
+
+  <button id="btn-return-all" class="btn btn-success disabled" type="submit">전체반납</button>
+  <button id="btn-return-partial" class="btn btn-warning disabled" type="submit">부분반납</button>
 </form>
