@@ -396,6 +396,7 @@ sub waiting_shipped {
     my ( %source, %target );
     for my $detail (@details) {
         my $name = $detail->name;
+        next unless $name =~ m/^[a-z]/; # 왕복배송비 예외처리
         $source{$name} = $detail;
     }
 

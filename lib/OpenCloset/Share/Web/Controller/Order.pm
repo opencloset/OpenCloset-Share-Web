@@ -8,6 +8,8 @@ use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $P
 
 has schema => sub { shift->app->schema };
 
+our $SHIPPING_FEE = 3000;
+
 =head1 METHODS
 
 =head2 add
@@ -42,6 +44,7 @@ sub create {
     my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $PAYMENT if $pair != 2;
 
+    my $guard = $self->schema->txn_scope_guard;
     my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $status_id } );
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
@@ -56,6 +59,17 @@ sub create {
             }
         );
     }
+
+    $order->create_related(
+        'order_details',
+        {
+            name        => '왕복배송비',
+            price       => $SHIPPING_FEE * 2,
+            final_price => $SHIPPING_FEE * 2,
+        }
+    );
+
+    $guard->commit;
 
     $self->redirect_to( 'order.order', order_id => $order->id );
 }

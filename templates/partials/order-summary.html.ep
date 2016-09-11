@@ -48,13 +48,17 @@
       <code><%= commify($PRICE{$c}) %></code>
     </li>
     % }
+    % $price += 6000;
   </ul>
+
+  <p class="help-block">
+    왕복택배비는 <code>6,000</code>원 입니다.
+  </p>
 
   <h3 class="no-margin">
     <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
     <small>원</small>
   </h3>
-
 </div>
 
 <hr>
