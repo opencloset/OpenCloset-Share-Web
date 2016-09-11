@@ -132,8 +132,9 @@ sub order_id {
         return;
     }
 
-    my $user = $self->stash('user');
-    if ( $user->id != $order->user_id ) {
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+    if ( $user_info->staff != 1 && $user->id != $order->user_id ) {
         $self->error( 400, "Permission denied" );
         return;
     }
