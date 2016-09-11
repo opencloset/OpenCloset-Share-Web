@@ -261,8 +261,8 @@ sub purchase {
         $self->render( template => 'order/purchase.payment_done' );
     }
     else {
-        my $parcel = $self->schema->resultset('OrderParcel')->find_or_create( { order_id => $order->id } );
-        $self->render( template => 'order/purchase.waiting_shipped', parcel => $parcel );
+        my $parcel = $order->order_parcel;
+        $self->render( template => 'order/purchase', parcel => $parcel );
     }
 }
 
