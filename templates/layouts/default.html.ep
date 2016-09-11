@@ -30,6 +30,13 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
+            % if ( $user_info->staff == 1 ) {
+            <li>
+              <a href="<%= url_for('/orders') %>">
+                주문서
+              </a>
+            </li>
+            % }
             <li>
               <a href="<%= url_for('/measurements') %>">
                 신체치수
