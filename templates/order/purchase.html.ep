@@ -1,6 +1,7 @@
 % layout 'default';
-% title '구매내역', jses => ['/assets/dist/js/waiting-shipped.min.js'];
+% title '구매내역', jses => ['/assets/dist/js/order-id-purchase-else.min.js'];
 
+% use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
 
 <div class="pull-right text-muted">
