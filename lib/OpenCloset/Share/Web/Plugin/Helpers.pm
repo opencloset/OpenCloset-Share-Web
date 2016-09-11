@@ -9,7 +9,7 @@ use Mojo::JSON qw/decode_json/;
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category ();
 use OpenCloset::Constants::Status
-    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -328,7 +328,7 @@ sub payment_done {
     return unless $order;
 
     my $detail = $order->order_details( { name => 'jacket' } )->next;
-    $order->update( { status_id => $PAYMENT_DONE } );
+    $self->update_status( $order, $PAYMENT_DONE );
     $order->find_or_create_related( 'order_parcel', {} );
 
     ## 선택한 의류가 있는지 확인
@@ -375,7 +375,6 @@ sub waiting_shipped {
 
     ## 대여자가 선택한 의류가 대여품목에 있는지 확인
     map { $_ = sprintf( '%05s', $_ ) } @$codes;
-    $self->log->debug("@$codes");
     my $detail = $order->order_details( { name => 'jacket' } )->next;
     if ($detail) {
         if ( my $code = $detail->clothes_code ) {
@@ -432,7 +431,7 @@ sub waiting_shipped {
         $clothes->update( { status_id => $RENTAL } );
     }
 
-    $order->update( { status_id => $WAITING_SHIPPED } );
+    $self->update_status( $order, $WAITING_SHIPPED );
     $guard->commit;
 
     return $order;
@@ -443,7 +442,21 @@ sub waiting_shipped {
 =cut
 
 sub returned {
-    my $self = shift;
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $guard = $self->schema->txn_scope_guard;
+    my $details = $order->order_details( { clothes_code => { '!=' => undef } } );
+    while ( my $detail = $details->next ) {
+        my $clothes = $detail->clothes;
+        $clothes->update( { status_id => $RETURNED } );
+        $detail->update( { status_id => $RETURNED } );
+    }
+
+    $self->update_status( $order, $RETURNED );
+    $guard->commit;
+
+    return $order;
 }
 
 =head2 partial_returned

@@ -63,3 +63,19 @@ $ ->
       $('#btn-return-all').addClass('disabled')
       $('#btn-return-partial').removeClass('disabled')
       $('#input-status-id').val(10)
+
+  $('#form-update-order').on 'click', '#btn-return-all:not(.disabled)', (e) ->
+    $this = $(@)
+    $this.addClass('disabled')
+    $form = $('#form-update-order')
+    url = $form.prop('action')
+    $.ajax url,
+      type: 'PUT'
+      data: $form.serialize()
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+        $.growl.error({ title:textStatus, message: jqXHR.responseJSON.error })
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')

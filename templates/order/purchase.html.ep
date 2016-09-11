@@ -138,6 +138,6 @@
     </tbody>
   </table>
 
-  <button id="btn-return-all" class="btn btn-success disabled" type="submit">전체반납</button>
-  <button id="btn-return-partial" class="btn btn-warning disabled" type="submit">부분반납</button>
+  <button id="btn-return-all" class="btn btn-success disabled" type="button">전체반납</button>
+  <button id="btn-return-partial" class="btn btn-warning disabled" type="button">부분반납</button>
 </form>
