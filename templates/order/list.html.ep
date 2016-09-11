@@ -2,13 +2,13 @@
 % title '주문서 목록';
 
 % use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
-% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
+% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED $CHOOSE_CLOTHES $CHOOSE_ADDRESS $RETURNED/;
 
 <h2>주문서 목록</h2>
 
 % my $status = param('s') || $PAYMENT_DONE;
 <ul class="order-status list-inline">
-  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
   <li>
     <a href="<%= url_for->query(s => $sts) %>">
       %= status2label($sts, $status == $sts)

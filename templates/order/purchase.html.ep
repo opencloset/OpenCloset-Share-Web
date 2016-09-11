@@ -13,7 +13,7 @@
 <hr>
 
 <ul class="order-status list-inline">
-  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED) {
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
   <li>
     %= status2label($sts, $order->status_id == $sts)
   </li>
