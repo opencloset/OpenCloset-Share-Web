@@ -9,7 +9,7 @@ use Mojo::JSON qw/decode_json/;
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category ();
 use OpenCloset::Constants::Status
-    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -43,6 +43,8 @@ sub register {
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
     $app->helper( waiting_shipped      => \&waiting_shipped );
+    $app->helper( returned             => \&returned );
+    $app->helper( partial_returned     => \&partial_returned );
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
     $app->helper( update_status        => \&update_status );
@@ -436,6 +438,22 @@ sub waiting_shipped {
     return $order;
 }
 
+=head2 returned
+
+=cut
+
+sub returned {
+    my $self = shift;
+}
+
+=head2 partial_returned
+
+=cut
+
+sub partial_returned {
+    my $self = shift;
+}
+
 =head2 admin_auth
 
     return unless $self->admin_auth;
@@ -532,9 +550,11 @@ sub categories {
 
     my @categories;
     my $status_id = $order->status_id;
-    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
         my $details = $order->order_details;
         while ( my $detail = $details->next ) {
+            my $name = $detail->name;
+            next unless $name =~ m/^[a-z]/;
             push @categories, $detail->name;
         }
     }

@@ -4,7 +4,8 @@ use Mojo::Base 'Mojolicious::Controller';
 use Data::Pageset;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
-use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+use OpenCloset::Constants::Status
+    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 
 has schema => sub { shift->app->schema };
 
@@ -219,6 +220,18 @@ sub update_order {
             my $clothes_code = $self->every_param('clothes_code');
             delete $input->{clothes_code};
             $self->waiting_shipped( $order, $clothes_code );
+        }
+        elsif ( $status_id == $RETURNED || $status_id == $PARTIAL_RETURNED ) {
+            my $clothes_code = $self->every_param('clothes_code');
+            delete $input->{clothes_code};
+            if ( $status_id == $RETURNED ) {
+                ## xxx -> 전체반납
+                $self->returned($order);
+            }
+            else {
+                ## xxx -> 부분반납
+                $self->partial_returned( $order, $clothes_code );
+            }
         }
     }
 
