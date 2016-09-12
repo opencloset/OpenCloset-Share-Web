@@ -18,24 +18,6 @@
 </h2>
 
 <div class="row choose-clothes-panel">
-  % my $detail = $order->order_details( { name => $JACKET } )->next;
-  % if ($detail && $detail->clothes_code) {
-  <p>
-    % my $code = trim_code($detail->clothes_code);
-    <div class="thumbnail col-xs-2 col-md-1">
-      <a href="<%= url_for('/clothes/' . $code) %>">
-        <img alt="<%= $code %>" src="<%= oavatar_url($code) %>">
-      </a>
-      <div class="caption">
-        <p>
-          %= clothes2status($detail->clothes)
-        </p>
-      </div>
-    </div>
-  </p>
-  % }
-
-
   % my @categories = categories($order);
   <ul class="list-inline">
     % my $price = 0;
