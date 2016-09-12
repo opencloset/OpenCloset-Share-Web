@@ -105,7 +105,7 @@
   <small>대여할 옷을 선택해주세요</small>
 </h4>
 
-<form id="form-clothes-code" class="form-inline" method="GET" action="<%= url_for('/clothes/xxx') %>">
+<form id="form-clothes-code" class="form-inline clothes-code" method="GET" action="<%= url_for('/clothes/xxx') %>">
   <div class="form-group">
     <input type="text" name="code" class="form-control" tabindex="1" placeholder="의류코드">
   </div>

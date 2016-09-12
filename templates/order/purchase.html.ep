@@ -99,7 +99,7 @@
   <small>반납할 옷을 선택해주세요</small>
 </h4>
 
-<form id="form-clothes-code" class="form-inline">
+<form id="form-clothes-code" class="form-inline clothes-code">
   <div class="form-group">
     <input id="input-code" type="text" name="code" class="form-control" tabindex="1" placeholder="의류코드">
   </div>
