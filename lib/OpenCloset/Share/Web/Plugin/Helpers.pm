@@ -39,7 +39,6 @@ sub register {
     $app->helper( clothes2status       => \&clothes2status );
     $app->helper( clothes_measurements => \&clothes_measurements );
     $app->helper( order2link           => \&order2link );
-    $app->helper( order_categories     => \&order_categories );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
     $app->helper( waiting_shipped      => \&waiting_shipped );
@@ -272,23 +271,6 @@ sub order2link {
     $dom->parse($html);
     my $tree = $dom->tree;
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
-}
-
-=head2 order_categories
-
-    my @categories = $self->order_categories($order);
-
-=cut
-
-sub order_categories {
-    my ( $self, $order ) = @_;
-    return unless $order;
-
-    my @categories;
-    my @details = $order->order_details;
-    map { push @categories, $_->name } @details;
-
-    return @categories;
 }
 
 =head2 timezone
