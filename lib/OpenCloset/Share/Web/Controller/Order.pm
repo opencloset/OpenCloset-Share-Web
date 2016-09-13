@@ -211,7 +211,7 @@ sub update_order {
     }
 
     if ( exists $input->{status_id} ) {
-        my $status_id = $input->{status_id};
+        my $status_id = delete $input->{status_id};
         if ( $status_id == $PAYMENT_DONE ) {
             ## 결제대기 -> 결제완료
             $self->payment_done($order);
@@ -233,6 +233,9 @@ sub update_order {
                 ## xxx -> 부분반납
                 $self->partial_returned( $order, $clothes_code );
             }
+        }
+        else {
+            $input->{status_id} = $status_id;
         }
     }
 
