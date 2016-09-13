@@ -26,25 +26,21 @@ sub recommend {
     return $self->error( 404, 'Not found user' ) unless $user;
 
     my $user_id = $user->id;
-    my $data = $self->session('recommend') || {};
-    unless ( $data->{$user_id} ) {
-        my $agent = $self->agent;
-        return $self->error( 500, "Couldn't get agent" ) unless $agent;
+    my $agent   = $self->agent;
+    return $self->error( 500, "Couldn't get agent" ) unless $agent;
 
-        my $url = Mojo::URL->new( $self->config->{opencloset}{root} );
-        $url->path("/api/user/$user_id/search/clothes");
+    my $url = Mojo::URL->new( $self->config->{opencloset}{root} );
+    $url->path("/api/user/$user_id/search/clothes");
 
-        my $res = $agent->get($url);
-        return $self->error( 500, "Couldn't get recommended clothes from API server" )
-            unless $self->is_success($res);
+    my $res = $agent->get($url);
+    return $self->error( 500, "Couldn't get recommended clothes from API server" )
+        unless $self->is_success($res);
 
-        $data->{$user_id} = decode_json( $res->{content} );
-        $self->session( 'recommend' => $data );
-    }
+    my $data = decode_json( $res->{content} );
 
     my @recommends;
     my $rs = $self->schema->resultset('Clothes');
-    for my $recommend ( @{ $data->{$user_id}{result} } ) {
+    for my $recommend ( @{ $data->{result} } ) {
         my ( $top, $bottom, $count ) = @$recommend;
         my $code;
         $code = sprintf( '%05s', $top );
@@ -60,7 +56,7 @@ sub recommend {
         html => sub {
             $self->render( recommends => \@recommends, order_id => $order_id );
         },
-        json => { json => $data->{$user_id}{result} },
+        json => { json => $data->{result} },
     );
 }
 

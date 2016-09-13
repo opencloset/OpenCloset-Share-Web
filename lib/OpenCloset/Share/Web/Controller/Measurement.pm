@@ -62,7 +62,6 @@ sub update {
     my $res = $agent->request( 'PUT', $url );
 
     if ( $self->is_success($res) ) {
-        delete $self->session->{recommend};
         $self->flash( message => 'Successfully update measurements' );
     }
     else {
