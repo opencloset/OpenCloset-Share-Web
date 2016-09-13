@@ -391,9 +391,11 @@ sub waiting_shipped {
 
     if ( "@source" ne "@target" ) {
         ## 일치하지 않으면 진행하면 아니됨
-        $self->log->error("주문서 품목과 대여품목이 일치하지 않습니다.");
+        my $msg = "주문서 품목과 대여품목이 일치하지 않습니다.";
+        $self->log->error($msg);
         $self->log->error("주문서품목: @source");
         $self->log->error("대여품목: @target");
+        $self->flash( alert => $msg );
         return;
     }
 

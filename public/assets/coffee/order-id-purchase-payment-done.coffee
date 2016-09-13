@@ -73,3 +73,7 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+
+  if $('#alert').get(0)
+    msg = $('#alert').prop('title')
+    $.growl.error({ message: msg })

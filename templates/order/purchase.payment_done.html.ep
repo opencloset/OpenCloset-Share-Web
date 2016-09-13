@@ -128,3 +128,7 @@
 
   <button id="btn-update-order" class="btn btn-primary" type="button">선택한 의류를 대여합니다.</button>
 </form>
+
+% if (my $alert = flash('alert')) {
+<div id="alert" class="hide" title="<%= $alert %>"></div>
+% }
