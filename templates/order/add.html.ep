@@ -4,7 +4,7 @@
 % ], csses => [
 %   '/assets/components/bootstrap-toggle/css/bootstrap-toggle.min.css'
 % ];
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE %LABEL_MAP %PRICE/;
 
 %= include 'partials/guide';
 
@@ -12,7 +12,7 @@
 
 <h3>대여가격 안내</h3>
 <ul class="list-inline">
-  % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $TIE) {
+  % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE) {
   <li>
     <span class="label label-primary">
       %= $LABEL_MAP{$category}
@@ -31,7 +31,7 @@
 
 <form action="<%= url_for('order.create') %>" method="POST">
   <ul class="list-inline">
-    % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $TIE) {
+    % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE) {
     <li>
       %= $LABEL_MAP{$category}
       <input checked name="category-<%= $category %>" data-toggle="toggle" data-on="대여함" data-off="대여안함" data-onstyle="success" type="checkbox">

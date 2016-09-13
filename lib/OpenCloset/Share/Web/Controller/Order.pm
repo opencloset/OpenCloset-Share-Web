@@ -3,7 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
 
-use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %PRICE/;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 
@@ -36,7 +36,7 @@ sub create {
     my $user = $self->stash('user');
 
     my @categories;
-    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $TIE ) {
+    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE ) {
         my $p = $self->param("category-$c") || '';
         push @categories, $c if $p eq 'on';
     }
