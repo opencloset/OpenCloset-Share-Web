@@ -12,6 +12,7 @@
 
 % use Mojo::JSON qw/to_json/;
 % use OpenCloset::Constants::Status qw/$WAITING_SHIPPED/;
+% use OpenCloset::Constants::Category qw/%PRICE/;
 
 %= include 'partials/order-summary', order => $order;
 
@@ -85,7 +86,9 @@
     <tr>
       <th>대여비</th>
       <td>
-        <code>30,000</code>
+        % my $price = 6000;
+        % $price += $PRICE{$_} for categories($order);
+        <code title="<%= $price %>"><%= commify $price %></code>
       </td>
     </tr>
     <tr>
