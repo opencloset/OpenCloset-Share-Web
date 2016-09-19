@@ -35,18 +35,34 @@ sub create {
     my $self = shift;
     my $user = $self->stash('user');
 
+    my $v = $self->validation;
+    $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE );
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
     my @categories;
     for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE ) {
-        my $p = $self->param("category-$c") || '';
+        my $p = $v->param("category-$c") || '';
         push @categories, $c if $p eq 'on';
     }
 
-    my $status_id = $CHOOSE_CLOTHES;
-    my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
+    my $wearon_date = $v->param('wearon_date');
+    my $status_id   = $CHOOSE_CLOTHES;
+    my $pair        = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $PAYMENT if $pair != 2;
 
     my $guard = $self->schema->txn_scope_guard;
-    my $order = $self->schema->resultset('Order')->create( { user_id => $user->id, status_id => $status_id } );
+    my $order = $self->schema->resultset('Order')->create(
+        {
+            user_id     => $user->id,
+            status_id   => $status_id,
+            wearon_date => $wearon_date,
+        }
+    );
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
