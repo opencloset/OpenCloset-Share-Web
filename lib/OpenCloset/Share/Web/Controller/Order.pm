@@ -188,8 +188,20 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        my $user_address = $order->user_address;
-        $self->render( template => 'order/order.payment', user_address => $user_address );
+        ## 의류착용일이 +3d 의 조건을 만족하는지 확인
+        my $fine        = 1;
+        my $now         = $self->timezone( DateTime->now )->truncate( to => 'day' )->epoch;
+        my $wearon_date = $self->timezone( $order->wearon_date )->truncate( to => 'day' )->epoch;
+        if ( $wearon_date - $now < 60 * 60 * 24 * 3 ) {
+            $self->log->info("Not enough wearon_date: +3d");
+            $fine = 0;
+        }
+
+        $self->render(
+            template         => 'order/order.payment',
+            user_address     => $order->user_address,
+            fine_wearon_date => $fine
+        );
     }
     else {
         ## 결제완료, 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
@@ -212,6 +224,7 @@ sub update_order {
     $v->optional('status_id')->in(@OpenCloset::Constants::Status::ALL);
     $v->optional('user_address');
     $v->optional('clothes_code');
+    $v->optional('wearon_date');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;

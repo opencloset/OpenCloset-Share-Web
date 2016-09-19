@@ -309,9 +309,10 @@ sub payment_done {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    my $detail = $order->order_details( { name => 'jacket' } )->next;
     $self->update_status( $order, $PAYMENT_DONE );
     $order->find_or_create_related( 'order_parcel', {} );
+
+    my $detail = $order->order_details( { name => 'jacket' } )->next;
 
     ## 선택한 의류가 있는지 확인
     return $order unless $detail;

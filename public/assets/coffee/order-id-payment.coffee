@@ -40,3 +40,25 @@ $ ->
       else
         console.log res.error_msg
     ###
+
+  $('#datepicker-wearon-date').datepicker
+    language: 'kr'
+    startDate: '+3d'
+    todayHighlight: true
+    format: 'yyyy-mm-dd'
+
+  $('#datepicker-wearon-date').on 'changeDate', ->
+    val = $('#datepicker-wearon-date').datepicker('getFormattedDate')
+    $('#wearon_date').val(val)
+
+  $('#form-wearon-date').submit (e) ->
+    e.preventDefault()
+    $this = $(@)
+    action = $this.prop('action')
+    $.ajax action,
+      type: 'PUT'
+      data: { wearon_date: $('#wearon_date').val() }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
