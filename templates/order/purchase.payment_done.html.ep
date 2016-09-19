@@ -123,6 +123,8 @@
 
 <form id="form-update-order" action="<%= url_for('/orders/' . $order->id) %>">
   <input name="status_id" type="hidden" value="<%= $WAITING_SHIPPED %>">
+  <input id="rental_date" name="rental_date" type="hidden">
+  <input id="target_date" name="target_date" type="hidden">
   <table id="table-clothes" class="table">
     <thead>
       <tr>
