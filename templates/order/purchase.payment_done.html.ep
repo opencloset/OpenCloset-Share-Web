@@ -68,6 +68,12 @@
       <td>4박5일</td>
     </tr>
     <tr>
+      <th>착용일</th>
+      <td>
+        %= $order->wearon_date->ymd
+      </td>
+    </tr>
+    <tr>
       <th>대여일</th>
       <td>
         <div class="input-group">
