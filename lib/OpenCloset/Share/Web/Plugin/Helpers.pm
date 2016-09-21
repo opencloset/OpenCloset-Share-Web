@@ -46,7 +46,7 @@ sub register {
     $app->helper( partial_returned     => \&partial_returned );
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
-    $app->helper( update_status        => \&update_status );
+    $app->helper( update_parcel_status => \&update_status );
     $app->helper( categories           => \&categories );
 }
 
@@ -309,8 +309,8 @@ sub payment_done {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    $self->update_status( $order, $PAYMENT_DONE );
-    $order->find_or_create_related( 'order_parcel', {} );
+    $order->update( { status_id => $RENTAL } );
+    $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
 
     my $detail = $order->order_details( { name => 'jacket' } )->next;
 
@@ -416,7 +416,7 @@ sub waiting_shipped {
         $clothes->update( { status_id => $RENTAL } );
     }
 
-    $self->update_status( $order, $WAITING_SHIPPED );
+    $self->update_parcel_status( $order, $WAITING_SHIPPED );
     $guard->commit;
 
     return $order;
@@ -438,7 +438,8 @@ sub returned {
         $detail->update( { status_id => $RETURNED } );
     }
 
-    $self->update_status( $order, $RETURNED );
+    $order->update( { status_id => $RETURNED } );
+    $self->update_parcel_status( $order, $RETURNED );
     $guard->commit;
 
     return $order;
@@ -505,13 +506,13 @@ sub status2label {
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
 }
 
-=head2 update_status($order, $to)
+=head2 update_parcel_status($order, $to)
 
-    $self->update_status($order, $SHIPPED);
+    $self->update_parcel_status($order, $SHIPPED);
 
 =cut
 
-sub update_status {
+sub update_parcel_status {
     my ( $self, $order, $to ) = @_;
     return unless $order;
     return unless $to;
@@ -520,7 +521,7 @@ sub update_status {
     my $from      = $order->status_id;
     my $user      = $order->user;
     my $user_info = $user->user_info;
-    $order->update( { status_id => $to } );
+    $parcel->update( { status_id => $to } );
 
     if ( $from == $WAITING_SHIPPED && $to == $SHIPPED ) {
         ## 발송대기 -> 배송중
