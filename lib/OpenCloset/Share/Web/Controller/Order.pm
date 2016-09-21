@@ -312,8 +312,8 @@ sub purchase {
     my $order  = $self->stash('order');
     my $parcel = $order->order_parcel;
 
-    my $parcel_status_id = $parcel->status_id;
-    if ( $parcel_status_id == $PAYMENT_DONE ) {
+    my $status_id = $order->status_id;
+    if ( $status_id == $PAYMENT_DONE ) {
         my @staff;
         my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
         push @staff, { value => $_->id, text => $_->name } for @users;
