@@ -110,15 +110,12 @@ sub list {
     ## TODO: $q 처리
     my $cond = { status_id => $s };
     my $attr = {
-        page      => $p,
-        rows      => 20,
-        order_by  => { -desc => 'update_date' },
-        join      => 'order_parcel',
-        '+select' => ['order_parcel.comment'],
-        '+as'     => ['parcel_comment'],
+        page     => $p,
+        rows     => 20,
+        order_by => { -desc => 'update_date' },
     };
 
-    my $rs      = $self->schema->resultset('Order')->search( $cond, $attr );
+    my $rs      = $self->schema->resultset('OrderParcel')->search( $cond, $attr );
     my $pager   = $rs->pager;
     my $pageset = Data::Pageset->new(
         {
@@ -129,7 +126,7 @@ sub list {
         }
     );
 
-    $self->render( orders => $rs, pageset => $pageset );
+    $self->render( parcels => $rs, pageset => $pageset );
 }
 
 =head2 order_id
@@ -311,11 +308,12 @@ sub delete_order {
 =cut
 
 sub purchase {
-    my $self  = shift;
-    my $order = $self->stash('order');
+    my $self   = shift;
+    my $order  = $self->stash('order');
+    my $parcel = $order->order_parcel;
 
-    my $status_id = $order->status_id;
-    if ( $status_id == $PAYMENT_DONE ) {
+    my $parcel_status_id = $parcel->status_id;
+    if ( $parcel_status_id == $PAYMENT_DONE ) {
         my @staff;
         my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
         push @staff, { value => $_->id, text => $_->name } for @users;
@@ -323,7 +321,6 @@ sub purchase {
         $self->render( template => 'order/purchase.payment_done' );
     }
     else {
-        my $parcel = $order->order_parcel;
         $self->render( template => 'order/purchase', parcel => $parcel );
     }
 }

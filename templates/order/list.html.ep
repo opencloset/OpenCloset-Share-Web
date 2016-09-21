@@ -29,7 +29,8 @@
     </tr>
   </thead>
   <tbody>
-    % while (my $order = $orders->next) {
+    % while (my $parcel = $parcels->next) {
+    % my $order = $parcel->order;
     % my $user = $order->user;
     % my $user_info = $user->user_info;
     % my $detail = $order->order_details( { name => $JACKET } )->next;
@@ -61,7 +62,7 @@
         </ul>
       </td>
       <td>
-        % if (my $comment = $order->get_column('parcel_comment')) {
+        % if (my $comment = $parcel->comment) {
         <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
         % } else {
         <i class="fa fa-comment-o fa-fw"></i>
