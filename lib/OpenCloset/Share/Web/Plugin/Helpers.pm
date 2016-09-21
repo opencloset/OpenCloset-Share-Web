@@ -46,7 +46,7 @@ sub register {
     $app->helper( partial_returned     => \&partial_returned );
     $app->helper( admin_auth           => \&admin_auth );
     $app->helper( status2label         => \&status2label );
-    $app->helper( update_parcel_status => \&update_status );
+    $app->helper( update_parcel_status => \&update_parcel_status );
     $app->helper( categories           => \&categories );
 }
 
