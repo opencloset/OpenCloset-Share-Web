@@ -309,7 +309,7 @@ sub payment_done {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    $order->update( { status_id => $RENTAL } );
+    $order->update( { status_id => $PAYMENT_DONE } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
 
     my $detail = $order->order_details( { name => 'jacket' } )->next;
@@ -416,6 +416,7 @@ sub waiting_shipped {
         $clothes->update( { status_id => $RENTAL } );
     }
 
+    $order->update( { status_id => $RENTAL } );
     $self->update_parcel_status( $order, $WAITING_SHIPPED );
     $guard->commit;
 
