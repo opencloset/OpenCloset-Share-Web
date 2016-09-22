@@ -15,8 +15,11 @@ has schema => sub { shift->app->schema };
 =cut
 
 sub index {
-    my $self = shift;
-    my $user = $self->stash('user');
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    return $self->redirect_to('/verify') unless $user_info->phone;
 
     my $failed = $self->_check_measurement;
     my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
@@ -111,5 +114,21 @@ sub import_hook {
 
     $self->render( text => 'OK' );
 }
+
+=head2 terms
+
+    GET /terms
+
+=cut
+
+sub terms { }
+
+=head privacy
+
+    GET /privacy
+
+=cut
+
+sub privacy { }
 
 1;

@@ -1,6 +1,8 @@
 package OpenCloset::Share::Web;
 use Mojo::Base 'Mojolicious';
 
+use Email::Valid ();
+
 use OpenCloset::Schema;
 
 has schema => sub {
@@ -42,6 +44,7 @@ sub startup {
     $self->_assets;
     $self->_public_routes;
     $self->_private_routes;
+    $self->_extend_validator;
 }
 
 sub _assets {
@@ -55,6 +58,10 @@ sub _public_routes {
     my $r    = $self->routes;
 
     $r->get('/welcome')->to('welcome#index')->name('welcome');
+    $r->get('/users/new')->to('user#add');
+    $r->post('/users')->to('user#create');
+    $r->get('/terms')->to('root#terms');
+    $r->get('/privacy')->to('root#privacy');
     $r->post('/webhooks/import')->to('root#import_hook');
 }
 
@@ -72,6 +79,8 @@ sub _private_routes {
     $r->get('/')->to('root#index')->name('index');
     $r->get('/logout')->to('user#logout')->name('logout');
     $r->get('/search')->to('root#search')->name('search');
+    $r->get('/verify')->to('user#verify_form');
+    $r->post('/verify')->to('user#verify');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
@@ -97,6 +106,17 @@ sub _private_routes {
     $address->delete('/:address_id')->to('address#delete_address');
 
     $sms->post('/')->to('sms#create')->name('sms.create');
+}
+
+sub _extend_validator {
+    my $self = shift;
+
+    $self->validator->add_check(
+        email => sub {
+            my ( $v, $name, $value ) = @_;
+            return not Email::Valid->address($value);
+        }
+    );
 }
 
 1;
