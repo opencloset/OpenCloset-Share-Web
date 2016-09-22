@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> &middot; 열린옷장</title>
+    <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/components/growl/stylesheets/jquery.growl.css">
+    <link rel="stylesheet" href="/assets/components/opencloset.css/dist/css/opencloset.min.css">
+    % for my $css (@$csses) {
+    <link rel="stylesheet" href="<%= $css %>">
+    % }
+    <link rel="stylesheet" href="/assets/dist/css/screen.min.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-oc">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="<%= url_for('/') %>">열린옷장</a>
+        </div>
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+      <div id="content">
+        %= content
+      </div>
+    </div>
+    %= footer
+    <script src="/assets/components/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/assets/components/underscore/underscore-min.js"></script>
+    <script src="/assets/components/jquery-timeago/jquery.timeago.js"></script>
+    <script src="/assets/components/jquery-timeago/locales/jquery.timeago.ko.js"></script>
+    <script src="/assets/components/growl/javascripts/jquery.growl.js"></script>
+    <script src="/assets/components/handlebars/handlebars.runtime.min.js"></script>
+    <script src="/assets/dist/js/templates.min.js"></script>
+    <script src="/assets/dist/js/bundle.min.js"></script>
+    % for my $js (@$jses) {
+    <script src="<%= $js %>"></script>
+    % }
+  </body>
+</html>
