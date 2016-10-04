@@ -2,6 +2,8 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
@@ -48,6 +50,7 @@ sub register {
     $app->helper( status2label         => \&status2label );
     $app->helper( update_parcel_status => \&update_parcel_status );
     $app->helper( categories           => \&categories );
+    $app->helper( send_mail            => \&send_mail );
 }
 
 =head1 HELPERS
@@ -566,6 +569,24 @@ sub categories {
     }
 
     return @categories;
+}
+
+=head2 send_mail( $email )
+
+=over
+
+=item $email - RFC 5322 formatted String.
+
+=back
+
+=cut
+
+sub send_mail {
+    my ( $self, $email ) = @_;
+    return unless $email;
+
+    my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
+    sendmail( $email, { transport => $transport } );
 }
 
 1;
