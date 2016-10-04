@@ -42,6 +42,12 @@
                 신체치수
               </a>
             </li>
+            <li>
+              <a href="<%= url_for('/logout') %>">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                로그아웃
+              </a>
+            </li>
           </ul>
 
           % if ($user_info->staff == 1) {
