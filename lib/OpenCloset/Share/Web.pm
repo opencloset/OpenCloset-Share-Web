@@ -58,7 +58,7 @@ sub _public_routes {
     my $r    = $self->routes;
 
     $r->get('/welcome')->to('welcome#index')->name('welcome');
-    $r->get('/users/new')->to('user#add');
+    $r->get('/signup')->to('user#add');
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');

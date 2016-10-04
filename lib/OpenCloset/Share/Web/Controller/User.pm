@@ -48,7 +48,7 @@ sub logout {
 
 =head2 add
 
-    GET /users/new
+    GET /signup
 
 =cut
 
