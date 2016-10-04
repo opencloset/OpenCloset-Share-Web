@@ -92,7 +92,7 @@
     <tr>
       <th>대여비</th>
       <td>
-        % my $price = 6000;
+        % my $price = 3000;
         % $price += $PRICE{$_} for categories($order);
         <code title="<%= $price %>"><%= commify $price %></code>
       </td>
