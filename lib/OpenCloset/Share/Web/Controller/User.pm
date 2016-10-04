@@ -102,7 +102,6 @@ sub reset_password {
         body => $body
     );
 
-    $self->log->debug( $msg->as_string );
     $self->send_mail( encode_utf8( $msg->as_string ) );
 
     $self->flash( done => 1 );
