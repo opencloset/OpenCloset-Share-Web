@@ -102,6 +102,7 @@ sub reset_password {
         body => $body
     );
 
+    $self->log->debug( $msg->as_string );
     $self->send_mail( encode_utf8( $msg->as_string ) );
 
     $self->flash( done => 1 );
@@ -116,6 +117,61 @@ sub reset_password {
 
 sub login {
     my $self = shift;
+
+    my $v = $self->validation;
+    $v->required('email')->email;
+    $v->required('password');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        $self->log->debug( 'Parameter validation failed: ' . join( ', ', @$failed ) );
+        return $self->error( 400, '잘못된 요청입니다' );
+    }
+
+    my $email    = $v->param('email');
+    my $password = $v->param('password');
+
+    my $user = $self->schema->resultset('User')->find( { email => $email } );
+    return $self->error( 404, "User not found: $email" ) unless $user;
+    return $self->error( 400, 'Wrong password' )         unless $user->check_password($password);
+
+    $self->session( access_token => $user->id );
+    $self->redirect_to("/settings");
+}
+
+=head2 settings
+
+    GET /settings
+
+=cut
+
+sub settings { }
+
+=head2 update_settings
+
+    POST /settings
+
+=cut
+
+sub update_settings {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->required('password');
+    $v->required('re-password');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $password = $v->param('password');
+    my $retype   = $v->param('re-password');
+    return $self->error( 400, "비밀번호가 일치하지 않습니다." ) if $password ne $retype;
+
+    my $user = $self->stash('user');
+    $user->update( { password => $password } );
+    $self->redirect_to('index');
 }
 
 =head2 create

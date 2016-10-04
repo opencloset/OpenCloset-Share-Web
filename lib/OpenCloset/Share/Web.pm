@@ -84,6 +84,8 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/verify')->to('user#verify_form');
     $r->post('/verify')->to('user#verify');
+    $r->get('/settings')->to('user#settings');
+    $r->post('/settings')->to('user#update_settings');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
