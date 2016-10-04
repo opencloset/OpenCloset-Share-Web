@@ -58,7 +58,10 @@ sub _public_routes {
     my $r    = $self->routes;
 
     $r->get('/welcome')->to('welcome#index')->name('welcome');
-    $r->get('/users/new')->to('user#add');
+    $r->get('/signup')->to('user#add');
+    $r->get('/reset')->to('user#reset');
+    $r->post('/reset')->to('user#reset_password');
+    $r->get('/login')->to('user#login');
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');
@@ -81,6 +84,8 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/verify')->to('user#verify_form');
     $r->post('/verify')->to('user#verify');
+    $r->get('/settings')->to('user#settings');
+    $r->post('/settings')->to('user#update_settings');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');

@@ -11,6 +11,13 @@
   동의하지 않으신다면 회원가입을 할 수 없습니다.
 </p>
 
+<p>
+  <a href="<%= url_for('/reset') %>" class="bg-info">
+    <i class="fa fa-exclamation-circle fa-fw" aria-hidden="true"></i>
+    열린옷장을 이용한 적이 있으신가요?
+  </a>
+</p>
+
 % if (my $error = flash('error')) {
 <div class="alert alert-danger">
   %= $error

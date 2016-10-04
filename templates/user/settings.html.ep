@@ -1,0 +1,15 @@
+% layout 'default';
+% title '설정';
+
+<h2>설정</h2>
+
+<hr>
+
+<form method="POST" action="<%= url_for('/settings') %>" class="form-inline">
+  <div class="form-group">
+    <input name="password" type="password" class="form-control" placeholder="비밀번호 Password">
+    <input name="re-password" type="password" class="form-control" placeholder="비밀번호확인 Retype password">
+    <button type="submit" class="btn btn-primary">변경</button>
+  </div>
+</form>
+
