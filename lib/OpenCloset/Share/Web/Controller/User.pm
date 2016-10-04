@@ -2,6 +2,9 @@ package OpenCloset::Share::Web::Controller::User;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use Digest::MD5 qw/md5_hex/;
+use Email::Simple ();
+use Encode qw/encode_utf8/;
 use Mojo::URL;
 use String::Random ();
 
@@ -53,6 +56,65 @@ sub logout {
 =cut
 
 sub add {
+    my $self = shift;
+}
+
+=head2 reset
+
+    GET /reset
+
+=cut
+
+sub reset {
+    my $self = shift;
+}
+
+=head2 reset_password
+
+    POST /reset
+
+=cut
+
+sub reset_password {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->required('email')->email;
+
+    return $self->error( 400, "유효하지 않은 email 입니다." ) if $v->has_error;
+
+    my $email = $v->param('email');
+    my $user = $self->schema->resultset('User')->find( { email => $email } );
+    return $self->error( 404, "사용자를 찾을 수 없습니다: $email" ) unless $user;
+
+    my $digest = md5_hex(time);
+    $user->update( { password => $digest } );
+
+    my $body = $self->render_to_string( 'email/reset_password', format => 'txt', email => $email, password => $digest );
+    chomp $body;
+
+    my $msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $email,
+            Subject => '[열린옷장] 비밀번호 변경안내',
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $msg->as_string ) );
+
+    $self->flash( done => 1 );
+    $self->redirect_to('/reset');
+}
+
+=head2 login
+
+    GET /login?email=xxxx&password=xxxx
+
+=cut
+
+sub login {
     my $self = shift;
 }
 

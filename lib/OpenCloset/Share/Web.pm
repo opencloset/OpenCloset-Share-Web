@@ -59,6 +59,9 @@ sub _public_routes {
 
     $r->get('/welcome')->to('welcome#index')->name('welcome');
     $r->get('/signup')->to('user#add');
+    $r->get('/reset')->to('user#reset');
+    $r->post('/reset')->to('user#reset_password');
+    $r->get('/login')->to('user#login');
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');

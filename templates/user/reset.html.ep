@@ -1,0 +1,23 @@
+% layout 'user-new';
+% title '비밀번호 재설정';
+
+<h2>비밀번호 재설정</h2>
+
+% if (my $done = flash('done')) {
+<div class="alert alert-success">
+  비밀번호를 재설정 하였습니다. 이메일을 확인해주세요.
+</div>
+% }
+
+<p class="help-block">
+  열린옷장 이용시에 사용했던 이메일을 입력해주세요. 해당 이메일로 로그인 할 수 있는 링크가 전달됩니다.
+</p>
+
+<hr>
+
+<form method="POST" action="<%= url_for('/reset') %>" class="form-inline">
+  <div class="form-group">
+    <input name="email" type="text" class="form-control" placeholder="이메일 Email">
+    <button type="submit" class="btn btn-primary">확인</button>
+  </div>
+</form>
