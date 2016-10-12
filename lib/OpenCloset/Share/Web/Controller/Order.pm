@@ -80,7 +80,7 @@ sub create {
     $order->create_related(
         'order_details',
         {
-            name        => '왕복배송비',
+            name        => '배송비',
             price       => $SHIPPING_FEE * 2,
             final_price => $SHIPPING_FEE * 2,
         }
