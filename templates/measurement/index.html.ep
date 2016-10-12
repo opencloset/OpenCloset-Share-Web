@@ -1,5 +1,5 @@
 % layout 'default';
-% title '치수측정';
+% title '치수측정', jses => ['/assets/dist/js/measurement.min.js'];
 
 <h1>치수측정</h1>
 
@@ -33,19 +33,28 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">허리둘레 <small>cm</small></label>
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="배꼽기준의 둘레">
+      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
+      허리둘레 <small>cm</small>
+    </label>
     <div class="col-sm-10">
       <input name="waist" type="text" class="form-control" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">윗배둘레 <small>cm</small></label>
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="가장 볼록한 배의 둘레">
+      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
+      윗배둘레 <small>cm</small>
+    </label>
     <div class="col-sm-10">
       <input name="topbelly" type="text" class="form-control" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">팔길이 <small>cm</small></label>
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="중지 끝 부터 어깨관절 까지의 길이">
+      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
+      팔길이 <small>cm</small>
+    </label>
     <div class="col-sm-10">
       <input name="arm" type="text" class="form-control" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>">
     </div>
@@ -55,13 +64,19 @@
   % if ($gender eq 'male') {
   <!-- male -->
   <div class="form-group">
-    <label class="col-sm-2 control-label">허벅지둘레 <small>cm</small></label>
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="허벅지의 가장 두꺼운 부분의 둘레">
+      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
+      허벅지둘레 <small>cm</small>
+    </label>
     <div class="col-sm-10">
       <input name="thigh" type="text" class="form-control" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>">
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label">다리길이 <small>cm</small></label>
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="발바닥부터 골반뼈까지의 길이">
+      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
+      다리길이 <small>cm</small>
+    </label>
     <div class="col-sm-10">
       <input name="leg" type="text" class="form-control" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>">
     </div>
