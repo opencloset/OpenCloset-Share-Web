@@ -328,17 +328,6 @@ sub payment_done {
         return $order;
     }
 
-    my $j_status_id = $jacket->status_id;
-    if ( $j_status_id == $RENTABLE ) {
-        ## 의류들을 발송대기 상태로 변경
-        $jacket->update( { status_id => $WAITING_SHIPPED } );
-    }
-    elsif ( $j_status_id == $RENTAL ) {
-        ## 대여중이라면 기록을 남기고 추천의류 방식으로 진행
-        my $desc = sprintf( "%s|%s", $jacket->code, $jacket->status->name );
-        $detail->update( { clothes_code => undef } );
-    }
-
     return $order;
 }
 
@@ -370,6 +359,11 @@ sub waiting_shipped {
                 my $msg = "대여자가 선택한 의류가 대여품목에 없습니다: $code";
                 $self->log->info($msg);
                 $self->flash( alert => $msg );
+
+                ## 희망의류를 desc 에 기록
+                my $jacket = $detail->clothes;
+                my $status = $jacket->status->name;
+                $detail->update( { desc => sprintf( "희망의류: %s, 상태: %s", $code, $status ) } );
             }
         }
     }
