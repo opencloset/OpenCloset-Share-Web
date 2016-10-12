@@ -11,4 +11,12 @@ use Mojo::Base 'Mojolicious::Controller';
 
 sub index { }
 
+=head2 features
+
+    GET /features
+
+=cut
+
+sub features { }
+
 1;
