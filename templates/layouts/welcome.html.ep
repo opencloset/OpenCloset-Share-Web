@@ -24,6 +24,7 @@
                   <li class="<%= $path eq '/welcome'  ? 'active' : '' %>"><a href="<%= url_for('welcome') %>">Home</a></li>
                   <li class="<%= $path eq '/features' ? 'active' : '' %>"><a href="<%= url_for('/features') %>">소개</a></li>
                   <li><a href="<%= url_for('/signup') %>">회원가입</a></li>
+                  <li><a href="<%= url_for('index') %>">로그인</a></li>
                 </ul>
               </nav>
             </div>
