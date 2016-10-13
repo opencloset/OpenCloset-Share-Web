@@ -1,4 +1,4 @@
-% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE/;
+% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE/;
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
 %= include 'partials/user-info';
@@ -77,7 +77,12 @@
 <hr>
 % }
 
-<h4>배송주소</h4>
+<h4>
+  배송주소
+  % if ($order->status_id == $PAYMENT) {
+  <button id="btn-choose-address" class="btn btn-info btn-sm">다시선택</button>
+  % }
+</h4>
 <address class="well">
   % my $address = $order->user_address || $user_info;
   <strong><%= $user->name %></strong><br>

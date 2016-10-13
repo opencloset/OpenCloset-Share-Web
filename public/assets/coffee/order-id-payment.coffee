@@ -4,6 +4,7 @@ $ ->
 
   ## FIXME: 테스트를 위해서 결제를 생략하고, 상태변경을 요청
   STATUS =
+    choose_address: 49
     payment_done: 50
 
   $('#btn-payment').click (e) ->
@@ -62,3 +63,16 @@ $ ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
+
+  $('#btn-choose-address:not(.disabled)').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax location.href,
+      type: 'PUT'
+      data: { status_id: STATUS.choose_address }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
