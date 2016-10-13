@@ -8,7 +8,7 @@
 %   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
 %   '/assets/components/bootstrap-toggle/css/bootstrap-toggle.min.css'
 % ];
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE %LABEL_MAP %PRICE/;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %LABEL_MAP %PRICE/;
 
 %= include 'partials/guide';
 
@@ -16,7 +16,7 @@
 
 <h3>대여가격 안내</h3>
 <ul class="list-inline">
-  % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE) {
+  % for my $category ($JACKET, $PANTS, $SKIRT, $SHIRT, $BLOUSE, $SHOES, $BELT, $TIE) {
   <li>
     <span class="label label-primary">
       %= $LABEL_MAP{$category}
@@ -32,15 +32,43 @@
 
 <hr>
 
+<div id="gender" data-gender="<%= $user_info->gender || '' %>"></div>
+
 <form action="<%= url_for('order.create') %>" method="POST">
   <h3>대여품목</h3>
   <p>대여하시고자 하는 의류를 선택해주세요</p>
+  <p>
+    합계: <code id="price-sum"></code>(택배비 포함)
+  </p>
 
   <ul class="list-inline">
-    % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE) {
     <li>
-      %= $LABEL_MAP{$category}
-      <input checked name="category-<%= $category %>" data-toggle="toggle" data-on="대여함" data-off="대여안함" data-onstyle="success" type="checkbox">
+      <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+    </li>
+    % for my $category ($JACKET, $SHOES) {
+    <li>
+      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+    </li>
+    % }
+  </ul>
+
+  <ul class="list-inline">
+    <li>
+      <i class="fa fa-male fa-fw" aria-hidden="true"></i>
+    </li>
+    % for my $category ($PANTS, $SHIRT, $BELT, $TIE) {
+    <li>
+      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+    </li>
+    % }
+  </ul>
+  <ul class="list-inline">
+    <li>
+      <i class="fa fa-female fa-fw" aria-hidden="true"></i>
+    </li>
+    % for my $category ($SKIRT, $BLOUSE) {
+    <li>
+      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
     </li>
     % }
   </ul>

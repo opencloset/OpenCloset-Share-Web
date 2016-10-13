@@ -3,7 +3,7 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
 
-use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE %PRICE/;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
 
@@ -37,7 +37,7 @@ sub create {
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE );
+    $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -45,7 +45,7 @@ sub create {
     }
 
     my @categories;
-    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE ) {
+    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE ) {
         my $p = $v->param("category-$c") || '';
         push @categories, $c if $p eq 'on';
     }
@@ -53,7 +53,7 @@ sub create {
     my $wearon_date = $v->param('wearon_date');
     my $status_id   = $CHOOSE_CLOTHES;
     my $pair        = grep { /^($JACKET|$PANTS)$/ } @categories;
-    $status_id = $PAYMENT if $pair != 2;
+    $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $guard = $self->schema->txn_scope_guard;
     my $order = $self->schema->resultset('Order')->create(
