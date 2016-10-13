@@ -16,10 +16,10 @@ $ ->
   $('input[data-toggle="toggle"]').change ->
     sum = 0
     delivery_fee = 3000
-    sum += delivery_fee
     $('input[data-toggle="toggle"]:checked').each ->
       price = $(@).data('price') or 0
       sum += parseInt(price)
+    sum += delivery_fee if sum
     $('#price-sum').text("#{sum}".replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
 
   gender = $('#gender').data('gender')
