@@ -33,7 +33,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="배꼽기준의 둘레">
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="바지를 입는 부분의 둘레 / (바지를 입지 않는다면) 골반뼈 윗부분의 둘레">
       <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
       허리둘레 <small>cm</small>
     </label>
@@ -42,7 +42,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="가장 볼록한 배의 둘레">
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="배꼽 7cm 윗부분의 둘레">
       <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
       윗배둘레 <small>cm</small>
     </label>
@@ -51,7 +51,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="중지 끝 부터 어깨관절 까지의 길이">
+    <label class="col-sm-2 control-label" data-toggle="tooltip" title="어깨뼈부터 손목뼈까지의 길이">
       <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
       팔길이 <small>cm</small>
     </label>
