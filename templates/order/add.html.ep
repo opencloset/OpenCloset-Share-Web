@@ -32,9 +32,14 @@
 
 <hr>
 
+<div id="gender" data-gender="<%= $user_info->gender || '' %>"></div>
+
 <form action="<%= url_for('order.create') %>" method="POST">
   <h3>대여품목</h3>
   <p>대여하시고자 하는 의류를 선택해주세요</p>
+  <p>
+    합계: <code id="price-sum"></code>(택배비 포함)
+  </p>
 
   <ul class="list-inline">
     % for my $category ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE) {
