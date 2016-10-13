@@ -292,9 +292,10 @@ sub delete_order {
     my $self  = shift;
     my $order = $self->stash('order');
 
-    ## TODO
-    ## 주문서의 상태에 따라서 삭제해야합니다.
-    ## 대여중인 주문서를 함부러 막 삭제하면 안됩니다.
+    my @status_can_be_delete = ( $PAYMENT, $CHOOSE_CLOTHES );
+
+    my $status_id = $order->status_id;
+    return $self->error( 400, "Couldn't delete status($status_id) order" ) unless "@status_can_be_delete" =~ m/\b$status_id\b/;
 
     $order->delete;
     $self->render( json => { message => 'Deleted order successfully' } );
