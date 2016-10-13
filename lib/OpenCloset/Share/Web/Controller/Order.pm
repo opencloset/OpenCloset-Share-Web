@@ -292,7 +292,7 @@ sub delete_order {
     my $self  = shift;
     my $order = $self->stash('order');
 
-    my @status_can_be_delete = ( $PAYMENT, $CHOOSE_CLOTHES );
+    my @status_can_be_delete = ( $PAYMENT, $CHOOSE_CLOTHES, $CHOOSE_ADDRESS );
 
     my $status_id = $order->status_id;
     return $self->error( 400, "Couldn't delete status($status_id) order" ) unless "@status_can_be_delete" =~ m/\b$status_id\b/;
