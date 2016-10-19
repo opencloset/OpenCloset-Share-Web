@@ -1,7 +1,7 @@
 % use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE/;
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
 
-%= include 'partials/user-info';
+%= include 'partials/user-info', user => $order->user;
 
 <hr>
 
