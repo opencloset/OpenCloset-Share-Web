@@ -516,7 +516,7 @@ sub update_parcel_status {
     return unless $to;
 
     my $parcel    = $order->order_parcel;
-    my $from      = $order->status_id;
+    my $from      = $parcel->status_id;
     my $user      = $order->user;
     my $user_info = $user->user_info;
     $parcel->update( { status_id => $to } );
