@@ -1,0 +1,5 @@
+% my $parcel = $order->order_parcel;
+% my $user   = $order->user;
+% my $target_date = $order->target_date;
+% my $parcel_target_date = $target_date->clone->subtract(days => 1);
+[열린옷장 - 배송확인] 안녕하세요. <%= $user->name %>님. 대여품목은 잘 받으셨나요? 택배 반송일은 <%= $parcel_target_date->day %>일 입니다. <%= $parcel_target_date->day %>일까지 택배 반납 부탁드립니다.
