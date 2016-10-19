@@ -357,7 +357,7 @@ sub update_parcel {
     my $waybill = $parcel->waybill;
     if ( !$waybill && $input->{waybill} ) {
         ## 운송장이 입력되면 배송중으로 변경한다
-        $self->update_status( $order, $SHIPPED );
+        $self->update_parcel_status( $order, $SHIPPED );
     }
 
     $parcel->update($input);
