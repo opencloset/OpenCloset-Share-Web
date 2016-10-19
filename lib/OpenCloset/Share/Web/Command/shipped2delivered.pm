@@ -50,7 +50,7 @@ sub run {
             my $latest = pop @{ $result->{descs} };
             next unless $latest =~ /배달완료/;
 
-            $self->app->update_status( $order, $DELIVERED );
+            $self->app->update_parcel_status( $order, $DELIVERED );
             printf(
                 "[%d]: %s -> %s", $order->id, $OpenCloset::Constants::Status::LABEL_MAP{$SHIPPED},
                 $OpenCloset::Constants::Status::LABEL_MAP{$DELIVERED}

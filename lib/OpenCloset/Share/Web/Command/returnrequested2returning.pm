@@ -54,7 +54,7 @@ sub run {
             ($return_waybill) = $html =~ /반품:(\d+)/;
 
             $parcel->update( { return_waybill => $return_waybill } );
-            $self->app->update_status( $order, $RETURNING );
+            $self->app->update_parcel_status( $order, $RETURNING );
             printf(
                 "[%d]: %s -> %s", $order->id, $OpenCloset::Constants::Status::LABEL_MAP{$RETURN_REQUESTED},
                 $OpenCloset::Constants::Status::LABEL_MAP{$RETURNING}

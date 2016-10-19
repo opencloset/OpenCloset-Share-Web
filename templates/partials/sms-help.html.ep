@@ -10,4 +10,10 @@
     <i class="fa fa-arrow-right"></i>
     %= status2label($SHIPPED)
   </li>
+  <li title="<%= include('sms/shipped2delivered', format => 'txt', order => $order) %>">
+    <i class="fa fa-envelope<%= $mask & 2**1 ? '' : '-o' %> fa-fw"></i>
+    %= status2label($SHIPPED)
+    <i class="fa fa-arrow-right"></i>
+    %= status2label($DELIVERED)
+  </li>
 </ul>
