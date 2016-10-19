@@ -11,7 +11,7 @@ use Mojo::JSON qw/decode_json/;
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category ();
 use OpenCloset::Constants::Status
-    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED/;
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -523,11 +523,27 @@ sub update_parcel_status {
 
     if ( $from == $WAITING_SHIPPED && $to == $SHIPPED ) {
         ## 발송대기 -> 배송중
-        my $msg = $self->render_to_string( 'sms/waiting_shipped2shipped', format => 'txt', order => $order );
-        chomp $msg;
-        $self->sms( $user_info->phone, $msg );
-        my $bitmask = $parcel->sms_bitmask;
-        $parcel->update( { sms_bitmask => $bitmask | 2**0 } );
+        my $pos  = 0;
+        my $mask = $parcel->sms_bitmask;
+        my $sent = $mask & 2**$pos;
+        unless ($sent) {
+            my $msg = $self->render_to_string( 'sms/waiting_shipped2shipped', format => 'txt', order => $order );
+            chomp $msg;
+            $self->sms( $user_info->phone, $msg );
+            $parcel->update( { sms_bitmask => $mask | 2**$pos } );
+        }
+    }
+    elsif ( $from == &SHIPPED && $to == $DELIVERED ) {
+        ## 배송중 -> 배송완료
+        my $pos  = 1;
+        my $mask = $parcel->sms_bitmask;
+        my $sent = $mask & 2**$pos;
+        unless ($sent) {
+            my $msg = $self->render_to_string( 'sms/shipped2delivered', format => 'txt', order => $order );
+            chomp $msg;
+            $self->sms( $user_info->phone, $msg );
+            $parcel->update( { sms_bitmask => $mask | 2**$pos } );
+        }
     }
 
     return 1;
