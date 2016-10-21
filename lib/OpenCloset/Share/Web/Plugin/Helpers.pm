@@ -533,7 +533,7 @@ sub update_parcel_status {
             $parcel->update( { sms_bitmask => $mask | 2**$pos } );
         }
     }
-    elsif ( $from == &SHIPPED && $to == $DELIVERED ) {
+    elsif ( $from == $SHIPPED && $to == $DELIVERED ) {
         ## 배송중 -> 배송완료
         my $pos  = 1;
         my $mask = $parcel->sms_bitmask;
