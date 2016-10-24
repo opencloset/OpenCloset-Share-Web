@@ -206,6 +206,7 @@ sub create {
     my $email    = $v->param('email');
     my $password = $v->param('password');
     my $retype   = $v->param('re-password');
+    my $gender   = $v->param('gender');
     my $birth    = $v->param('birth');
     my $address1 = $v->param('address1');
     my $address2 = $v->param('address2');
@@ -246,6 +247,7 @@ sub create {
             address3 => $address3,
             address4 => $address4,
             birth    => $birth,
+            gender   => $gender,
         }
     );
     $guard->commit;
