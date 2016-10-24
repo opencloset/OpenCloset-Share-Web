@@ -49,25 +49,12 @@ sub update {
         return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
     }
 
-    my $user = $self->current_user;
-    return $self->error( 500, 'Not found current user' ) unless $user;
+    my $user_info = $self->stash('user_info');
+    return $self->error( 500, 'Not found user_info' ) unless $user_info;
 
-    my $agent = $self->agent;
-    return $self->error( 500, "Couldn't get agent" ) unless $agent;
-
-    my $input  = $v->input;
-    my $params = $agent->www_form_urlencode($input);
-    my $url    = Mojo::URL->new( $self->config->{opencloset}{root} . "?$params" );
-    $url->path( '/api/user/' . $user->id );
-    my $res = $agent->request( 'PUT', $url );
-
-    if ( $self->is_success($res) ) {
-        $self->flash( message => 'Successfully update measurements' );
-    }
-    else {
-        $self->flash( message => 'Failed to update measurements', has_error => 1 );
-    }
-
+    my $input = $v->input || {};
+    $user_info->update($input);
+    $self->flash( message => 'Successfully update measurements' );
     $self->redirect_to('/measurements');
 }
 
