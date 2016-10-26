@@ -49,13 +49,22 @@ sub update {
         return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
     }
 
+    my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
     return $self->error( 500, 'Not found user_info' ) unless $user_info;
 
     my $input = $v->input || {};
+    map { $input->{$_} ||= 0 } keys %$input;
     $user_info->update($input);
-    $self->flash( message => 'Successfully update measurements' );
-    $self->redirect_to('/measurements');
+
+    my $failed = $self->check_measurement( $user, $user_info );
+    if ($failed) {
+        $self->flash( message => 'Successfully update measurements' );
+        $self->redirect_to('/measurements');
+    }
+    else {
+        $self->redirect_to('order.add');
+    }
 }
 
 1;
