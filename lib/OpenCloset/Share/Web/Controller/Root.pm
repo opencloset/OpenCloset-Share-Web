@@ -21,7 +21,7 @@ sub index {
 
     return $self->redirect_to('/verify') unless $user_info->phone;
 
-    my $failed = $self->_check_measurement;
+    my $failed = $self->check_measurement( $user, $user_info );
     my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
     $self->render( failed => $failed, orders => $orders );
 }
@@ -50,50 +50,6 @@ sub search {
     else {
         $self->redirect_to( '/clothes/' . $clothes->code );
     }
-}
-
-=head3 _check_measurement
-
-    my $failed = $self->_check_measurement;
-
-=cut
-
-sub _check_measurement {
-    my $self      = shift;
-    my $user      = $self->stash('user');
-    my $user_info = $self->stash('user_info');
-
-    my $user_id = $user->id;
-    my $gender = $user_info->gender || 'male'; # TODO: 원래 없으면 안됨
-
-    my $input = {};
-    map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh leg hip knee/;
-
-    my $v = $self->validation;
-    $v->input($input);
-    $v->required('height')->size( 3, 3 );
-    $v->required('weight')->size( 2, 3 );
-    $v->required('bust')->size( 2, 3 );
-    $v->required('topbelly')->size( 2, 3 );
-    $v->required('arm')->size( 2, 3 );
-
-    if ( $gender eq 'male' ) {
-        $v->required('waist')->size( 2, 3 );
-        $v->required('thigh')->size( 2, 3 );
-        $v->required('leg')->size( 2, 3 );
-    }
-    elsif ( $gender eq 'female' ) {
-        $v->required('hip')->size( 2, 3 );
-        $v->required('knee')->size( 2, 3 );
-    }
-    else {
-        my $msg = "Wrong user gender: $gender($user_id)";
-        $self->log->error($msg);
-        return ["gender($msg)"];
-    }
-
-    return $v->failed if $v->has_error;
-    return;
 }
 
 =head2 import_hook

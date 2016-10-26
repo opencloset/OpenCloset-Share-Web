@@ -51,6 +51,7 @@ sub register {
     $app->helper( update_parcel_status => \&update_parcel_status );
     $app->helper( categories           => \&categories );
     $app->helper( send_mail            => \&send_mail );
+    $app->helper( check_measurement    => \&check_measurement );
 }
 
 =head1 HELPERS
@@ -597,6 +598,48 @@ sub send_mail {
 
     my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
     sendmail( $email, { transport => $transport } );
+}
+
+=head2 check_measurement
+
+    my $failed = $self->check_measurement($user, $user_info);
+
+=cut
+
+sub check_measurement {
+    my ( $self, $user, $user_info ) = @_;
+
+    my $user_id = $user->id;
+    my $gender = $user_info->gender || 'male'; # TODO: 원래 없으면 안됨
+
+    my $input = {};
+    map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh leg hip knee/;
+
+    my $v = $self->validation;
+    $v->input($input);
+    $v->required('height')->size( 3, 3 );
+    $v->required('weight')->size( 2, 3 );
+    $v->required('bust')->size( 2, 3 );
+    $v->required('topbelly')->size( 2, 3 );
+    $v->required('arm')->size( 2, 3 );
+
+    if ( $gender eq 'male' ) {
+        $v->required('waist')->size( 2, 3 );
+        $v->required('thigh')->size( 2, 3 );
+        $v->required('leg')->size( 2, 3 );
+    }
+    elsif ( $gender eq 'female' ) {
+        $v->required('hip')->size( 2, 3 );
+        $v->required('knee')->size( 2, 3 );
+    }
+    else {
+        my $msg = "Wrong user gender: $gender($user_id)";
+        $self->log->error($msg);
+        return ["gender($msg)"];
+    }
+
+    return $v->failed if $v->has_error;
+    return;
 }
 
 1;
