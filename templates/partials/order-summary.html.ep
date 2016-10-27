@@ -1,5 +1,5 @@
 % use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE/;
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $TIE %LABEL_MAP %PRICE/;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $SKIRT $TIE $BLOUSE %LABEL_MAP %PRICE/;
 
 %= include 'partials/user-info', user => $order->user;
 
@@ -25,7 +25,15 @@
     % $price += $PRICE{$c};
     <li>
       <span class="label label-primary">
-        %= $LABEL_MAP{$c}
+        % if ($c eq $SHIRT) {
+          %= shirt_type($order)
+          %= $LABEL_MAP{$c}
+        % } elsif ($c eq $BLOUSE) {
+          %= blouse_type($order)
+          %= $LABEL_MAP{$c}
+        % } else {
+          %= $LABEL_MAP{$c}
+        % }
       </span>
       <code><%= commify($PRICE{$c}) %></code>
     </li>

@@ -39,6 +39,8 @@ sub create {
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
+    $v->optional('shirt-type');
+    $v->optional('blouse-type');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -68,12 +70,16 @@ sub create {
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
     for my $category (@categories) {
+        my $desc;
+        $desc = $v->param('shirt-type')  if $category eq $SHIRT;
+        $desc = $v->param('blouse-type') if $category eq $BLOUSE;
         $order->create_related(
             'order_details',
             {
                 name        => $category,
                 price       => $PRICE{$category},
                 final_price => $PRICE{$category},
+                desc        => $desc,
             }
         );
     }
@@ -82,8 +88,8 @@ sub create {
         'order_details',
         {
             name        => '배송비',
-            price       => $SHIPPING_FEE * 2,
-            final_price => $SHIPPING_FEE * 2,
+            price       => $SHIPPING_FEE,
+            final_price => $SHIPPING_FEE,
         }
     );
 

@@ -21,6 +21,11 @@ $ ->
       sum += parseInt(price)
     sum += delivery_fee if sum
     $('#price-sum').text("#{sum}".replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
+    name = $(@).prop('name')
+    if name is 'category-shirt'
+      $('#list-shirt-type').toggleClass('hide')
+    if name is 'category-blouse'
+      $('#list-blouse-type').toggleClass('hide')
 
   gender = $('#gender').data('gender')
   if gender is 'male'
