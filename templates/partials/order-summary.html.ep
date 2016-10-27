@@ -43,10 +43,9 @@
   </h3>
 </div>
 
-<hr>
-
 % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
 % if ($details->count) {
+<hr>
 <div class="row choose-clothes-panel">
   % my @desc;
   % while (my $detail = $details->next) {
@@ -73,10 +72,10 @@
   <li><%= $desc %></li>
   % }
 </ul>
-
-<hr>
 % }
 
+% if ($order->status_id != $CHOOSE_CLOTHES) {
+<hr>
 <h4>
   배송주소
   % if ($order->status_id == $PAYMENT) {
@@ -92,3 +91,4 @@
   <abbr title="Phone">P:</abbr>
   %= $user_info->phone
 </address>
+% }
