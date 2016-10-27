@@ -50,6 +50,8 @@ sub register {
     $app->helper( status2label         => \&status2label );
     $app->helper( update_parcel_status => \&update_parcel_status );
     $app->helper( categories           => \&categories );
+    $app->helper( shirt_type           => \&shirt_type );
+    $app->helper( blouse_type          => \&blouse_type );
     $app->helper( send_mail            => \&send_mail );
     $app->helper( check_measurement    => \&check_measurement );
 }
@@ -578,6 +580,58 @@ sub categories {
     }
 
     return @categories;
+}
+
+=head2 shirt_type($order)
+
+    % my $type = shirt_type($order);
+    # 하늘색
+
+=cut
+
+sub shirt_type {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $type      = '';
+    my $status_id = $order->status_id;
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
+        my $detail = $order->order_details( { name => 'shirt' }, { rows => 1 } )->single;
+        $type = $detail->desc || '' if $detail;
+    }
+    else {
+        my $details = $order->order_details;
+        my $detail = $details->search_like( { clothes_code => '0S%' }, { rows => 1 } )->single;
+        $type = $detail->desc || '' if $detail;
+    }
+
+    return $type;
+}
+
+=head2 blouse_type($order)
+
+    % my $type = blouse_type($order);
+    # 하늘색
+
+=cut
+
+sub blouse_type {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $type      = '';
+    my $status_id = $order->status_id;
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
+        my $detail = $order->order_details( { name => 'blouse' }, { rows => 1 } )->single;
+        $type = $detail->desc || '' if $detail;
+    }
+    else {
+        my $details = $order->order_details;
+        my $detail = $details->search_like( { clothes_code => '0B%' }, { rows => 1 } )->single;
+        $type = $detail->desc || '' if $detail;
+    }
+
+    return $type;
 }
 
 =head2 send_mail( $email )
