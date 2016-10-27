@@ -82,8 +82,8 @@ sub create {
         'order_details',
         {
             name        => '배송비',
-            price       => $SHIPPING_FEE * 2,
-            final_price => $SHIPPING_FEE * 2,
+            price       => $SHIPPING_FEE,
+            final_price => $SHIPPING_FEE,
         }
     );
 
