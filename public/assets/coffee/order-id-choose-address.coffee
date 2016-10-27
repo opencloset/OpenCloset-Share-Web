@@ -50,6 +50,7 @@ $ ->
 
   STATUS =
     payment: 19
+    choose_clothes: 48
 
   $('#btn-next-step').click (e) ->
     e.preventDefault()
@@ -58,6 +59,19 @@ $ ->
     $.ajax $this.prop('href'),
       type: 'PUT'
       data: "#{$('#form-address').serialize()}&status_id=#{STATUS.payment}"
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
+
+  $('#btn-choose-clothes:not(.disabled)').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax location.href,
+      type: 'PUT'
+      data: { status_id: STATUS.choose_clothes }
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
