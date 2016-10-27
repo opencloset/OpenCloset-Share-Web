@@ -199,7 +199,7 @@ sub create {
         my $error  = '입력값이 유효하지 않습니다: ' . join( ', ', @$failed );
         my $input  = $v->input;
         $self->flash( input => $input, error => $error );
-        return $self->redirect_to('/users/new');
+        return $self->redirect_to('/signup');
     }
 
     my $name     = $v->param('name');
@@ -218,14 +218,14 @@ sub create {
         my $error = "이미 사용중인 email 입니다: $email";
         my $input = $v->input;
         $self->flash( input => $input, error => $error );
-        return $self->redirect_to('/users/new');
+        return $self->redirect_to('/signup');
     }
 
     if ( $password ne $retype ) {
         my $error = "비밀번호를 다르게 입력하셨습니다.";
         my $input = $v->input;
         $self->flash( input => $input, error => $error );
-        return $self->redirect_to('/users/new');
+        return $self->redirect_to('/signup');
     }
 
     my $guard = $self->schema->txn_scope_guard;
