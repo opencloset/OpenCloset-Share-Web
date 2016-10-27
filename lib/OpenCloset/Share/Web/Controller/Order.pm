@@ -32,8 +32,9 @@ sub add {
 =cut
 
 sub create {
-    my $self = shift;
-    my $user = $self->stash('user');
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
@@ -56,13 +57,13 @@ sub create {
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $guard = $self->schema->txn_scope_guard;
-    my $order = $self->schema->resultset('Order')->create(
-        {
-            user_id     => $user->id,
-            status_id   => $status_id,
-            wearon_date => $wearon_date,
-        }
-    );
+    my $param = {
+        user_id     => $user->id,
+        status_id   => $status_id,
+        wearon_date => $wearon_date,
+    };
+    map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
+    my $order = $self->schema->resultset('Order')->create($param);
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
