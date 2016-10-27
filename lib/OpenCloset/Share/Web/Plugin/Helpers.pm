@@ -553,8 +553,6 @@ sub update_parcel_status {
 =head2 categories($order)
 
     % my @categories = categories($order)
-    # 자켓, 팬츠, 셔츠, 타이
-    # clothes2status($clothes), ...
 
 =cut
 

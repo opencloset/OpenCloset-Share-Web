@@ -74,7 +74,8 @@
 </ul>
 % }
 
-% if ($order->status_id != $CHOOSE_CLOTHES) {
+% my $status_id = $order->status_id;
+% if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
 <hr>
 <h4>
   배송주소
