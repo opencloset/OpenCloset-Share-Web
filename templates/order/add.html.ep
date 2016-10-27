@@ -75,6 +75,33 @@
 
   <hr>
 
+  <ul id="list-shirt-type" class="list-inline hide">
+    <li>
+      <i class="fa fa-male fa-fw" aria-hidden="true"></i>
+    </li>
+    <li>
+      % for my $type ("흰색", "하늘색") {
+      <label class="radio-inline">
+        <input class="radio" name="shirt-type" type="radio" value="<%= $type %>"> <%= $type %> 셔츠
+      </label>
+      % }
+    </li>
+  </ul>
+  <ul id="list-blouse-type" class="list-inline hide">
+    <li>
+      <i class="fa fa-female fa-fw" aria-hidden="true"></i>
+    </li>
+    <li>
+      % for my $type ("라운드 반팔", "라운드 민소매", "탑", "셔츠", "승무원") {
+      <label class="radio-inline">
+        <input class="radio" name="blouse-type" type="radio" value="<%= $type %>"> <%= $type %> 블라우스
+      </label>
+      % }
+    </li>
+  </ul>
+
+  <hr>
+
   <h3>의류착용일</h3>
   <p>
     달력에서 의류착용일을 선택해주세요.<br>
