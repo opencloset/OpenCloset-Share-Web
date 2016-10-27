@@ -7,7 +7,7 @@
 %   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
 % ];
 
-%= include 'partials/guide';
+%= include 'partials/guide', active => 4;
 
 <hr>
 

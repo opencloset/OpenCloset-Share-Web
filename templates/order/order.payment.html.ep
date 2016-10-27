@@ -10,7 +10,7 @@
 
 % use OpenCloset::Constants::Category qw/%PRICE/;
 
-%= include 'partials/guide';
+%= include 'partials/guide', active => 5;
 
 <hr>
 

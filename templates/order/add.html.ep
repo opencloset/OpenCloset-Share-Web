@@ -10,7 +10,7 @@
 % ];
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %LABEL_MAP %PRICE/;
 
-%= include 'partials/guide';
+%= include 'partials/guide', active => 2;
 
 <hr>
 

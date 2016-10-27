@@ -11,7 +11,7 @@
 %   female       => '여성용',
 % );
 
-%= include 'partials/guide';
+%= include 'partials/guide', active => 3;
 
 <div class="alert alert-warning" role="alert">
   <strong>주의!</strong>
