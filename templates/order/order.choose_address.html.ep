@@ -19,7 +19,7 @@
   배송주소
   <button id="address-search" class="btn btn-default btn-sm">
     <i class="fa fa-search" aria-hidden="true"></i>
-    주소검색
+    배송주소추가
   </button>
 </h3>
 
