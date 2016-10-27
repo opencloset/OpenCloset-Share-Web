@@ -12,7 +12,7 @@
 
 <hr>
 
-%= include 'partials/guide';
+%= include 'partials/guide', active => 0;
 
 <hr>
 
