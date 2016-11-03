@@ -60,6 +60,7 @@ sub _public_routes {
     $r->get('/welcome')->to('welcome#index')->name('welcome');
     $r->get('/features')->to('welcome#features');
     $r->get('/signup')->to('user#add');
+    $r->post('/verify')->to('user#verify');
     $r->get('/reset')->to('user#reset');
     $r->post('/reset')->to('user#reset_password');
     $r->get('/login')->to('user#login');
@@ -83,8 +84,6 @@ sub _private_routes {
     $r->get('/')->to('root#index')->name('index');
     $r->get('/logout')->to('user#logout')->name('logout');
     $r->get('/search')->to('root#search')->name('search');
-    $r->get('/verify')->to('user#verify_form');
-    $r->post('/verify')->to('user#verify');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
 
