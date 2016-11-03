@@ -193,6 +193,8 @@ sub create {
     $v->required('address2');
     $v->required('address3');
     $v->required('address4');
+    $v->required('phone')->like(qr/^01\d\-?\d{3,4}\-?\d{4}$/);
+    $v->required('verification-code')->like(qr/^\d{6}$/);
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -212,6 +214,8 @@ sub create {
     my $address2 = $v->param('address2');
     my $address3 = $v->param('address3');
     my $address4 = $v->param('address4');
+    my $phone    = $v->param('phone') =~ s/\-//gr;
+    my $code     = $v->param('verification-code');
 
     my $user = $self->schema->resultset('User')->find( { email => $email } );
     if ($user) {
@@ -224,6 +228,25 @@ sub create {
     if ( $password ne $retype ) {
         my $error = "비밀번호를 다르게 입력하셨습니다.";
         my $input = $v->input;
+        $self->flash( input => $input, error => $error );
+        return $self->redirect_to('/signup');
+    }
+
+    my $verify = $self->session('verify');
+    unless ($verify) {
+        my $error = "휴대폰 본인확인이 되지 않았습니다.";
+        my $input = $v->input;
+        delete $input->{phone};
+        delete $input->{'verification-code'};
+        $self->flash( input => $input, error => $error );
+        return $self->redirect_to('/signup');
+    }
+
+    if ( $phone ne $verify->{phone} || $code ne $verify->{code} ) {
+        my $error = "유효하지 않은 인증번호입니다.";
+        my $input = $v->input;
+        delete $input->{phone};
+        delete $input->{'verification-code'};
         $self->flash( input => $input, error => $error );
         return $self->redirect_to('/signup');
     }
@@ -248,21 +271,14 @@ sub create {
             address4 => $address4,
             birth    => $birth,
             gender   => $gender,
+            phone    => $phone,
         }
     );
     $guard->commit;
 
     $self->session( access_token => $user->id );
-    $self->redirect_to('/verify');
+    $self->redirect_to('index');
 }
-
-=head2 verify_form
-
-    GET /verify
-
-=cut
-
-sub verify_form { shift->render( template => 'user/verify' ) }
 
 =head2 verify
 
@@ -271,39 +287,27 @@ sub verify_form { shift->render( template => 'user/verify' ) }
 =cut
 
 sub verify {
-    my $self      = shift;
-    my $user_info = $self->stash('user_info');
+    my $self = shift;
 
     my $v = $self->validation;
-    $v->required('phone')->like(qr/^01[01679]\d{7,8}$/);
-    $v->optional('code')->like(qr/^\d{6}$/);
+    $v->required('phone')->like(qr/^01\d\-?\d{3,4}\-?\d{4}$/);
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
         return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
     }
 
-    my $phone = $v->param('phone');
-    my $code  = $v->param('code');
+    my $phone = $v->param('phone') =~ s/\-//gr;
+    my $user_info = $self->schema->resultset('UserInfo')->find( { phone => $phone } );
+    return $self->error( 400, "중복된 휴대폰번호 입니다: $phone" ) if $user_info;
 
-    my $ui = $self->schema->resultset('UserInfo')->find( { phone => $phone } );
-    return $self->error( 400, "중복된 휴대폰번호 입니다: $phone" ) if $ui;
-
-    if ($code) {
-        my $verify = delete $self->session->{verify};
-        return $self->error( 400, "잘못된 인증번호입니다: $code" ) if $code ne $verify->{code} || '';
-
-        $user_info->update( { phone => $phone } );
-        return $self->redirect_to('index');
-    }
-
-    $code = String::Random->new->randregex('\d\d\d\d\d\d');
+    my $code = String::Random->new->randregex('\d\d\d\d\d\d');
     $self->log->info("[$phone] 열린옷장 인증번호: $code");
     my $sms = $self->sms( $phone, "열린옷장 인증번호: $code" );
     return $self->error( 500, "Failed to send a SMS to $phone" ) unless $sms;
 
     $self->session( verify => { phone => $phone, code => $code } );
-    $self->redirect_to('/verify');
+    $self->render( text => 'Sent a verification code successfully' );
 }
 
 1;

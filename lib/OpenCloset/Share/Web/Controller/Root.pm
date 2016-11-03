@@ -19,8 +19,6 @@ sub index {
     my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
 
-    return $self->redirect_to('/verify') unless $user_info->phone;
-
     my $failed = $self->check_measurement( $user, $user_info );
     my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
     $self->render( failed => $failed, orders => $orders );
