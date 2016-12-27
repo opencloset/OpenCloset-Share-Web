@@ -13,7 +13,7 @@
       % my $url = url_for('/clothes/' . $top->code);
       % $url = $url->query(order_id => $order_id) if $order_id;
       <a class="thumbnail" href="<%= $url %>">
-        <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top)) %>">
+        <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top), size => 200) %>">
       </a>
     </div>
     % }
