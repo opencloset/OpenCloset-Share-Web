@@ -35,7 +35,7 @@
     %   }
     <div class="col-xs-6 col-md-3">
       <a class="thumbnail" href="<%= $image %>" target="_blank">
-        <img alt="<%= $clothes->code %>" src="<%= $image %>">
+        <img alt="<%= $clothes->code %>" src="<%= $image %>?s=200">
       </a>
     </div>
     % }
