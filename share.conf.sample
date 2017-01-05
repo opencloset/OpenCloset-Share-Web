@@ -23,4 +23,17 @@
     notify     => {
         from => 'info@theopencloset.net',
     },
+    oavatar => {
+        shirt     => 'https://avatar.theopencloset.net/avatar/c9507f538a6e79c9bd6229981d6e05a3',
+        shoes     => 'https://avatar.theopencloset.net/avatar/b0a8b6f820479900e34d34f6b8a4af73',
+        belt      => 'https://avatar.theopencloset.net/avatar/960dc476150dbdbee160fe289705baf3',
+        jacket    => 'https://avatar.theopencloset.net/avatar/f4ebf8a096b6deffc44d73b12989ef91',
+        pants     => 'https://avatar.theopencloset.net/avatar/ca425b88f047ce8ec45ee90e813ada91',
+        skirt     => 'https://avatar.theopencloset.net/avatar/25035b696adab5392334d25a32956a21',
+        tie       => 'https://avatar.theopencloset.net/avatar/bd352c8df49c325dd22ad8867e6ef874',
+        onepiece  => 'https://avatar.theopencloset.net/avatar/e81502a921e78c4ddb017a555586664c',
+        waistcoat => 'https://avatar.theopencloset.net/avatar/5f65e2487f5432ea38107d62b4f8cc12',
+        coat      => 'https://avatar.theopencloset.net/avatar/77eaa26cdfae788af243f9fb04650eb3',
+        blouse    => 'https://avatar.theopencloset.net/avatar/2bbbc09c29efa9bebd8718aa6f9d7bae',
+    },
 };
