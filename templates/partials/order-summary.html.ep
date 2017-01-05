@@ -61,13 +61,13 @@
 % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
 % if ($details->count) {
 <hr>
-<div class="row choose-clothes-panel">
+<ul class="list-inline choose-clothes-panel">
   % my @desc;
   % while (my $detail = $details->next) {
-  <p>
+  <li>
     % my $code = trim_code($detail->clothes_code);
     % my $clothes = $detail->clothes;
-    <div class="thumbnail col-xs-2 col-md-1">
+    <div class="thumbnail">
       <a href="<%= url_for('/clothes/' . $code) %>">
         <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
       </a>
@@ -77,11 +77,11 @@
         </p>
       </div>
     </div>
-  </p>
+  </li>
     % my $desc = $detail->desc;
     % push @desc, $desc if $desc;
   % }
-</div>
+</ul>
 
 <ul>
   % for my $desc (@desc) {
