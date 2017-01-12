@@ -102,6 +102,23 @@
 
   <hr>
 
+  <h3>선호하는 색상</h3>
+  <div class="row">
+    <div class="col-sm-4">
+      <select name="pre_color" class="form-control">
+        <option value="staff">직원추천</option>
+        <option value="dark">어두운계열</option>
+        <option value="black">블랙</option>
+        <option value="navy">네이비</option>
+        <option value="charcoalgray">차콜그레이</option>
+        <option value="gray">그레이</option>
+        <option value="brown">브라운</option>
+      </select>
+    </div>
+  </div>
+
+  <hr>
+
   <h3>의류착용일</h3>
   <p>
     달력에서 의류착용일을 선택해주세요.<br>
