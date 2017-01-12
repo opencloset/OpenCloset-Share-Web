@@ -11,6 +11,7 @@
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %LABEL_MAP %PRICE/;
 
 %= include 'partials/guide', active => 2;
+% my $cnt;
 
 <hr>
 
@@ -80,10 +81,20 @@
       <i class="fa fa-male fa-fw" aria-hidden="true"></i>
     </li>
     <li>
+      % $cnt = 0;
       % for my $type ("흰색", "하늘색") {
       <label class="radio-inline">
-        <input class="radio" name="shirt-type" type="radio" value="<%= $type %>"> <%= $type %> 셔츠
+        <input
+            class="radio"
+            name="shirt-type"
+            type="radio"
+            value="<%= $type %>"
+            % unless ($cnt) {
+            checked
+            % }
+        > <%= $type %> 셔츠
       </label>
+      % $cnt++;
       % }
     </li>
   </ul>
@@ -92,10 +103,20 @@
       <i class="fa fa-female fa-fw" aria-hidden="true"></i>
     </li>
     <li>
-      % for my $type ("라운드 반팔", "라운드 민소매", "탑", "셔츠", "승무원") {
+      % $cnt = 0;
+      % for my $type ("라운드 반팔", "라운드 민소매", "탑", "셔츠", "승무원", "라운드 긴소매") {
       <label class="radio-inline">
-        <input class="radio" name="blouse-type" type="radio" value="<%= $type %>"> <%= $type %> 블라우스
+        <input
+            class="radio"
+            name="blouse-type"
+            type="radio"
+            value="<%= $type %>"
+            % unless ($cnt) {
+            checked
+            % }
+        > <%= $type %> 블라우스
       </label>
+      % $cnt++;
       % }
     </li>
   </ul>
