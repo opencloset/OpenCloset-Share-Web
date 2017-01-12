@@ -41,6 +41,7 @@ sub create {
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
+    $v->optional('pre_color')->in(qw/staff dark black navy charcoalgray gray brown/);
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -63,6 +64,7 @@ sub create {
         user_id     => $user->id,
         status_id   => $status_id,
         wearon_date => $wearon_date,
+        pre_color   => $v->param('pre_color'),
     };
     map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
     my $order = $self->schema->resultset('Order')->create($param);
