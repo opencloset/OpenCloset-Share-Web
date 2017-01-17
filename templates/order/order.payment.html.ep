@@ -2,7 +2,7 @@
 % title $title, jses => [
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
-%   'https://service.iamport.kr/js/iamport.payment-1.1.1.js',
+%   'https://service.iamport.kr/js/iamport.payment-1.1.2.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
 %   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css'
@@ -28,7 +28,7 @@
 %   $addr  = $user_info->address2 . ' ' . $user_info->address4;
 %   $addr2 = $user_info->address3 . ' ' . $user_info->address4;
 % }
-<div id="payment-info" data-email="<%= $user->email %>" data-name="<%= $user->name %>" data-phone="<%= $user_info->phone %>" data-address1="<%= $addr %>" data-address2="<%= $addr2 %>"></div>
+<div id="payment-info" data-email="<%= $user->email %>" data-name="<%= $user->name %>" data-phone="<%= $user_info->phone %>" data-address1="<%= $addr %>" data-address2="<%= $addr2 %>" data-order-id="<%= $order->id %>"></div>
 
 <div class="form-group col-md-4">
   <select id="payment-method" name="pay_method" class="form-control">
