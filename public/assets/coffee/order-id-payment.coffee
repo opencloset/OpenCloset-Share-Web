@@ -39,7 +39,7 @@ $ ->
       else
         console.log '** FAIL'
 
-  ### FIXME: 테스트를 위해서 결제를 생략하고, 상태변경을 요청
+  ###
   STATUS =
     choose_address: 49
     payment_done: 50
@@ -91,3 +91,4 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+  ###
