@@ -1,0 +1,5 @@
+% title "Internal exception";
+% layout 'error';
+
+<h2>오류가 발생했습니다.</h2>
+<p><%= $error %></p>
