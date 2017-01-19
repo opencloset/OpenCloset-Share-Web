@@ -51,11 +51,6 @@ sub create_payment {
     );
 
     return $self->error( 500, "Failed to create a new payment history" ) unless $history;
-
-    if ( $status && $status eq 'paid' ) {
-        $self->payment_done($order);
-    }
-
     $self->render( json => { $history->get_columns } );
 }
 

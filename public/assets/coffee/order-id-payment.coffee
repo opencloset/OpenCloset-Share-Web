@@ -3,8 +3,9 @@ $ ->
   IMP.init('imp77873889')
 
   STATUS =
-    choose_address: 49
-    payment_done: 50
+    choose_address: 49  # 주소선택
+    payment_done: 50    # 결제완료
+    waiting_deposit: 56 # 입금대기
 
   $('#btn-payment').click (e) ->
     e.preventDefault()
@@ -55,6 +56,18 @@ $ ->
             error: (jqXHR, textStatus, errorThrown) ->
             complete: (jqXHR, textStatus) ->
               $this.removeClass('disabled')
+
+          ## ready 라면 입금대기로 상태변경
+          ## paid 라면 결제완료로 상태변경
+          if res.success and res.status in ['paid', 'ready']
+            status = if res.status is 'paid' then 'payment_done' else 'waiting_deposit'
+            $.ajax location.href,
+              type: 'PUT'
+              data: { status_id: STATUS[status] }
+              success: (data, textStatus, jqXHR) ->
+                location.reload()
+              error: (jqXHR, textStatus, errorThrown) ->
+              complete: (jqXHR, textStatus) ->
 
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
