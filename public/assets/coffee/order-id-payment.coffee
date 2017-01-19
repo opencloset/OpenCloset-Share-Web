@@ -17,7 +17,7 @@ $ ->
     IMP.request_pay
       pg:           'html5_inicis'
       pay_method:   $('#payment-method').val()    # 'card':신용카드, 'trans':실시간계좌이체, 'vbank':가상계좌, 'phone':휴대폰소액결제
-      merchant_uid: 'merchant_' + new Date().getTime()
+      merchant_uid: $info.data('merchant-uid')
       name:         "#{name}##{order_id}"
       amount:       $('#order-price').data('price')
       buyer_email:  $info.data('email')
