@@ -26,37 +26,29 @@ $ ->
       buyer_addr:   $info.data('address1')
       notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
     , (res) ->
-      console.log res
-      if res.success
-        $.ajax location.href,
-          type: 'PUT'
-          data: { status_id: STATUS.payment_done }
-          success: (data, textStatus, jqXHR) ->
-            # location.reload()
-            console.log '** SUCCESS'
-          error: (jqXHR, textStatus, errorThrown) ->
-          complete: (jqXHR, textStatus) ->
-            $this.removeClass('disabled')
-      else
-        console.log '** FAIL'
+      data =
+        order_id: order_id
+        dump: JSON.stringify(res)
+        imp_uid: res.imp_uid
+        merchant_uid: res.merchant_uid
+        amount: res.paid_amount
+        status: res.status
+        pg_provider: res.pg_provider
+        pay_method: res.pay_method
 
-  ###
-  STATUS =
-    choose_address: 49
-    payment_done: 50
+      unless res.success
+        $.growl.error({ title: '결제실패', message: res.error_msg })
 
-  $('#btn-payment').click (e) ->
-    e.preventDefault()
-    $this = $(@)
-    $this.addClass('disabled')
-    $.ajax location.href,
-      type: 'PUT'
-      data: { status_id: STATUS.payment_done }
-      success: (data, textStatus, jqXHR) ->
-        location.reload()
-      error: (jqXHR, textStatus, errorThrown) ->
-      complete: (jqXHR, textStatus) ->
-        $this.removeClass('disabled')
+      res.order_id = order_id
+      res.dump = JSON.stringify(res)
+      $.ajax '/payments/histories',
+        type: 'POST'
+        dataType: 'json'
+        data: data
+        success: (data, textStatus, jqXHR) ->
+        error: (jqXHR, textStatus, errorThrown) ->
+        complete: (jqXHR, textStatus) ->
+          $this.removeClass('disabled')
 
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
@@ -87,6 +79,24 @@ $ ->
     $.ajax location.href,
       type: 'PUT'
       data: { status_id: STATUS.choose_address }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
+
+  ###
+  STATUS =
+    choose_address: 49
+    payment_done: 50
+
+  $('#btn-payment').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax location.href,
+      type: 'PUT'
+      data: { status_id: STATUS.payment_done }
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
