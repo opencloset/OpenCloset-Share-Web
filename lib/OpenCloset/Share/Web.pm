@@ -70,7 +70,7 @@ sub _public_routes {
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');
-    $r->post('/webhooks/import')->to('root#import_hook');
+    $r->post('/webhooks/iamport')->to('hook#iamport');
 }
 
 sub _private_routes {
