@@ -43,4 +43,8 @@
         coat      => 'https://avatar.theopencloset.net/avatar/77eaa26cdfae788af243f9fb04650eb3',
         blouse    => 'https://avatar.theopencloset.net/avatar/2bbbc09c29efa9bebd8718aa6f9d7bae',
     },
+    iamport => {
+        key    => $ENV{OPENCLOSET_IAMPORT_API_KEY},
+        secret => $ENV{OPENCLOSET_IAMPORT_API_SECRET},
+    }
 };

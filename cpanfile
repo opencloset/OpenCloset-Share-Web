@@ -17,3 +17,4 @@ requires 'String::Random';
 requires 'OpenCloset::Common';
 requires 'OpenCloset::Plugin::Helpers';
 requires 'OpenCloset::Schema';
+requires 'Iamport::REST::Client';

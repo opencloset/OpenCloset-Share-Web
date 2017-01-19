@@ -7,6 +7,7 @@ use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
+use Time::HiRes qw/gettimeofday/;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
@@ -55,6 +56,7 @@ sub register {
     $app->helper( send_mail            => \&send_mail );
     $app->helper( check_measurement    => \&check_measurement );
     $app->helper( category_price       => \&category_price );
+    $app->helper( merchant_uid         => \&merchant_uid );
 }
 
 =head1 HELPERS
@@ -315,6 +317,7 @@ sub timezone {
 sub payment_done {
     my ( $self, $order ) = @_;
     return unless $order;
+    return $order if $order->status_id == $PAYMENT_DONE;
 
     $order->update( { status_id => $PAYMENT_DONE } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
@@ -728,6 +731,22 @@ sub category_price {
 
     return $tie_price if $category;
     return $price;
+}
+
+=head2 merchant_uid
+
+    my $merchant_uid = $self->merchant_uid;    # merchant_1484777630841
+
+    ## same as javascript
+    'merchant_' + new Date().getTime()
+
+=cut
+
+sub merchant_uid {
+    my $self = shift;
+    my ( $sec, $millis ) = gettimeofday;
+    $millis = int( $millis / 1000 );
+    return 'merchant_' . $sec . $millis;
 }
 
 1;
