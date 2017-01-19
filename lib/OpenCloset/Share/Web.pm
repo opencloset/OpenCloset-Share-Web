@@ -89,6 +89,7 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
+    $r->post('/payments/histories')->to('payment#create_history');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
