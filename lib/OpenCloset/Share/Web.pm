@@ -89,7 +89,7 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
-    $r->post('/payments/histories')->to('payment#create_history');
+    $r->post('/payments')->to('payment#create_payment');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
@@ -106,6 +106,7 @@ sub _private_routes {
     $order->delete('/')->to('order#delete_order')->name('order.delete');
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
+    $order->post('/payments')->to('order#create_payment');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');

@@ -5,13 +5,13 @@ has schema => sub { shift->app->schema };
 
 =head1 METHODS
 
-=head2 create_history
+=head2 create_payment
 
-    POST /payments/histories
+    POST /payments
 
 =cut
 
-sub create_history {
+sub create_payment {
     my $self = shift;
 
     my $v = $self->validation;
