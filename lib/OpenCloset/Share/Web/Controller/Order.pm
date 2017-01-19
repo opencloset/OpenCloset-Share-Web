@@ -377,4 +377,40 @@ sub update_parcel {
     );
 }
 
+=head2 create_payment
+
+    POST /order/:id/payments
+
+=cut
+
+sub create_payment {
+    my $self  = shift;
+    my $order = $self->stash('order');
+
+    my $amount = 3_000; # 배송비
+    for my $c ( $self->categories($order) ) {
+        $amount += $PRICE{$c};
+    }
+
+    my $iamport = $self->config->{iamport};
+    my $key     = $iamport->{key};
+    my $secret  = $iamport->{secret};
+    my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
+
+    my $merchant_uid = $self->merchant_uid;
+    my $json = $client->create_prepare( $merchant_uid, $amount );
+    return $self->error( 500, "The payment agency failed to process" ) unless $json;
+
+    my $history = $order->create_related(
+        'payment_histories',
+        {
+            cid    => $merchant_uid,
+            amount => $amount,
+        }
+    );
+
+    return $self->error( 500, "Failed to create a new payment_history" ) unless $history;
+    $self->render( json => { $history->get_columns } );
+}
+
 1;
