@@ -2,11 +2,13 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
+use Encode qw/encode_utf8/;
 use Iamport::REST::Client;
+use JSON qw/decode_json/;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT/;
 
 has schema => sub { shift->app->schema };
 
@@ -208,6 +210,19 @@ sub order {
             template         => 'order/order.payment',
             user_address     => $order->user_address,
             fine_wearon_date => $fine,
+        );
+    }
+    elsif ( $status_id == $WAITING_DEPOSIT ) {
+        my $payment = $order->payment_histories( { status => 'ready' } )->next;
+        return $self->error( 404, "Not found payment" ) unless $payment;
+
+        my $json = $payment->dump;
+        return $self->error( 404, "Not found payment info" ) unless $json;
+
+        my $payment_info = decode_json( encode_utf8($json) );
+        $self->render(
+            template     => 'order/order.waiting_deposit',
+            payment_info => $payment_info
         );
     }
     else {

@@ -1,0 +1,24 @@
+% layout 'default';
+% title $title;
+
+%= include 'partials/guide', active => 5;
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<p>주문이 완료되었습니다.</p>
+
+<hr>
+
+<p>
+  <samp><%= $payment_info->{vbank_date} %></samp> 까지
+</p>
+
+<p class="payment-info">
+  %= $payment_info->{vbank_name}
+  <mark><samp><%= $payment_info->{vbank_num} %></samp></mark> 으로
+  <code><%= commify($payment_info->{paid_amount}) %></code>원 입금해주세요.
+</p>
