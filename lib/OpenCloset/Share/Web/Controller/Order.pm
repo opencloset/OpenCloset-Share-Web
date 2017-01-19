@@ -204,35 +204,10 @@ sub order {
             $fine = 0;
         }
 
-        my $iamport = $self->config->{iamport};
-        my $key     = $iamport->{key};
-        my $secret  = $iamport->{secret};
-        my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
-
-        my $amount = 3_000; # 배송비
-        for my $c ( $self->categories($order) ) {
-            $amount += $PRICE{$c};
-        }
-
-        my $merchant_uid = $self->merchant_uid;
-        my $json = $client->create_prepare( $merchant_uid, $amount );
-        return $self->error( 500, "The payment agency failed to process" ) unless $json;
-
-        my $history = $order->create_related(
-            'payment_histories',
-            {
-                cid    => $merchant_uid,
-                amount => $amount,
-            }
-        );
-
-        return $self->error( 500, "Failed to create a new payment_history" ) unless $history;
-
         $self->render(
             template         => 'order/order.payment',
             user_address     => $order->user_address,
             fine_wearon_date => $fine,
-            merchant_uid     => $history->cid,
         );
     }
     else {
