@@ -14,7 +14,7 @@ requires 'Path::Tiny';
 requires 'String::Random';
 
 # cpan.theopencloset.net
-requires 'OpenCloset::Common', 'v0.0.9';
+requires 'OpenCloset::Common', 'v0.0.10';
 requires 'OpenCloset::Plugin::Helpers';
 requires 'OpenCloset::Schema';
 requires 'Iamport::REST::Client';
