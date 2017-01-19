@@ -24,7 +24,7 @@ $ ->
       buyer_name:   name
       buyer_tel:    $info.data('phone')
       buyer_addr:   $info.data('address1')
-      notice_url:   'https://test-share.theopencloset.net/webhooks/import'
+      notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
     , (res) ->
       console.log res
       if res.success
