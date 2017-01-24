@@ -41,7 +41,7 @@ $ ->
             dataType: 'json'
             data:
               order_id: order_id
-              dump: JSON.stringify(res)
+              detail: JSON.stringify(res)
               imp_uid: res.imp_uid
               merchant_uid: res.merchant_uid
               amount: res.paid_amount
