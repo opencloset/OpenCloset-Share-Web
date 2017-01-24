@@ -103,6 +103,7 @@ sub reset_password {
     );
 
     $self->send_mail( encode_utf8( $msg->as_string ) );
+    $self->log->info( "reset password url: " . $self->url_for('/login')->query(email => $email, password => $digest)->to_abs );
 
     $self->flash( done => 1 );
     $self->redirect_to('/reset');
