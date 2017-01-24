@@ -16,16 +16,16 @@ has schema => sub { shift->app->schema };
 sub payment_id {
     my $self       = shift;
     my $payment_id = $self->param("payment_id");
-    my $order      = $self->schema->resultset("Payment")->find( { id => $payment_id } );
+    my $payment    = $self->schema->resultset("Payment")->find( { id => $payment_id } );
 
-    unless ($order) {
+    unless ($payment) {
         $self->error( 404, "Payment not found: $payment_id" );
         return;
     }
 
     my $user      = $self->stash("user");
     my $user_info = $self->stash("user_info");
-    if ( $user_info->staff != 1 && $user->id != $order->user_id ) {
+    if ( $user_info->staff != 1 && $user->id != $payment->order->user_id ) {
         $self->error( 400, "Permission denied" );
         return;
     }
