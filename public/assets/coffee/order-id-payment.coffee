@@ -46,8 +46,6 @@ $ ->
           unless res.success
             $.growl.error({ title: '결제실패', message: res.error_msg })
 
-          res.order_id = order_id
-          res.dump = JSON.stringify(res)
           $.ajax '/payments',
             type: 'POST'
             dataType: 'json'
