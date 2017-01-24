@@ -71,7 +71,7 @@ sub update_payment {
     return $self->error( 400, "Not match amount: $payment_id:$cid" )        unless $payment->amount eq $amount;
 
     my ( $payment_log, $error ) = do {
-        my $guard = $self->DB->txn_scope_guard;
+        my $guard = $self->schema->txn_scope_guard;
         try {
             $payment->update(
                 {
