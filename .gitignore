@@ -8,5 +8,11 @@ public/assets/dist
 # config
 share.conf
 
+# hypnotoad
+hypnotoad.pid
+
+# log
+log/
+
 # else
 .cookie.txt
