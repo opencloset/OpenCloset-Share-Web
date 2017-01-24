@@ -12,6 +12,7 @@ requires 'Mojolicious::Plugin::Number::Commify';
 requires 'Parcel::Track';
 requires 'Path::Tiny';
 requires 'String::Random';
+requires 'Try::Tiny;';
 
 # cpan.theopencloset.net
 requires 'OpenCloset::Common', 'v0.0.10';

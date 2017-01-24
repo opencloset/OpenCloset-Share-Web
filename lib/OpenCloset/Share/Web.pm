@@ -81,6 +81,7 @@ sub _private_routes {
     my $measurements = $root->under('/measurements')->to('user#auth');
     my $clothes      = $root->under('/clothes')->to('user#auth');
     my $orders       = $root->under('/orders')->to('user#auth');
+    my $payments     = $root->under('/payments')->to('user#auth');
     my $address      = $root->under('/address')->to('user#auth');
     my $sms          = $root->under('/sms')->to('user#auth');
 
@@ -89,7 +90,6 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
-    $r->post('/payments')->to('payment#create_payment');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
@@ -107,6 +107,9 @@ sub _private_routes {
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
     $order->post('/payments')->to('order#create_payment');
+
+    my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
+    $payment->put('/')->to('payment#update_payment');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');

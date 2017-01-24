@@ -46,8 +46,9 @@ $ ->
           unless res.success
             $.growl.error({ title: '결제실패', message: res.error_msg })
 
-          $.ajax '/payments',
-            type: 'POST'
+          payment_id = res.id
+          $.ajax "/payments/#{payment_id}",
+            type: 'PUT'
             dataType: 'json'
             data: data
             success: (data, textStatus, jqXHR) ->
@@ -69,7 +70,6 @@ $ ->
 
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
-
 
   $('#datepicker-wearon-date').datepicker
     language: 'kr'

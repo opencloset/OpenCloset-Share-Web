@@ -213,13 +213,17 @@ sub order {
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
-        my $payment = $order->payment_histories( { status => 'ready' } )->next;
+        my $payment = $order->payments( { status => 'ready' }, { order_by => { -desc => "id" } } )->next;
         return $self->error( 404, "Not found payment" ) unless $payment;
 
-        my $json = $payment->dump;
-        return $self->error( 404, "Not found payment info" ) unless $json;
+        my $payment_id = $payment->id;
+        my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
+        return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
 
-        my $payment_info = decode_json( encode_utf8($json) );
+        my $detail = $payment_log->detail;
+        return $self->error( 404, "Not found payment info" ) unless $detail;
+
+        my $payment_info = decode_json( encode_utf8($detail) );
         $self->render(
             template     => 'order/order.waiting_deposit',
             payment_info => $payment_info
@@ -416,16 +420,16 @@ sub create_payment {
     my $json = $client->create_prepare( $merchant_uid, $amount );
     return $self->error( 500, "The payment agency failed to process" ) unless $json;
 
-    my $history = $order->create_related(
-        'payment_histories',
+    my $payment = $order->create_related(
+        "payments",
         {
             cid    => $merchant_uid,
             amount => $amount,
         }
     );
 
-    return $self->error( 500, "Failed to create a new payment_history" ) unless $history;
-    $self->render( json => { $history->get_columns } );
+    return $self->error( 500, "Failed to create a new payment" ) unless $payment;
+    $self->render( json => { $payment->get_columns } );
 }
 
 1;

@@ -1,24 +1,24 @@
 package OpenCloset::Share::Web::Command::iamport::cancel;
 
-use Mojo::Base 'Mojolicious::Command';
+use Mojo::Base "Mojolicious::Command";
 
 use Iamport::REST::Client;
 use JSON qw/decode_json/;
 
 use OpenCloset::Schema;
 
-has description => 'Cancel order payment';
-has usage       => "Usage: APPLICATION iamport cancel [ORDER-ID]\n";
+has description => "Cancel order payment";
+has usage       => "Usage: APPLICATION iamport cancel <payment_id>\n";
 
 =encoding utf-8
 
 =head1 NAME
 
-OpenCloset::Share::Web::Command::iamport::cancel - cancel paid order
+OpenCloset::Share::Web::Command::iamport::cancel - cancel payment
 
 =head1 SYNOPSIS
 
-    $ MOJO_CONFIG=/path/to/share.conf ./script/share iamport cancel <order_id>
+    $ MOJO_CONFIG=/path/to/share.conf ./script/share iamport cancel <payment_id>
 
 =head1 METHODS
 
@@ -27,16 +27,17 @@ OpenCloset::Share::Web::Command::iamport::cancel - cancel paid order
 =cut
 
 sub run {
-    my ( $self, $order_id ) = @_;
+    my ( $self, $payment_id ) = @_;
 
-    die $self->usage unless $order_id;
+    die $self->usage unless $payment_id;
 
-    my $schema = $self->app->schema;
-    my $order = $schema->resultset('Order')->find( { id => $order_id } );
-    die "Not found order: $order_id" unless $order;
+    my $schema  = $self->app->schema;
+    my $payment = $schema->resultset("Payment")->find($payment_id);
+    die "Not found payment: $payment_id" unless $payment;
 
-    my $payment = $order->payment_histories( { status => 'paid' } )->next;
-    die "Not found paid payment" unless $payment;
+    my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
+    die "Not found payment log" unless $payment_log;
+    die "Not paid payment" unless $payment_log->status eq "paid";
 
     my $iamport = $self->config->{iamport};
     my $key     = $iamport->{key};
@@ -53,23 +54,21 @@ sub run {
     my $pay_method = $data->{response}{pay_method};
 
     die "Unknown paid method" unless $pay_method;
-    die "Not supported vbank" if $pay_method eq 'vbank'; # 환불계좌를 입력해야 함
+    die "Not supported vbank" if $pay_method eq "vbank"; # 환불계좌를 입력해야 함
 
-    $json = $client->cancel( imp_uid => $imp_uid, merchant_uid => $merchant_uid );
+    $json = $client->cancel(
+        imp_uid      => $imp_uid,
+        merchant_uid => $merchant_uid,
+    );
     die "Failed cancel request" unless $json;
 
     $data = decode_json($json);
-    $order->create_related(
-        'payment_histories',
+    $payment->create_related(
+        "payment_logs",
         {
-            sid        => $imp_uid,
-            cid        => $merchant_uid,
-            amount     => $data->{response}{cancel_amount},
-            status     => $data->{response}{status},
-            vendor     => $data->{response}{pg_provider},
-            pay_method => $data->{response}{pay_method},
-            dump       => $json,
-        }
+            status => $data->{response}{status},
+            detail => $json,
+        },
     );
 }
 
