@@ -33,24 +33,21 @@ $ ->
           buyer_addr:   $info.data('address1')
           notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
         , (res) ->
-          data =
-            order_id: order_id
-            dump: JSON.stringify(res)
-            imp_uid: res.imp_uid
-            merchant_uid: res.merchant_uid
-            amount: res.paid_amount
-            status: res.status
-            pg_provider: res.pg_provider
-            pay_method: res.pay_method
-
           unless res.success
             $.growl.error({ title: '결제실패', message: res.error_msg })
 
-          payment_id = res.id
-          $.ajax "/payments/#{payment_id}",
+          $.ajax "/payments/#{data.id}",
             type: 'PUT'
             dataType: 'json'
-            data: data
+            data:
+              order_id: order_id
+              dump: JSON.stringify(res)
+              imp_uid: res.imp_uid
+              merchant_uid: res.merchant_uid
+              amount: res.paid_amount
+              status: res.status
+              pg_provider: res.pg_provider
+              pay_method: res.pay_method
             success: (data, textStatus, jqXHR) ->
             error: (jqXHR, textStatus, errorThrown) ->
             complete: (jqXHR, textStatus) ->
