@@ -749,7 +749,7 @@ sub merchant_uid {
     my ( $self, $prefix_fmt, @prefix_params ) = @_;
 
     my $prefix = $prefix_fmt ? sprintf( $prefix_fmt, @prefix_params ) : "merchant_";
-    my ( $seconds, $microseconds ) = Time::HiRes : gettimeofday;
+    my ( $seconds, $microseconds ) = Time::HiRes::gettimeofday;
     my $random = String::Random->new->randregex(q{-\w\w\w});
 
     return $prefix . $seconds . $microseconds . $random;
