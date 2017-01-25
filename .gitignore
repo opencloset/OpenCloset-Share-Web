@@ -7,3 +7,6 @@ public/assets/dist
 
 # config
 share.conf
+
+# else
+.cookie.txt
