@@ -73,12 +73,13 @@ sub update_payment {
     my ( $payment_log, $error ) = do {
         my $guard = $self->schema->txn_scope_guard;
         try {
-            $payment->update(
-                {
-                    sid    => $sid,
-                    vendor => $vendor,
-                },
+
+            my %params = (
+                sid    => $sid,
+                vendor => $vendor,
             );
+            defined $params{$_} or delete $params{$_} for keys %params;
+            $payment->update(\%params);
 
             my $pl = $payment->create_related(
                 "payment_logs",
