@@ -7,6 +7,7 @@ use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
+use String::Random;
 use Time::HiRes;
 
 use OpenCloset::Schema;
@@ -735,14 +736,12 @@ sub category_price {
 
 =head2 merchant_uid
 
-    # merchant_1484777630841
+    # merchant-1484777630841-Wfg
+    # same as javascript: merchant-' + new Date().getTime() + "-<random_3_chars>"
     my $merchant_uid = $self->merchant_uid;
 
-    # opencloset-share-3-1484777630841
+    # opencloset-share-3-1484777630841-D8d
     my $merchant_uid = $self->merchant_uid( "opencloset-share-%d-", $order->id );
-
-    ## same as javascript
-    'merchant_' + new Date().getTime()
 
 =cut
 
@@ -751,8 +750,9 @@ sub merchant_uid {
 
     my $prefix = $prefix_fmt ? sprintf( $prefix_fmt, @prefix_params ) : "merchant_";
     my ( $seconds, $microseconds ) = Time::HiRes : gettimeofday;
+    my $random = String::Random->new->randregex(q{-\w\w\w});
 
-    return "$prefix$seconds$microseconds";
+    return $prefix . $seconds . $microseconds . $random;
 }
 
 1;
