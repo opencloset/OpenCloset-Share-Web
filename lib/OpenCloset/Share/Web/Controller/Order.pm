@@ -416,7 +416,7 @@ sub create_payment {
     my $secret  = $iamport->{secret};
     my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
 
-    my $merchant_uid = $self->merchant_uid;
+    my $merchant_uid = $self->merchant_uid( "opencloset-share-%d-", $order->id );
     my $json = $client->create_prepare( $merchant_uid, $amount );
     return $self->error( 500, "The payment agency failed to process" ) unless $json;
 

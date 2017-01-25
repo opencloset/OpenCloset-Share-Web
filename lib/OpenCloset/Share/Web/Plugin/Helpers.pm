@@ -7,7 +7,7 @@ use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
-use Time::HiRes qw/gettimeofday/;
+use Time::HiRes;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
@@ -735,7 +735,11 @@ sub category_price {
 
 =head2 merchant_uid
 
-    my $merchant_uid = $self->merchant_uid;    # merchant_1484777630841
+    # merchant_1484777630841
+    my $merchant_uid = $self->merchant_uid;
+
+    # opencloset-share-3-1484777630841
+    my $merchant_uid = $self->merchant_uid( "opencloset-share-%d-", $order->id );
 
     ## same as javascript
     'merchant_' + new Date().getTime()
@@ -743,10 +747,12 @@ sub category_price {
 =cut
 
 sub merchant_uid {
-    my $self = shift;
-    my ( $sec, $millis ) = gettimeofday;
-    $millis = int( $millis / 1000 );
-    return 'merchant_' . $sec . $millis;
+    my ( $self, $prefix_fmt, @prefix_params ) = @_;
+
+    my $prefix = $prefix_fmt ? sprintf( $prefix_fmt, @prefix_params ) : "merchant_";
+    my ( $seconds, $microseconds ) = Time::HiRes : gettimeofday;
+
+    return "$prefix$seconds$microseconds";
 }
 
 1;
