@@ -213,12 +213,8 @@ sub order {
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
-        my $payment = $order->payments( { status => 'ready' }, { order_by => { -desc => "id" } } )->next;
-        return $self->error( 404, "Not found payment" ) unless $payment;
-
-        my $payment_id = $payment->id;
-        my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
-        return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
+        my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+        my $payment = $payment_log->payment;
 
         my $detail = $payment_log->detail;
         return $self->error( 404, "Not found payment info" ) unless $detail;
