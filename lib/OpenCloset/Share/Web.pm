@@ -2,6 +2,9 @@ package OpenCloset::Share::Web;
 use Mojo::Base 'Mojolicious';
 
 use Email::Valid ();
+use HTTP::CookieJar;
+use HTTP::Tiny;
+use Path::Tiny;
 
 use OpenCloset::Schema;
 
@@ -122,6 +125,39 @@ sub _extend_validator {
             return not Email::Valid->address($value);
         }
     );
+}
+
+sub _auth_opencloset {
+    my $self = shift;
+
+    my $opencloset = $self->config->{opencloset};
+    my $cookie     = path( $opencloset->{api}{cookie} )->touch;
+    my $cookiejar  = HTTP::CookieJar->new->load_cookies( $cookie->lines );
+    my $http       = HTTP::Tiny->new( timeout => 3, cookie_jar => $cookiejar );
+
+    my ($cookies) = $cookiejar->cookies_for( $opencloset->{root} );
+    my $expires   = $cookies->{expires};
+    my $now       = time;
+    if ( !$expires || $expires < $now ) {
+        my $email    = $opencloset->{api}{email};
+        my $password = $opencloset->{api}{password};
+        my $url      = $opencloset->{login};
+        my $res      = $http->post_form(
+            $url,
+            { email => $email, password => $password, remember => 1 }
+        );
+
+        ## 성공일때 응답코드가 302 인데, 이는 실패했을때와 마찬가지이다.
+        if ( $res->{status} == 302 && $res->{headers}{location} eq '/' ) {
+            $cookie->spew( join "\n", $cookiejar->dump_cookies );
+        }
+        else {
+            $self->log->error("Failed Authentication to Opencloset");
+            $self->log->error("$res->{status} $res->{reason}");
+        }
+    }
+
+    return $cookiejar;
 }
 
 1;

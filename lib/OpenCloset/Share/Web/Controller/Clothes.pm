@@ -26,13 +26,22 @@ sub recommend {
     return $self->error( 404, 'Not found user' ) unless $user;
 
     my $user_id = $user->id;
-    my $agent   = $self->agent;
-    return $self->error( 500, "Couldn't get agent" ) unless $agent;
+
+    my $cookie = $self->app->_auth_opencloset;
+    return $self->error( 500, "Failed to authentication to API server" ) unless $cookie;
+
+    my $http = HTTP::Tiny->new(
+        cookie_jar      => $cookie,
+        default_headers => {
+            cookie => "opencloset=$cookie",
+            accept => 'application/json',
+        }
+    );
 
     my $url = Mojo::URL->new( $self->config->{opencloset}{root} );
     $url->path("/api/user/$user_id/search/clothes");
 
-    my $res = $agent->get($url);
+    my $res = $http->get($url);
     return $self->error( 500, "Couldn't get recommended clothes from API server" )
         unless $self->is_success($res);
 
