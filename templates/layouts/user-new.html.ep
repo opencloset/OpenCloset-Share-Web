@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="<%= $css %>">
     % }
     <link rel="stylesheet" href="/assets/dist/css/screen.min.css">
+    %= include 'partials/config';
   </head>
   <body>
     <nav class="navbar navbar-default navbar-oc">

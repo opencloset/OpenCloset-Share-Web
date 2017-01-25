@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/assets/dist/css/welcome.min.css">
+    %= include 'partials/config';
   </head>
   <body>
     <div class="site-wrapper">
