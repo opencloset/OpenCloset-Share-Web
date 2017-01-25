@@ -1,6 +1,6 @@
 $ ->
   $('#address-search').postcodifyPopUp
-    api: "https://staff.theopencloset.net/api/postcode/search.json"
+    api: CONFIG.postcodify_url
     afterSelect: (entry) ->
       $('.postcodify_address').trigger('change')
       $('.postcodify_controls .close_button').trigger('click')
