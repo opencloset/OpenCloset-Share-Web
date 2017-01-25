@@ -50,10 +50,10 @@ sub update_payment {
     # parameter check & fetch
     #
     my $v = $self->validation;
-    $v->required("order_id")->equal_to( $payment->order_id );
-    $v->required("merchant_uid")->equal_to( $payment->cid );
-    $v->required("amount")->equal_to( $payment->amount );
-    $v->required("pay_method")->equal_to( $payment->pay_method );
+    $v->required("order_id")->in( $payment->order_id );
+    $v->required("merchant_uid")->in( $payment->cid );
+    $v->optional("amount")->in( $payment->amount );
+    $v->optional("pay_method")->in( $payment->pay_method );
     $v->optional("imp_uid");
     $v->optional("pg_provider");
     $v->optional("status")->in(qw/paid ready cancelled failed/);
