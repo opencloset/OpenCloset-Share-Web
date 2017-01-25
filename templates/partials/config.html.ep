@@ -1,0 +1,6 @@
+%= javascript begin
+  var CONFIG = {
+    postcodify_url: "<%= $self->config->{postcodify_url} %>"
+  };
+% end
+
