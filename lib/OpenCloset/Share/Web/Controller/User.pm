@@ -169,7 +169,8 @@ sub update_settings {
     return $self->error( 400, "비밀번호가 일치하지 않습니다." ) if $password ne $retype;
 
     my $user = $self->stash('user');
-    $user->update( { password => $password } );
+    my $expires = time + ( 86400 * 365 );
+    $user->update( { password => $password, expires => $expires } );
     $self->redirect_to('index');
 }
 
