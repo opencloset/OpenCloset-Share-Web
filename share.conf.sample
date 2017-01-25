@@ -46,5 +46,6 @@
     iamport => {
         key    => $ENV{OPENCLOSET_IAMPORT_API_KEY},
         secret => $ENV{OPENCLOSET_IAMPORT_API_SECRET},
-    }
+    },
+    postcodify_url => "https://postcodify.theopencloset.net/api/postcode/search.json",
 };
