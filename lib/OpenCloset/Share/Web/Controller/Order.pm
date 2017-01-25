@@ -2,10 +2,13 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
+use Encode qw/encode_utf8/;
+use Iamport::REST::Client;
+use JSON qw/decode_json/;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED/;
+    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT/;
 
 has schema => sub { shift->app->schema };
 
@@ -206,7 +209,24 @@ sub order {
         $self->render(
             template         => 'order/order.payment',
             user_address     => $order->user_address,
-            fine_wearon_date => $fine
+            fine_wearon_date => $fine,
+        );
+    }
+    elsif ( $status_id == $WAITING_DEPOSIT ) {
+        my $payment = $order->payments( { status => 'ready' }, { order_by => { -desc => "id" } } )->next;
+        return $self->error( 404, "Not found payment" ) unless $payment;
+
+        my $payment_id = $payment->id;
+        my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
+        return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
+
+        my $detail = $payment_log->detail;
+        return $self->error( 404, "Not found payment info" ) unless $detail;
+
+        my $payment_info = decode_json( encode_utf8($detail) );
+        $self->render(
+            template     => 'order/order.waiting_deposit',
+            payment_info => $payment_info
         );
     }
     else {
@@ -374,6 +394,50 @@ sub update_parcel {
         html => sub    { shift->redirect_to('order.purchase') },
         json => { json => { $parcel->get_columns } }
     );
+}
+
+=head2 create_payment
+
+    POST /order/:id/payments
+
+=cut
+
+sub create_payment {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    #
+    # parameter check & fetch
+    #
+    my $v = $self->validation;
+    $v->required("pay_method")->in(qw/ card trans vbank phone /);
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
+    }
+    my $pay_method = $v->param("pay_method");
+
+    my $amount  = $self->category_price($order);
+    my $iamport = $self->config->{iamport};
+    my $key     = $iamport->{key};
+    my $secret  = $iamport->{secret};
+    my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
+
+    my $merchant_uid = $self->merchant_uid( "share-%d-", $order->id );
+    my $json = $client->create_prepare( $merchant_uid, $amount );
+    return $self->error( 500, "The payment agency failed to process" ) unless $json;
+
+    my $payment = $order->create_related(
+        "payments",
+        {
+            cid        => $merchant_uid,
+            amount     => $amount,
+            pay_method => $pay_method,
+        },
+    );
+
+    return $self->error( 500, "Failed to create a new payment" ) unless $payment;
+    $self->render( json => { $payment->get_columns } );
 }
 
 1;

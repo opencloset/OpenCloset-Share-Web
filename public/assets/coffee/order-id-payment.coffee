@@ -1,46 +1,96 @@
 $ ->
   IMP = window.IMP
+  IMP.init('imp77873889')
 
-
-  ## FIXME: 테스트를 위해서 결제를 생략하고, 상태변경을 요청
   STATUS =
-    choose_address: 49
-    payment_done: 50
+    choose_address: 49  # 주소선택
+    payment_done: 50    # 결제완료
+    waiting_deposit: 56 # 입금대기
 
   $('#btn-payment').click (e) ->
     e.preventDefault()
     $this = $(@)
     $this.addClass('disabled')
-    $.ajax location.href,
-      type: 'PUT'
-      data: { status_id: STATUS.payment_done }
+
+    # card: 신용카드
+    # trans: 실시간계좌이체
+    # vbank: 가상계좌
+    # phone: 휴대폰소액결제
+    pay_method = $('#payment-method').val()
+    unless pay_method in [ "card", "trans", "vbank", "phone" ]
+      $.growl.error({ title: "결제 실패", message: "결제 수단을 선택하세요." })
+      $this.removeClass('disabled')
+      return
+
+    $info = $('#payment-info')
+    name     = $info.data("name")
+    order_id = $info.data("order-id")
+
+    unless order_id? && /^\d+$/.test(order_id) && order_id > 0
+      $.growl.error({ title: "결제 실패", message: "주문서가 없습니다." })
+      $this.removeClass('disabled')
+      return
+
+    unless name? && name.length > 0
+      $.growl.error({ title: "결제 실패", message: "사용자 이름이 없습니다." })
+      $this.removeClass('disabled')
+      return
+
+    $.ajax "/orders/#{order_id}/payments",
+      type: 'POST'
+      data:
+        pay_method: pay_method
+      dataType: 'json'
       success: (data, textStatus, jqXHR) ->
-        location.reload()
+
+        IMP.request_pay
+          pg:           'html5_inicis'
+          pay_method:   pay_method
+          merchant_uid: data.cid
+          name:         "#{name}##{order_id}"
+          amount:       $('#order-price').data('price')
+          buyer_email:  $info.data('email')
+          buyer_name:   name
+          buyer_tel:    $info.data('phone')
+          buyer_addr:   $info.data('address1')
+          notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
+        , (res) ->
+          payment_status = res.status
+          unless res.success
+            payment_status = "cancelled"
+            $.growl.error({ title: '결제실패', message: res.error_msg })
+
+          $.ajax "/payments/#{data.id}",
+            type: 'PUT'
+            dataType: 'json'
+            data:
+              order_id: order_id
+              detail: JSON.stringify(res)
+              imp_uid: res.imp_uid
+              merchant_uid: res.merchant_uid
+              amount: res.paid_amount
+              status: payment_status
+              pg_provider: res.pg_provider
+              pay_method: res.pay_method
+            success: (data, textStatus, jqXHR) ->
+            error: (jqXHR, textStatus, errorThrown) ->
+            complete: (jqXHR, textStatus) ->
+              $this.removeClass('disabled')
+
+          ## ready 라면 입금대기로 상태변경
+          ## paid 라면 결제완료로 상태변경
+          if res.success and res.status in ['paid', 'ready']
+            status = if res.status is 'paid' then 'payment_done' else 'waiting_deposit'
+            $.ajax location.href,
+              type: 'PUT'
+              data: { status_id: STATUS[status] }
+              success: (data, textStatus, jqXHR) ->
+                location.reload()
+              error: (jqXHR, textStatus, errorThrown) ->
+              complete: (jqXHR, textStatus) ->
+
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
-        $this.removeClass('disabled')
-    ###
-    $info = $('#payment-info')
-    IMP.init('imp77873889')
-    IMP.request_pay
-      pg:             'html5_inicis'                # version 1.1.0부터 지원.
-      pay_method:     $('#payment-method').val()    # 'card':신용카드, 'trans':실시간계좌이체, 'vbank':가상계좌, 'phone':휴대폰소액결제
-      merchant_uid:   'merchant_' + new Date().getTime()
-      name:           '주문명:test#1'
-      amount:         $('#order-price').data('price')
-      buyer_email:    $info.data('email')
-      buyer_name:     $info.data('name')
-      buyer_tel:      $info.data('phone')
-      buyer_addr:     $info.data('address1')
-    , (res) ->
-      if res.success
-        console.log "고유ID: #{res.imp_uid}"
-        console.log "상점거래ID: #{res.merchant_uid}"
-        console.log "결제금액: #{res.paid_amount}"
-        console.log "카드승인번호: #{res.apply_num}"
-      else
-        console.log res.error_msg
-    ###
 
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
@@ -76,3 +126,22 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+
+  ###
+  STATUS =
+    choose_address: 49
+    payment_done: 50
+
+  $('#btn-payment').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.addClass('disabled')
+    $.ajax location.href,
+      type: 'PUT'
+      data: { status_id: STATUS.payment_done }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
+  ###

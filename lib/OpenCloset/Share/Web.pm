@@ -70,7 +70,7 @@ sub _public_routes {
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');
-    $r->post('/webhooks/import')->to('root#import_hook');
+    $r->post('/webhooks/iamport')->to('hook#iamport');
 }
 
 sub _private_routes {
@@ -81,6 +81,7 @@ sub _private_routes {
     my $measurements = $root->under('/measurements')->to('user#auth');
     my $clothes      = $root->under('/clothes')->to('user#auth');
     my $orders       = $root->under('/orders')->to('user#auth');
+    my $payments     = $root->under('/payments')->to('user#auth');
     my $address      = $root->under('/address')->to('user#auth');
     my $sms          = $root->under('/sms')->to('user#auth');
 
@@ -105,6 +106,10 @@ sub _private_routes {
     $order->delete('/')->to('order#delete_order')->name('order.delete');
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
+    $order->post('/payments')->to('order#create_payment');
+
+    my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
+    $payment->put('/')->to('payment#update_payment');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');

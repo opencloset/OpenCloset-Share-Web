@@ -50,25 +50,6 @@ sub search {
     }
 }
 
-=head2 import_hook
-
-    POST /webhooks/import
-
-=cut
-
-sub import_hook {
-    my $self = shift;
-
-    my $v     = $self->validation;
-    my $input = $v->input;
-
-    while ( my ( $key, $value ) = each %$input ) {
-        $self->log->debug("$key: $value");
-    }
-
-    $self->render( text => 'OK' );
-}
-
 =head2 terms
 
     GET /terms
