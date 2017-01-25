@@ -17,10 +17,14 @@
     ## must set secret of staff.theopencloset.net
     secrets       => [ $ENV{OPENCLOSET_SECRET} ],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
-
-    opencloset => {
+    opencloset    => {
         login => 'http://localhost:5001/login',
         root  => 'http://localhost:5001',
+        api   => {
+            email    => $ENV{OPENCLOSET_API_EMAIL},
+            password => $ENV{OPENCLOSET_API_PASSWORD},
+            cookie   => '.cookie.txt'
+        },
     },
     timezone => 'Asia/Seoul',
     notify   => {
