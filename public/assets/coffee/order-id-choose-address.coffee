@@ -5,8 +5,12 @@ $.fn.editable.defaults.ajaxOptions =
   dataType: 'json'
 
 $ ->
+  host = location.host.replace(/share/, 'staff')
+    .replace(/test\-/, '')      # test-staff 는 주소검색 API 를 지원하지 못함
+    .replace(/5002/, '5001')    # for development
+
   $('#address-search').postcodifyPopUp
-    api: "http://localhost:5001/api/postcode/search.json"
+    api: "//#{host}/api/postcode/search.json"
     afterSelect: (entry) ->
       $('.postcodify_address').trigger('change')
       $('.postcodify_controls .close_button').trigger('click')
