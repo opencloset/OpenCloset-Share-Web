@@ -36,7 +36,7 @@ sub payment_id {
 
 =head2 update_payment
 
-    PUT /payments
+    PUT /payments/:payment_id
 
 =cut
 
@@ -44,17 +44,24 @@ sub update_payment {
     my $self    = shift;
     my $payment = $self->stash("payment");
 
+    return $self->error( 400, "Not found order from payment: " . $payment->id ) unless $payment->order;
+
+    #
+    # parameter check & fetch
+    #
     my $v = $self->validation;
-    $v->required("order_id");
+    $v->required("order_id")->equal_to( $payment->order_id );
+    $v->required("merchant_uid")->equal_to( $payment->cid );
+    $v->required("amount")->equal_to( $payment->amount );
+    $v->required("pay_method")->equal_to( $payment->pay_method );
     $v->optional("imp_uid");
-    $v->optional("merchant_uid");
-    $v->optional("amount")->like(qr/^\d+$/);
     $v->optional("pg_provider");
-    $v->optional("pay_method");
     $v->optional("status")->in(qw/paid ready cancelled failed/);
     $v->optional("detail");
-
-    my $order_id   = $v->param("order_id");
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
+    }
     my $sid        = $v->param("imp_uid");
     my $cid        = $v->param("merchant_uid");
     my $amount     = $v->param("amount");
@@ -63,21 +70,13 @@ sub update_payment {
     my $status     = $v->param("status");
     my $detail     = $v->param("detail");
 
-    my $payment_id = $payment->id;
-
-    my $order = $self->schema->resultset("Order")->find( { id => $order_id } );
-    return $self->error( 400, "Not match order_id: $payment_id:$order_id" ) unless $payment->order_id eq $order_id;
-    return $self->error( 400, "Not match cid: $payment_id:$cid" )           unless $payment->cid eq $cid;
-    return $self->error( 400, "Not match amount: $payment_id:$cid" )        unless $payment->amount eq $amount;
-
     my ( $payment_log, $error ) = do {
         my $guard = $self->schema->txn_scope_guard;
         try {
             $payment->update(
                 {
-                    sid        => $sid,
-                    vendor     => $vendor,
-                    pay_method => $pay_method,
+                    sid    => $sid,
+                    vendor => $vendor,
                 },
             );
 

@@ -12,18 +12,40 @@ $ ->
     $this = $(@)
     $this.addClass('disabled')
 
+    # card: 신용카드
+    # trans: 실시간계좌이체
+    # vbank: 가상계좌
+    # phone: 휴대폰소액결제
+    pay_method = $('#payment-method').val()
+    unless pay_method in [ "card", "trans", "vbank", "phone" ]
+      $.growl.error({ title: "결제 실패", message: "결제 수단을 선택하세요." })
+      $this.removeClass('disabled')
+      return
+
     $info = $('#payment-info')
-    order_id = $info.data('order-id')
-    name     = $info.data('name')
+    name     = $info.data("name")
+    order_id = $info.data("order-id")
+
+    unless order_id? && /^\d+$/.test(order_id) && order_id > 0
+      $.growl.error({ title: "결제 실패", message: "주문서가 없습니다." })
+      $this.removeClass('disabled')
+      return
+
+    unless name? && name.length > 0
+      $.growl.error({ title: "결제 실패", message: "사용자 이름이 없습니다." })
+      $this.removeClass('disabled')
+      return
 
     $.ajax "/orders/#{order_id}/payments",
       type: 'POST'
+      data:
+        pay_method: pay_method
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
 
         IMP.request_pay
           pg:           'html5_inicis'
-          pay_method:   $('#payment-method').val()    # 'card':신용카드, 'trans':실시간계좌이체, 'vbank':가상계좌, 'phone':휴대폰소액결제
+          pay_method:   pay_method
           merchant_uid: data.cid
           name:         "#{name}##{order_id}"
           amount:       $('#order-price').data('price')

@@ -404,7 +404,18 @@ sub update_parcel {
 
 sub create_payment {
     my $self  = shift;
-    my $order = $self->stash('order');
+    my $order = $self->stash("order");
+
+    #
+    # parameter check & fetch
+    #
+    my $v = $self->validation;
+    $v->required("pay_method")->in(qw/ card trans vbank phone /);
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
+    }
+    my $pay_method = $v->param("pay_method");
 
     my $amount = 3_000; # 배송비
     for my $c ( $self->categories($order) ) {
@@ -423,9 +434,10 @@ sub create_payment {
     my $payment = $order->create_related(
         "payments",
         {
-            cid    => $merchant_uid,
-            amount => $amount,
-        }
+            cid        => $merchant_uid,
+            amount     => $amount,
+            pay_method => $pay_method,
+        },
     );
 
     return $self->error( 500, "Failed to create a new payment" ) unless $payment;
