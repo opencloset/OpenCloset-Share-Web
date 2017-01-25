@@ -33,7 +33,7 @@ sub iamport {
     return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
 
     ## 가상계좌(vbank)의 ready -> paid
-    my $last_status = $payment->status;
+    my $last_status = $payment_log->status;
     if ( $last_status && $last_status eq "ready" && $status eq "paid" ) {
         #
         # FIXME
