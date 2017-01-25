@@ -55,7 +55,9 @@ $ ->
           buyer_addr:   $info.data('address1')
           notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
         , (res) ->
+          payment_status = res.status
           unless res.success
+            payment_status = "cancelled"
             $.growl.error({ title: '결제실패', message: res.error_msg })
 
           $.ajax "/payments/#{data.id}",
@@ -67,7 +69,7 @@ $ ->
               imp_uid: res.imp_uid
               merchant_uid: res.merchant_uid
               amount: res.paid_amount
-              status: res.status
+              status: payment_status
               pg_provider: res.pg_provider
               pay_method: res.pay_method
             success: (data, textStatus, jqXHR) ->
