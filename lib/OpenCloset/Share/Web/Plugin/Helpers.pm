@@ -9,7 +9,7 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Category ();
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED/;
 use OpenCloset::Constants::Measurement;
@@ -54,6 +54,7 @@ sub register {
     $app->helper( blouse_type          => \&blouse_type );
     $app->helper( send_mail            => \&send_mail );
     $app->helper( check_measurement    => \&check_measurement );
+    $app->helper( category_price       => \&category_price );
 }
 
 =head1 HELPERS
@@ -692,6 +693,41 @@ sub check_measurement {
 
     return $v->failed if $v->has_error;
     return;
+}
+
+=head2 category_price($order, $category?)
+
+    # 배송비포함
+    my $price = $self->category_price($order);     # 33000
+
+    my $tie_price = $self->category_price($order, $TIE);     # 2000 or 0
+
+=cut
+
+sub category_price {
+    my ( $self, $order, $category ) = @_;
+    return unless $order;
+
+    return $PRICE{$category} if $category && $category ne $TIE;
+
+    my $price = 3_000; # 배송비
+    my %seen;
+    my @categories = $self->categories($order);
+
+    for my $c (@categories) {
+        $price += $PRICE{$c};
+        $seen{$c}++;
+    }
+
+    ## 자켓이나 팬츠가 없는데 타이가 있다면?
+    my $tie_price = $PRICE{$TIE};
+    if ( $seen{$TIE} && ( !$seen{$JACKET} || !$seen{$PANTS} ) ) {
+        $tie_price = 2_000;
+        $price += $tie_price;
+    }
+
+    return $tie_price if $category;
+    return $price;
 }
 
 1;

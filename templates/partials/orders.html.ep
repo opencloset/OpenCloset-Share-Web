@@ -32,14 +32,19 @@
 
     % my @categories = categories($order);
     <ul class="list-inline">
-      % my $price = 0;
+      % my $price = category_price($order);
       % for my $c (@categories) {
-      % $price += $PRICE{$c};
       <li>
         <span class="label label-primary">
           %= $LABEL_MAP{$c}
         </span>
-        <code><%= commify($PRICE{$c}) %></code>
+        <code>
+          % if ($c eq $TIE) {
+            <%= commify(category_price($order, $TIE)) %>
+          % } else {
+            <%= commify($PRICE{$c}) %>
+          % }
+        </code>
       </li>
       % }
     </ul>
@@ -48,6 +53,7 @@
       <code><%= commify $price %></code>
       <small>원</small>
     </h4>
+    <p class="help-block">배송비는 <code>3,000</code>원 입니다.</p>
   </li>
   % }
 </ul>

@@ -20,9 +20,8 @@
 <div class="row choose-clothes-panel">
   % my @categories = categories($order);
   <ul class="list-inline">
-    % my $price = 0;
+    % my $price = category_price($order);
     % for my $c (@categories) {
-    % $price += $PRICE{$c};
     <li>
       <div class="thumbnail">
         <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
@@ -39,13 +38,18 @@
                 %= $LABEL_MAP{$c}
               % }
             </span>
-            <code><%= commify($PRICE{$c}) %></code>
+            <code>
+              % if ($c eq $TIE) {
+                <%= commify(category_price($order, $TIE)) %>
+              % } else {
+                <%= commify($PRICE{$c}) %>
+              % }
+            </code>
           </p>
         </div>
       </div>
     </li>
     % }
-    % $price += 3000;
   </ul>
 
   <p class="help-block">
