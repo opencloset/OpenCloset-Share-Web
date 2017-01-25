@@ -417,11 +417,7 @@ sub create_payment {
     }
     my $pay_method = $v->param("pay_method");
 
-    my $amount = 3_000; # 배송비
-    for my $c ( $self->categories($order) ) {
-        $amount += $PRICE{$c};
-    }
-
+    my $amount  = $self->category_price($order);
     my $iamport = $self->config->{iamport};
     my $key     = $iamport->{key};
     my $secret  = $iamport->{secret};
