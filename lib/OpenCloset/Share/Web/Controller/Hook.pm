@@ -51,7 +51,7 @@ sub iamport {
         my $secret  = $iamport->{secret};
         my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
 
-        my $json = $iamport->payment($sid);
+        my $json = $client->payment($sid);
         unless ($json) {
             $self->log->info("cannot fetch payment information");
             #
