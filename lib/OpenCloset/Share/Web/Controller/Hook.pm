@@ -92,14 +92,14 @@ sub iamport {
         }
 
         my $str = sprintf(
-            "buyer_addr:   %s\n"
-            . "buyer_email:  %s\n"
-            . "buyer_name:   %s\n"
-            . "buyer_name:   %s\n"
-            . "buyer_tel:    %s\n"
-            . "imp_uid:      %s\n"
-            . "merchant_uid: %s\n"
-            . "status:       %s\n",
+                  "buyer_addr:   %s\n"
+                . "buyer_email:  %s\n"
+                . "buyer_name:   %s\n"
+                . "buyer_name:   %s\n"
+                . "buyer_tel:    %s\n"
+                . "imp_uid:      %s\n"
+                . "merchant_uid: %s\n"
+                . "status:       %s\n",
             $data->{response}{buyer_addr},
             $data->{response}{buyer_email},
             $data->{response}{buyer_name},
