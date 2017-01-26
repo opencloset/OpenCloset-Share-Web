@@ -1,0 +1,10 @@
+% layout 'welcome';
+% title '정장대여소개';
+
+<h1 class="cover-heading">온라인 정장대여 서비스</h1>
+<p>
+  거리, 시간상 열린옷장 오프라인 공간을 방문할 수 없는 분들을 위한 온라인 택배 서비스
+</p>
+<p class="lead">
+  <a href="<%= url_for('/features') %>" class="btn btn-lg btn-default">더보기</a>
+</p>

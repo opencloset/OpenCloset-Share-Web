@@ -1,0 +1,38 @@
+% layout 'default';
+% title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
+% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
+% use OpenCloset::Constants::Category qw/%PRICE %LABEL_MAP $TIE/;
+% use OpenCloset::Constants::Measurement ();
+% my $gender = $user_info->gender;
+
+<h2>
+  <i class="fa fa-<%= $gender %>" aria-hidden="true"></i>
+  <%= $user->name %>님
+</h2>
+
+<hr>
+
+%= include 'partials/guide', active => 0;
+
+<hr>
+
+<h3>대여이력</h3>
+%= include 'partials/orders', orders => $orders;
+
+<hr>
+
+% unless ($failed) {
+<p>
+  <a class="btn btn-primary" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
+</p>
+% } else {
+<p>
+  대여에 필요한 정보를 입력하지 않으셨습니다.
+  <a class="btn btn-primary btn-sm" href="<%= url_for('/measurements') %>">치수입력</a>
+  <ul class="list-inline text-muted">
+    % for my $fail (@$failed) {
+    <li><%= $OpenCloset::Constants::Measurement::LABEL_MAP{$fail} %></li>
+    % }
+  </ul>
+</p>
+% }

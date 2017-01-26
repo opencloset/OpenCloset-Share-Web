@@ -1,0 +1,22 @@
+% my $cnt = 0;
+% while (1) {
+  % my $last;
+  <div class="row">
+    % for my $i (0 .. 3) {
+    %   my $recommend = $recommends->[$cnt++];
+    %   unless ($recommend) {
+    %     $last = 1;
+    %     last;
+    %   }
+    %   my ($top, $bottom, $count) = @$recommend;
+    <div class="col-xs-6 col-md-3">
+      % my $url = url_for('/clothes/' . $top->code);
+      % $url = $url->query(order_id => $order_id) if $order_id;
+      <a class="thumbnail" href="<%= $url %>">
+        <img alt="<%= $top->code %>" src="<%= oavatar_url(trim_code($top), size => 200, default => $config->{oavatar}{jacket}) %>">
+      </a>
+    </div>
+    % }
+  </div>
+  % last if $last;
+% }

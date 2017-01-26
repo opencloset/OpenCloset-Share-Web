@@ -1,0 +1,143 @@
+% layout 'default';
+% title '구매내역', jses => ['/assets/dist/js/order-id-purchase-else.min.js'];
+
+% use OpenCloset::Constants::Category ();
+% use OpenCloset::Constants::Status qw/$RETURNED $PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
+
+<div class="pull-right text-muted">
+  %= include 'partials/sms-help', parcel => $parcel;
+</div>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<ul class="order-status list-inline">
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
+  <li>
+    %= status2label($sts, $parcel->status_id == $sts)
+  </li>
+  % }
+</ul>
+
+<hr>
+
+% my $waybill = $parcel->waybill;
+% if ($waybill) {
+<p title="운송장">운송장 <samp><%= $waybill %></samp></p>
+% }
+
+<p>
+  % if ($waybill) {
+  <a class="btn btn-default btn-sm" href="<%= parcel($parcel->parcel_service, $waybill) %>" target="_blank">
+    <i class="fa fa-external-link"></i>
+    배송조회
+  </a>
+  % }
+
+  <button id="btn-toggle-parcel" class="btn btn-info btn-sm" type="button">
+    % if ($waybill) {
+    운송장변경
+    % } else {
+    운송장입력
+    % }
+  </button>
+  <button id="btn-comment" class="btn btn-default btn-sm" type="button">Comment</button>
+  <button id="btn-sms" class="btn btn-default btn-sm" type="button">SMS</button>
+</p>
+
+<p class="help-block">
+  % if (my $comment = $parcel->comment) {
+  <i class="fa fa-comment fa-fw"></i>
+  %= $comment
+  % }
+</p>
+
+<form id="form-parcel" class="form-inline hide" action="<%= url_for('order.update_parcel') %>" method="POST">
+  <div class="form-group">
+    <select class="form-control" name="parcel-service">
+      <option value="CJ대한통운">CJ대한통운</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <input class="form-control" name="waybill" type="text" value="<%= $waybill || '' %>" placeholder="운송장번호">
+  </div>
+  <button class="btn btn-primary" type="submit">입력</button>
+  <button class="btn btn-danger btn-cancel" type="button">취소</button>
+  <p class="help-block">
+    <small>
+      운송장 번호를 입력하면 상태가
+      %= status2label($SHIPPED)
+      으로 변경됩니다
+    </small>
+  </p>
+</form>
+
+<form id="form-comment" class="hide" action="<%= url_for('order.update_parcel') %>" method="POST">
+  <div class="form-group">
+    <textarea id="comment" name="comment" class="form-control" placeholder="Comment"><%= $parcel->comment || '' %></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">입력</button>
+  <button class="btn btn-danger btn-cancel" type="button">취소</button>
+</form>
+
+% my $ui = $order->user->user_info;
+<form id="form-sms" class="hide" action="<%= url_for('sms.create') %>" method="POST">
+  <input type="hidden" name="to" value="<%= $ui->phone %>">
+  <div class="form-group">
+    <textarea name="text" class="form-control" placeholder="SMS 내용"></textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">전송</button>
+  <button class="btn btn-danger btn-cancel" type="button">취소</button>
+</form>
+
+<hr>
+
+<h4>
+  <i class="fa fa-barcode fa-fw" aria-hidden="true"></i>
+  의류코드입력
+  <small>반납할 옷을 선택해주세요</small>
+</h4>
+
+<form id="form-clothes-code" class="form-inline clothes-code">
+  <div class="form-group">
+    <input id="input-code" type="text" name="code" class="form-control" tabindex="1" placeholder="의류코드">
+  </div>
+  <button type="submit" class="btn btn-primary">검색</button>
+</form>
+
+<form id="form-update-order" action="<%= url_for('/orders/' . $order->id) %>">
+  <input id="input-status-id" name="status_id" type="hidden" value="<%= $RETURNED %>">
+  <table id="table-clothes" class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>의류코드</th>
+        <th>종류</th>
+      </tr>
+    </thead>
+    <tbody>
+      % my $details = $order->order_details({ clothes_code => { '!=' => undef } });
+      % while (my $detail = $details->next) {
+      % my $clothes = $detail->clothes;
+      % my $code = trim_code($clothes->code);
+      <tr>
+        <td>
+          <input id="code-<%= $code %>" name="clothes_code" class="checkbox checkbox-code" type="checkbox" value="<%= $code %>">
+        </td>
+        <td>
+          <a href="<%= url_for('/clothes/' . $code) %>">
+            %= clothes2status($clothes)
+          </a>
+        </td>
+        <td>
+          %= $OpenCloset::Constants::Category::LABEL_MAP{$clothes->category}
+        </td>
+      </tr>
+      % }
+    </tbody>
+  </table>
+
+  <button id="btn-return-all" class="btn btn-success disabled" type="button">전체반납</button>
+  <button id="btn-return-partial" class="btn btn-warning disabled" type="button">부분반납</button>
+</form>

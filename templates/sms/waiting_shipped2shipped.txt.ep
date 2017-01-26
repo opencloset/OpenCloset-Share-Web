@@ -1,0 +1,3 @@
+% my $parcel = $order->order_parcel;
+% my $user   = $order->user;
+[열린옷장 - 배송안내] 안녕하세요. <%= $user->name %>님. 대여하신 <%= url_for('/order/' . $order->id)->to_abs %>가 CJ대한통운 <%= $parcel->waybill || 'Unknown' %>으로 발송되었습니다. 감사합니다.

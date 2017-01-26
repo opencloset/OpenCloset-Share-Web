@@ -1,0 +1,64 @@
+% layout 'default';
+% title $title, jses => [
+%   '//cdn.poesis.kr/post/search.min.js',
+%   '/assets/components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
+%   '/assets/dist/js/order-id-choose-address.min.js'
+% ], csses => [
+%   '/assets/components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css'
+% ];
+
+%= include 'partials/guide', active => 4;
+
+<hr>
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<h3>
+  배송주소
+  <button id="address-search" class="btn btn-default btn-sm">
+    <i class="fa fa-search" aria-hidden="true"></i>
+    배송주소추가
+  </button>
+</h3>
+
+<input class="postcodify_building_id" name="address1" type="hidden" value="">
+<input class="postcodify_address" name="address2" type="hidden" value="">
+<input class="postcodify_jibeon_address" name="address3" type="hidden" value="">
+
+<form id="form-address" action="<%= url_for %>">
+  <ul id="address">
+    <li class="radio">
+      <label>
+        <input id="user_profile_address" name="user_address" type="radio" value="0" checked>
+        %= $user_info->address2
+        %= $user_info->address4
+      </label>
+      <small class="text-muted">
+        %= $user_info->address3
+      </small>
+    </li>
+    % while (my $address = $addresses->next) {
+    <li class="radio">
+      <label>
+        <input name="user_address" type="radio" value="<%= $address->id %>">
+        %= $address->address2
+      </label>
+      <a href="#" class="address-editable" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
+        %= $address->address4 || ''
+      </a>
+      <small class="text-muted">
+        %= $address->address3
+      </small>
+      <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
+    </li>
+    % }
+  </ul>
+
+  % my @categories = categories($order);
+  % if (grep { /jacket/ } @categories and grep { /pants/ } @categories) {
+  <button id="btn-choose-clothes" class="btn btn-default">의류다시선택</button>
+  % }
+  <a id="btn-next-step" class="btn btn-success" href="<%= url_for %>">다음</a>
+</form>

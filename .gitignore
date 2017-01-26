@@ -1,0 +1,18 @@
+# npm packages
+node_modules
+
+# bower package and dist files
+public/assets/components
+public/assets/dist
+
+# config
+share.conf
+
+# hypnotoad
+hypnotoad.pid
+
+# log
+log/
+
+# else
+.cookie.txt

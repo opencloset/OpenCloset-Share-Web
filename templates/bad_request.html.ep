@@ -1,0 +1,5 @@
+% title "Bad request";
+% layout 'error';
+
+<h2>잘못된 요청입니다.</h2>
+<p><%= $error %></p>
