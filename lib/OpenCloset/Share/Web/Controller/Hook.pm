@@ -68,7 +68,7 @@ sub iamport {
                 chomp;
                 return ( undef, $_ );
             }
-        }
+        };
         unless ($data) {
             $self->log->info("cannot decode json: $error");
             #
