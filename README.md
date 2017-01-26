@@ -2,6 +2,10 @@
 
 https://share.theopencloset.net
 
+## VERSION ##
+
+v0.0.1
+
 ## Dependencies ##
 
     $ cpanm --installdeps .
