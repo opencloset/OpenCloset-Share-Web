@@ -1,6 +1,10 @@
 %= javascript begin
   var CONFIG = {
-    postcodify_url: "<%= $self->config->{postcodify_url} %>"
+    postcodify_url: "<%= $self->config->{postcodify_url} %>",
+    iamport: {
+      id: "<%= $self->config->{iamport}{id} %>",
+      notice_url: "<%= $self->config->{iamport}{notice_url} %>"
+    }
   };
 % end
 
