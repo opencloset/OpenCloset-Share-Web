@@ -70,7 +70,13 @@ sub _public_routes {
     $r->post('/users')->to('user#create');
     $r->get('/terms')->to('root#terms');
     $r->get('/privacy')->to('root#privacy');
-    $r->post('/webhooks/iamport')->to('hook#iamport');
+
+    my $hook_route = "/webhooks/iamport";
+    if ( $self->config->{iamport} && $self->config->{iamport}{notice_url} ) {
+        my $notice_url = $self->config->{iamport}{notice_url};
+        $hook_route = $notice_url if $notice_url =~ m{^/};
+    }
+    $r->post($hook_route)->to('hook#iamport');
 }
 
 sub _private_routes {
