@@ -1,6 +1,6 @@
 $ ->
   IMP = window.IMP
-  IMP.init('imp77873889')
+  IMP.init(CONFIG.iamport.id)
 
   STATUS =
     choose_address: 49  # 주소선택
@@ -43,7 +43,7 @@ $ ->
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
 
-        IMP.request_pay
+        imp_params =
           pg:           'html5_inicis'
           pay_method:   pay_method
           merchant_uid: data.cid
@@ -53,8 +53,9 @@ $ ->
           buyer_name:   name
           buyer_tel:    $info.data('phone')
           buyer_addr:   $info.data('address1')
-          notice_url:   'https://test-share.theopencloset.net/webhooks/iamport'
-        , (res) ->
+        imp_params.notice_url = CONFIG.iamport.notice_url if CONFIG.iamport.notice_url?
+
+        IMP.request_pay imp_params, (res) ->
           payment_status = res.status
           unless res.success
             payment_status = "cancelled"
