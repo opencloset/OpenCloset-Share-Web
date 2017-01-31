@@ -6,6 +6,7 @@ use HTTP::CookieJar;
 use HTTP::Tiny;
 use Path::Tiny;
 
+use Iamport::REST::Client;
 use OpenCloset::Schema;
 
 use version; our $VERSION = qv("v0.0.1");
@@ -21,6 +22,12 @@ has schema => sub {
     );
 
     return $schema;
+};
+
+has iamport => sub {
+    my $self = shift;
+    my $conf = $self->config->{iamport};
+    return Iamport::REST::Client->new( key => $conf->{key}, secret => $conf->{secret} );
 };
 
 =head1 METHODS
