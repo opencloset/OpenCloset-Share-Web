@@ -14,11 +14,11 @@
 <hr>
 
 <p>
-  <samp><%= $payment_info->{vbank_date} %></samp> 까지
+  <samp><%= $payment_info->{response}{vbank_date} %></samp> 까지
 </p>
 
 <p class="payment-info">
-  %= $payment_info->{vbank_name}
-  <mark><samp><%= $payment_info->{vbank_num} %></samp></mark> 으로
-  <code><%= commify($payment_info->{paid_amount}) %></code>원 입금해주세요.
+  %= $payment_info->{response}{vbank_name}
+  <mark><samp><%= $payment_info->{response}{vbank_num} %></samp></mark> 으로
+  <code><%= commify($payment_info->{response}{amount}) %></code>원 입금해주세요.
 </p>
