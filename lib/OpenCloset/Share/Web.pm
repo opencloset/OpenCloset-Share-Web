@@ -6,6 +6,7 @@ use HTTP::CookieJar;
 use HTTP::Tiny;
 use Path::Tiny;
 
+use Iamport::REST::Client;
 use OpenCloset::Schema;
 
 use version; our $VERSION = qv("v0.0.1");
@@ -21,6 +22,12 @@ has schema => sub {
     );
 
     return $schema;
+};
+
+has iamport => sub {
+    my $self = shift;
+    my $conf = $self->config->{iamport};
+    return Iamport::REST::Client->new( key => $conf->{key}, secret => $conf->{secret} );
 };
 
 =head1 METHODS
@@ -118,6 +125,7 @@ sub _private_routes {
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');
+    $payment->get('/callback')->to('payment#callback'); # IMP.request_pay m_redirect_url
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');

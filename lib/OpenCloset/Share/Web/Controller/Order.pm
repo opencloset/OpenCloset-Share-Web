@@ -3,7 +3,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
 use Encode qw/encode_utf8/;
-use Iamport::REST::Client;
 use JSON qw/decode_json/;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
@@ -214,6 +213,8 @@ sub order {
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
         my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+        return $self->error( 404, "Not found ready status payment log" ) unless $payment_log;
+
         my $payment = $payment_log->payment;
 
         my $detail = $payment_log->detail;

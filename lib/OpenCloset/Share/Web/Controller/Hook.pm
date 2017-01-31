@@ -5,8 +5,6 @@ use Mojo::JSON;
 
 use Try::Tiny;
 
-use Iamport::REST::Client;
-
 has schema => sub { shift->app->schema };
 
 =head1 METHODS
@@ -46,12 +44,8 @@ sub iamport {
         #   직접 PG사에 REST API 호출 후 그 결과를 저장해야 함
         #
 
-        my $iamport = $self->config->{iamport};
-        my $key     = $iamport->{key};
-        my $secret  = $iamport->{secret};
-        my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
-
-        my $json = $client->payment($sid);
+        my $iamport = $self->app->iamport;
+        my $json    = $iamport->payment($sid);
         unless ($json) {
             $self->log->info("cannot fetch payment information");
             #
@@ -128,6 +122,7 @@ sub iamport {
             "payment_logs",
             {
                 status => $status,
+                detail => $json,
             },
         );
         $self->payment_done( $payment->order );
