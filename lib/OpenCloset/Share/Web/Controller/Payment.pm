@@ -3,6 +3,8 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny;
 
+use OpenCloset::Constants::Status qw/$WAITING_DEPOSIT/;
+
 has schema => sub { shift->app->schema };
 
 =head1 METHODS
@@ -130,18 +132,28 @@ sub callback {
 
     my $sid     = $v->param('imp_uid');
     my $cid     = $v->param('merchant_uid');
-    my $success = $v->param('imp_success');
+    my $success = $v->param('imp_success') || ''; # 'true' or 'false'
 
     $self->log->info("imp_uid: $sid");
     $self->log->info("merchant_uid: $cid");
     $self->log->info("imp_success: $success");
 
+    my $pay_method = $payment->pay_method;
+    my $status     = '';
+    if ( $pay_method eq 'vbank' ) {
+        $status = $success eq 'true' ? 'ready' : 'cancelled';
+    }
+    else {
+        $status = $success eq 'true' ? 'paid' : 'cancelled';
+    }
+
     my ( $payment_log, $error ) = do {
         my $guard = $self->schema->txn_scope_guard;
         try {
             $payment->update( { sid => $sid } );
-            my $log = $payment->create_related( "payment_logs", {} );
+            my $log = $payment->create_related( "payment_logs", { status => $status } );
             die "Failed to create a Payment log" unless $log;
+            $order->update( { status => $WAITING_DEPOSIT } ) if $status eq 'ready';
             $guard->commit;
 
             return ( $log, undef );
@@ -155,8 +167,7 @@ sub callback {
 
     return $self->error( 500, $error ) unless $payment_log;
 
-    sleep(1); # waiting 'hook#iamport'
-
+    $self->payment_done($order) if $status eq 'paid';
     $self->redirect_to( $self->url_for( 'order.order', { order_id => $order->id } ) );
 }
 
