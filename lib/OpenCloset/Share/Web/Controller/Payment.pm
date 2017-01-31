@@ -153,7 +153,7 @@ sub callback {
             $payment->update( { sid => $sid } );
             my $log = $payment->create_related( "payment_logs", { status => $status } );
             die "Failed to create a Payment log" unless $log;
-            $order->update( { status => $WAITING_DEPOSIT } ) if $status eq 'ready';
+            $order->update( { status_id => $WAITING_DEPOSIT } ) if $status eq 'ready';
             $guard->commit;
 
             return ( $log, undef );
