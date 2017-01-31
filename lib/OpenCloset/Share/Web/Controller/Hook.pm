@@ -28,7 +28,11 @@ sub iamport {
     my $status = $v->param("status");
 
     my $payment = $self->schema->resultset("Payment")->find( { sid => $sid } );
-    return $self->error( 404, "Not found payment: sid($sid)" ) unless $payment;
+    unless ($payment) {
+        $self->log->warn("Not found payment: sid($sid)");
+        $payment = $self->schema->resultset("Payment")->find( { cid => $cid } );
+        return $self->error( 404, "Not found payment: cid($cid)" ) unless $payment;
+    }
 
     my $payment_id = $payment->id;
     return $self->error( 404, "Not found order: payment_id($payment_id)" ) unless $payment->order;
