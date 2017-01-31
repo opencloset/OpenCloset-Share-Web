@@ -213,6 +213,8 @@ sub order {
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
         my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+        return $self->error( 404, "Not found ready status payment log" ) unless $payment_log;
+
         my $payment = $payment_log->payment;
 
         my $detail = $payment_log->detail;
