@@ -136,7 +136,24 @@ sub callback {
     $self->log->info("merchant_uid: $cid");
     $self->log->info("imp_success: $success");
 
-    $payment->update( { sid => $sid } );
+    my ( $payment_log, $error ) = do {
+        my $guard = $self->schema->txn_scope_guard;
+        try {
+            $payment->update( { sid => $sid } );
+            my $log = $payment->create_related( "payment_logs", {} );
+            die "Failed to create a Payment log" unless $log;
+            $guard->commit;
+
+            return ( $log, undef );
+        }
+        catch {
+            chomp;
+            $self->log->error($_);
+            return ( undef, $_ );
+        };
+    };
+
+    return $self->error( 500, $error ) unless $payment_log;
 
     sleep(1); # waiting 'hook#iamport'
 
