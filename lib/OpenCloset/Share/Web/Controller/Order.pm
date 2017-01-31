@@ -3,7 +3,6 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
 use Encode qw/encode_utf8/;
-use Iamport::REST::Client;
 use JSON qw/decode_json/;
 
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;

@@ -2,6 +2,7 @@ package OpenCloset::Share::Web::Controller::Payment;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny;
+use Mojo::JSON qw/decode_json/;
 
 use OpenCloset::Constants::Status qw/$WAITING_DEPOSIT/;
 
@@ -59,19 +60,29 @@ sub update_payment {
     $v->optional("imp_uid");
     $v->optional("pg_provider");
     $v->optional("status")->in(qw/paid ready cancelled failed/);
-    $v->optional("detail");
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
         return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
     }
+
     my $sid        = $v->param("imp_uid");
     my $cid        = $v->param("merchant_uid");
     my $amount     = $v->param("amount");
     my $vendor     = $v->param("pg_provider");
     my $pay_method = $v->param("pay_method");
     my $status     = $v->param("status");
-    my $detail     = $v->param("detail");
+
+    my $iamport = $self->app->iamport;
+    my $json    = $iamport->payment( $payment->sid );
+    return $self->error( 500, "Failed to get payment info from iamport" ) unless $json;
+
+    my $info        = decode_json($json);
+    my $info_status = $info->{response}{status};
+    my $info_amount = $info->{response}{amount};
+
+    return $self->error( 400, "Payment amount is different: $amount and $info_amount" ) if $amount != $info_amount;
+    return $self->error( 400, "Payment status is different: $status and $info_status" ) if $status ne $info_status;
 
     my ( $payment_log, $error ) = do {
         my $guard = $self->schema->txn_scope_guard;
@@ -88,7 +99,7 @@ sub update_payment {
                 "payment_logs",
                 {
                     status => $status,
-                    detail => $detail,
+                    detail => $json,
                 },
             );
 
@@ -110,6 +121,8 @@ sub update_payment {
 =head2 callback
 
     GET /payments/:payment_id/callback
+
+모바일결제 callback
 
 =cut
 
@@ -138,22 +151,32 @@ sub callback {
     $self->log->info("merchant_uid: $cid");
     $self->log->info("imp_success: $success");
 
+    my $iamport = $self->app->iamport;
+    my $json    = $iamport->payment( $payment->sid );
+    return $self->error( 500, "Failed to get payment info from iamport" ) unless $json;
+
+    my $info       = decode_json($json);
+    my $status     = $info->{response}{status};
+    my $amount     = $info->{response}{amount};
     my $pay_method = $payment->pay_method;
-    my $status     = '';
-    if ( $pay_method eq 'vbank' ) {
-        $status = $success eq 'true' ? 'ready' : 'cancelled';
-    }
-    else {
-        $status = $success eq 'true' ? 'paid' : 'cancelled';
-    }
+
+    return $self->error( 400, "Payment amount is different." ) if $payment->amount != $amount;
 
     my ( $payment_log, $error ) = do {
         my $guard = $self->schema->txn_scope_guard;
         try {
             $payment->update( { sid => $sid } );
-            my $log = $payment->create_related( "payment_logs", { status => $status } );
+            my $log = $payment->create_related(
+                "payment_logs",
+                {
+                    status => $status,
+                    detail => $json,
+                }
+            );
             die "Failed to create a Payment log" unless $log;
-            $order->update( { status_id => $WAITING_DEPOSIT } ) if $status eq 'ready';
+            if ( $status eq 'ready' && $pay_method eq 'vbank' ) {
+                $order->update( { status_id => $WAITING_DEPOSIT } );
+            }
             $guard->commit;
 
             return ( $log, undef );
