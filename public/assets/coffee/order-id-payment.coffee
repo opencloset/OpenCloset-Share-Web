@@ -53,6 +53,7 @@ $ ->
           buyer_name:   name
           buyer_tel:    $info.data('phone')
           buyer_addr:   $info.data('address1')
+          vbank_due:    moment().add(2, 'hours').format('YYYYMMDDHHmm')
         imp_params.notice_url = CONFIG.iamport.notice_url if CONFIG.iamport.notice_url?
 
         IMP.request_pay imp_params, (res) ->

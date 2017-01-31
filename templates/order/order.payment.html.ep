@@ -2,6 +2,7 @@
 % title $title, jses => [
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
+%   '/assets/components/moment/moment.js',
 %   'https://service.iamport.kr/js/iamport.payment-1.1.1.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
