@@ -152,7 +152,7 @@ sub callback {
     $self->log->info("imp_success: $success");
 
     my $iamport = $self->app->iamport;
-    my $json    = $iamport->payment( $payment->sid );
+    my $json    = $iamport->payment($sid);
     return $self->error( 500, "Failed to get payment info from iamport" ) unless $json;
 
     my $info       = decode_json($json);
