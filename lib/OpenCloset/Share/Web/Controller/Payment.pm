@@ -58,6 +58,7 @@ sub update_payment {
     $v->optional("pg_provider");
     $v->optional("status")->in(qw/paid ready cancelled failed/);
     $v->optional("detail");
+
     if ( $v->has_error ) {
         my $failed = $v->failed;
         return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
@@ -79,7 +80,7 @@ sub update_payment {
                 vendor => $vendor,
             );
             defined $params{$_} or delete $params{$_} for keys %params;
-            $payment->update(\%params);
+            $payment->update( \%params );
 
             my $pl = $payment->create_related(
                 "payment_logs",
