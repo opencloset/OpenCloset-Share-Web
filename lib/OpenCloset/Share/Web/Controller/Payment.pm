@@ -105,21 +105,42 @@ sub update_payment {
     $self->render( json => { $payment->get_columns } );
 }
 
-=head2 payment
+=head2 callback
 
-    GET /payments/:payment_id
+    GET /payments/:payment_id/callback
 
 =cut
 
-sub payment {
-    my $self  = shift;
-    my $v     = $self->validation;
-    my $input = $v->input;
-    while ( my ( $key, $value ) = each %$input ) {
-        $self->log->debug("$key: $value");
+sub callback {
+    my $self    = shift;
+    my $payment = $self->stash("payment");
+    my $order   = $payment->order;
+
+    return $self->error( 400, "Not found order from payment: " . $payment->id ) unless $order;
+
+    my $v = $self->validation;
+    $v->required('imp_uid');
+    $v->required('merchant_uid');
+    $v->required('imp_success');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, "Parameter validation failed: " . join( ", ", @$failed ) );
     }
 
-    $self->render( text => 'OK' );
+    my $sid     = $v->param('imp_uid');
+    my $cid     = $v->param('merchant_uid');
+    my $success = $v->param('imp_success');
+
+    $self->log->info("imp_uid: $sid");
+    $self->log->info("merchant_uid: $cid");
+    $self->log->info("imp_success: $success");
+
+    $payment->update( { sid => $sid } );
+
+    sleep(1); # waiting 'hook#iamport'
+
+    $self->redirect_to( $self->url_for( 'order.order', { order_id => $order->id } ) );
 }
 
 1;
