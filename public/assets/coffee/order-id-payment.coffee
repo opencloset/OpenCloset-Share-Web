@@ -128,22 +128,3 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
-
-  ###
-  STATUS =
-    choose_address: 49
-    payment_done: 50
-
-  $('#btn-payment').click (e) ->
-    e.preventDefault()
-    $this = $(@)
-    $this.addClass('disabled')
-    $.ajax location.href,
-      type: 'PUT'
-      data: { status_id: STATUS.payment_done }
-      success: (data, textStatus, jqXHR) ->
-        location.reload()
-      error: (jqXHR, textStatus, errorThrown) ->
-      complete: (jqXHR, textStatus) ->
-        $this.removeClass('disabled')
-  ###
