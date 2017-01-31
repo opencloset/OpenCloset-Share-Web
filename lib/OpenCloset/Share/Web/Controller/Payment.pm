@@ -104,4 +104,21 @@ sub update_payment {
     $self->render( json => { $payment->get_columns } );
 }
 
+=head2 payment
+
+    GET /payments/:payment_id
+
+=cut
+
+sub payment {
+    my $self  = shift;
+    my $v     = $self->validation;
+    my $input = $v->input;
+    while ( my ( $key, $value ) = each %$input ) {
+        $self->log->debug("$key: $value");
+    }
+
+    $self->render( text => 'OK' );
+}
+
 1;

@@ -118,6 +118,7 @@ sub _private_routes {
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');
+    $payment->get('/')->to('payment#payment');
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');
