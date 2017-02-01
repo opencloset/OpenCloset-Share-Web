@@ -75,21 +75,22 @@ $ ->
               pg_provider: res.pg_provider
               pay_method: res.pay_method
             success: (data, textStatus, jqXHR) ->
+
+              ## ready 라면 입금대기로 상태변경
+              ## paid 라면 결제완료로 상태변경
+              if res.success and res.status in ['paid', 'ready']
+                status = if res.status is 'paid' then 'payment_done' else 'waiting_deposit'
+                $.ajax location.href,
+                  type: 'PUT'
+                  data: { status_id: STATUS[status] }
+                  success: (data, textStatus, jqXHR) ->
+                    location.reload()
+                  error: (jqXHR, textStatus, errorThrown) ->
+                  complete: (jqXHR, textStatus) ->
+
             error: (jqXHR, textStatus, errorThrown) ->
             complete: (jqXHR, textStatus) ->
               $this.removeClass('disabled')
-
-          ## ready 라면 입금대기로 상태변경
-          ## paid 라면 결제완료로 상태변경
-          if res.success and res.status in ['paid', 'ready']
-            status = if res.status is 'paid' then 'payment_done' else 'waiting_deposit'
-            $.ajax location.href,
-              type: 'PUT'
-              data: { status_id: STATUS[status] }
-              success: (data, textStatus, jqXHR) ->
-                location.reload()
-              error: (jqXHR, textStatus, errorThrown) ->
-              complete: (jqXHR, textStatus) ->
 
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->

@@ -75,7 +75,7 @@ sub update_payment {
 
     my $iamport = $self->app->iamport;
     my $json    = $iamport->payment($sid);
-    return $self->error( 500, "Failed to get payment info from iamport" ) unless $json;
+    return $self->error( 500, "Failed to get payment info from iamport: sid($sid)" ) unless $json;
 
     my $info        = decode_json($json);
     my $info_status = $info->{response}{status};
