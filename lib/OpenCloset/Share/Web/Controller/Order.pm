@@ -63,6 +63,7 @@ sub create {
 
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
+        online      => 1,
         user_id     => $user->id,
         status_id   => $status_id,
         wearon_date => $wearon_date,
