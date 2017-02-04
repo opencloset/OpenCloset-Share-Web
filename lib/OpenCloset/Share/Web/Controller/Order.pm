@@ -25,7 +25,14 @@ our $SHIPPING_FEE = 3000;
 =cut
 
 sub add {
-    my $self = shift;
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    my $failed = $self->check_measurement( $user, $user_info );
+    return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
+
+    $self->render;
 }
 
 =head2 create
