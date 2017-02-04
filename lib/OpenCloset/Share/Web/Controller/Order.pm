@@ -335,12 +335,32 @@ sub update_order {
     }
 
     if ( my $code = delete $input->{clothes_code} ) {
-        my $detail = $order->order_details( { name => $JACKET } )->next;
-        if ($detail) {
-            $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+        my $clothes = $self->schema->resultset('Clothes')->find( { code => $code } );
+        unless ($clothes) {
+            $self->log->warn("Not found clothes code: $code");
         }
         else {
-            $self->log->info("Not found clothes_code: $code");
+            my $detail = $order->order_details( { name => $JACKET } )->next;
+            if ($detail) {
+                $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+            }
+            else {
+                $self->log->info("Not found clothes_code: $code");
+            }
+
+            if ( my $bottom = $clothes->bottom ) {
+                my $category = $bottom->category;
+                my $detail = $order->order_details( { name => $category } )->next;
+                if ($detail) {
+                    $detail->update( { clothes_code => sprintf( '%05s', $bottom->code ) } );
+                }
+                else {
+                    $self->log->info( "Not found clothes_code: " . $bottom->code );
+                }
+            }
+            else {
+                $self->log->warn("Not found bottom: $code");
+            }
         }
     }
 
