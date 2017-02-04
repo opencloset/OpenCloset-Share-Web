@@ -1,5 +1,6 @@
 requires 'Data::Pageset';
 requires 'DateTime';
+requires 'DateTime::Format::Strptime';
 requires 'Digest::MD5';
 requires 'Email::Sender';
 requires 'Email::Simple';

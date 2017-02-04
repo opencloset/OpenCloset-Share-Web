@@ -2,6 +2,8 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
+use DateTime::Format::Strptime;
+use DateTime;
 use Encode qw/encode_utf8/;
 use JSON qw/decode_json/;
 
@@ -50,15 +52,24 @@ sub create {
         return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
     }
 
+    my $wearon_date   = $v->param('wearon_date');
+    my $tz            = $self->config->{timezone};
+    my $strp          = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
+    my $dt_wearon     = $strp->parse_datetime($wearon_date);
+    my $dt_max_wearon = DateTime->today( time_zone => $self->config->{timezone} )->add( months => 1 );
+
+    if ( $dt_wearon->epoch > $dt_max_wearon->epoch ) {
+        return $self->error( 400, "wearon_date is valid up to +1m: $wearon_date" );
+    }
+
     my @categories;
     for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE ) {
         my $p = $v->param("category-$c") || '';
         push @categories, $c if $p eq 'on';
     }
 
-    my $wearon_date = $v->param('wearon_date');
-    my $status_id   = $CHOOSE_CLOTHES;
-    my $pair        = grep { /^($JACKET|$PANTS)$/ } @categories;
+    my $status_id = $CHOOSE_CLOTHES;
+    my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $guard = $self->schema->txn_scope_guard;
