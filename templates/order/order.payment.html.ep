@@ -35,8 +35,7 @@
   <select id="payment-method" name="pay_method" class="form-control">
     <option value="card" selected>신용카드</option>
     <option value="trans">실시간계좌이체</option>
-    <option value="vbank">가상계좌</option>
-    <option value="phone">휴대폰소액결제</option>
+    <option value="vbank">가상계좌(무통장입금)</option>
   </select>
 </div>
 
