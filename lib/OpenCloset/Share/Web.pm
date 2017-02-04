@@ -113,7 +113,7 @@ sub _private_routes {
 
     $orders->get('/new')->to('order#add')->name('order.add');
     $orders->post('/')->to('order#create')->name('order.create');
-    $orders->get('/')->to('order#list')->name('order.list');
+    $orders->get('/shipping')->to('order#shipping_list');
 
     my $order = $orders->under('/:order_id')->to('order#order_id');
     $order->get('/')->to('order#order')->name('order.order');

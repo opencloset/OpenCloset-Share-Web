@@ -35,7 +35,7 @@
           <ul class="nav navbar-nav navbar-right">
             % if ( $user_info->staff == 1 ) {
             <li>
-              <a href="<%= url_for('/orders') %>">
+              <a href="<%= url_for('/orders/shipping') %>">
                 주문서
               </a>
             </li>

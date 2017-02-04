@@ -114,14 +114,13 @@ sub create {
     $self->redirect_to( 'order.order', order_id => $order->id );
 }
 
-=head2 list
+=head2 shipping_list
 
-    # order.list
-    GET /orders?s=19
+    GET /orders/shipping?s=19
 
 =cut
 
-sub list {
+sub shipping_list {
     my $self = shift;
 
     return unless $self->admin_auth;
