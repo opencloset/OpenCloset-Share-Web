@@ -233,9 +233,24 @@ sub order {
         return $self->error( 404, "Not found payment info" ) unless $detail;
 
         my $payment_info = decode_json( encode_utf8($detail) );
+        my $epoch        = $payment_info->{response}{vbank_date};
+
+        unless ($epoch) {
+            $self->log->error("Wrong payment info: $detail");
+            return $self->error( 500, "Couldn't find vbank due date." );
+        }
+
+        my $tz   = $self->config->{timezone};
+        my $dt   = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
+        my $strp = DateTime::Format::Strptime->new(
+            pattern => '%B %d일 %A %H:%M분',
+            locale  => 'ko_KR',
+        );
+
         $self->render(
             template     => 'order/order.waiting_deposit',
-            payment_info => $payment_info
+            payment_info => $payment_info,
+            payment_due  => $strp->format_datetime($dt),
         );
     }
     else {
