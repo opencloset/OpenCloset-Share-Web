@@ -365,6 +365,7 @@ sub delete_order {
     return $self->error( 400, "Couldn't delete status($status_id) order" ) unless "@status_can_be_delete" =~ m/\b$status_id\b/;
 
     $order->delete;
+    $self->flash( message => '주문서가 삭제되었습니다.' );
     $self->render( json => { message => 'Deleted order successfully' } );
 }
 

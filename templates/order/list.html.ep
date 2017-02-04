@@ -1,6 +1,10 @@
 % layout 'default';
 % title $user->name . '님의 대여기록', jses => ['/assets/dist/js/order-list.min.js'];
 
+% if (my $message = flash('message')) {
+  <div class="alert alert-success" role="alert"><%= $message %></div>
+% }
+
 <h2>대여기록</h2>
 
 <p>
