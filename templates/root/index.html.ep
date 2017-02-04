@@ -1,5 +1,5 @@
 % layout 'default';
-% title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
+% title $user->name . '님';
 % use OpenCloset::Constants::Measurement ();
 % my $gender = $user_info->gender;
 
