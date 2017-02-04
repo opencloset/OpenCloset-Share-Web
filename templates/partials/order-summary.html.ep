@@ -104,6 +104,8 @@
   % }
 </h4>
 <address class="well">
+  % my $user = $order->user;
+  % my $user_info = $user->user_info;
   % my $address = $order->user_address || $user_info;
   <strong><%= $user->name %></strong><br>
   %= $address->address2
