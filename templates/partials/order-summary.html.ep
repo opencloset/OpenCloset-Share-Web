@@ -26,7 +26,15 @@
     % for my $c (@categories) {
     <li>
       <div class="thumbnail">
-        <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
+        % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
+        % if ($clothes) {
+          % my $code = substr $clothes->code, 1;
+          <a href="<%= url_for('/clothes/' . $code) %>">
+            <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+          </a>
+        % } else {
+          <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
+        % }
         <div class="caption">
           <p>
             <span class="label label-primary">
@@ -63,38 +71,6 @@
     <small>원</small>
   </h3>
 </div>
-
-% my $details = $order->order_details({ clothes_code => { '!=' => undef } });
-% if ($details->count) {
-<hr>
-<ul class="list-inline choose-clothes-panel">
-  % my @desc;
-  % while (my $detail = $details->next) {
-  <li>
-    % my $code = trim_code($detail->clothes_code);
-    % my $clothes = $detail->clothes;
-    <div class="thumbnail">
-      <a href="<%= url_for('/clothes/' . $code) %>">
-        <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
-      </a>
-      <div class="caption">
-        <p>
-          %= clothes2status($detail->clothes)
-        </p>
-      </div>
-    </div>
-  </li>
-    % my $desc = $detail->desc;
-    % push @desc, $desc if $desc;
-  % }
-</ul>
-
-<ul>
-  % for my $desc (@desc) {
-  <li><%= $desc %></li>
-  % }
-</ul>
-% }
 
 <hr>
 
