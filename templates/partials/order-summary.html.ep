@@ -1,5 +1,5 @@
-% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE/;
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $SKIRT $TIE $BLOUSE %LABEL_MAP %PRICE/;
+% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT/;
+% use OpenCloset::Constants::Category qw/$SHIRT $TIE $BLOUSE %PRICE/;
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
@@ -40,12 +40,12 @@
             <span class="label label-primary">
               % if ($c eq $SHIRT) {
                 %= shirt_type($order)
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % } elsif ($c eq $BLOUSE) {
                 %= blouse_type($order)
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % } else {
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % }
             </span>
             <code>
