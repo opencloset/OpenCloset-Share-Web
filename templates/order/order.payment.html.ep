@@ -58,7 +58,7 @@
   </p>
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    의류준비부터 배송까지 최소 3일이 소요됩니다.(결제일 기준)
+    의류준비부터 배송까지 최소 5일이 소요됩니다.(결제일 기준)
   </p>
   <button class="btn btn-primary" type="submit">선택완료</button>
 </form>

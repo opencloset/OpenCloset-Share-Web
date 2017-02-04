@@ -1,7 +1,7 @@
 $ ->
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
-    startDate: '+3d'
+    startDate: '+5d'
     endDate: '+1m'
     todayHighlight: true
     format: 'yyyy-mm-dd'
