@@ -14,7 +14,7 @@
 <hr>
 
 <p>
-  <samp><%= $payment_info->{response}{vbank_date} %></samp> 까지
+  <samp><%= $payment_due %></samp> 까지
 </p>
 
 <p class="payment-info">
