@@ -53,7 +53,7 @@
   </p>
 
   <p>
-    <div id="datepicker-wearon-date" data-date="+3d"></div>
+    <div id="datepicker-wearon-date" data-date="+5d"></div>
     <input type="hidden" name="wearon_date" id="wearon_date">
   </p>
   <p class="help-block">
