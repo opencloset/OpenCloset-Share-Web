@@ -1,7 +1,5 @@
 % layout 'default';
 % title $user->name . '님', jses => ['/assets/dist/js/root-index.min.js'];;
-% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
-% use OpenCloset::Constants::Category qw/%PRICE %LABEL_MAP $TIE/;
 % use OpenCloset::Constants::Measurement ();
 % my $gender = $user_info->gender;
 
@@ -13,11 +11,6 @@
 <hr>
 
 %= include 'partials/guide', active => 0;
-
-<hr>
-
-<h3>대여이력</h3>
-%= include 'partials/orders', orders => $orders;
 
 <hr>
 

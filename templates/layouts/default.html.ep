@@ -40,8 +40,8 @@
             </li>
             <li>
               <a href="<%= url_for('/orders') %>">
-                <i class="fa fa-list-ul" aria-hidden="true"></i>
-                주문서
+                <i class="fa fa-files-o" aria-hidden="true"></i>
+                대여기록
               </a>
             </li>
             <li>
