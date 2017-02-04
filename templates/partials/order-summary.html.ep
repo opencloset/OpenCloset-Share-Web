@@ -86,6 +86,12 @@
   % }
 </ul>
 
+<hr>
+<p>의류착용일</p>
+<p>
+  %= $order->wearon_date->ymd
+</p>
+
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
 <hr>
