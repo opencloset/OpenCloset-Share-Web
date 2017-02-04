@@ -1,0 +1,11 @@
+% layout 'default';
+% title $user->name . '님의 대여기록';
+
+<h2>대여기록</h2>
+
+<p>
+  %= $user->name
+  님의 지난 대여기록입니다.
+</p>
+
+%= include 'partials/orders', orders => $orders;
