@@ -1,5 +1,7 @@
-% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE/;
-% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $SKIRT $TIE $BLOUSE %LABEL_MAP %PRICE/;
+% use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT/;
+% use OpenCloset::Constants::Category qw/$SHIRT $TIE $BLOUSE %PRICE/;
+
+% our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
 %= include 'partials/user-info', user => $order->user;
 
@@ -24,18 +26,26 @@
     % for my $c (@categories) {
     <li>
       <div class="thumbnail">
-        <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
+        % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
+        % if ($clothes) {
+          % my $code = substr $clothes->code, 1;
+          <a href="<%= url_for('/clothes/' . $code) %>">
+            <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+          </a>
+        % } else {
+          <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
+        % }
         <div class="caption">
           <p>
             <span class="label label-primary">
               % if ($c eq $SHIRT) {
                 %= shirt_type($order)
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % } elsif ($c eq $BLOUSE) {
                 %= blouse_type($order)
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % } else {
-                %= $LABEL_MAP{$c}
+                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
               % }
             </span>
             <code>
@@ -62,37 +72,25 @@
   </h3>
 </div>
 
-% my $details = $order->order_details({ clothes_code => { '!=' => undef } });
-% if ($details->count) {
 <hr>
-<ul class="list-inline choose-clothes-panel">
-  % my @desc;
-  % while (my $detail = $details->next) {
-  <li>
-    % my $code = trim_code($detail->clothes_code);
-    % my $clothes = $detail->clothes;
-    <div class="thumbnail">
-      <a href="<%= url_for('/clothes/' . $code) %>">
-        <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
-      </a>
-      <div class="caption">
-        <p>
-          %= clothes2status($detail->clothes)
-        </p>
-      </div>
-    </div>
-  </li>
-    % my $desc = $detail->desc;
-    % push @desc, $desc if $desc;
+
+<p>선호하는 색상</p>
+% my @colors  = split /,/, $order->pre_color;
+<ul class="list-inline">
+  % for my $color (@colors) {
+    <li>
+      <span class="label label-pre-color label-<%= $color %>">
+        %= $COLOR_MAP{$color}
+      </span>
+    </li>
   % }
 </ul>
 
-<ul>
-  % for my $desc (@desc) {
-  <li><%= $desc %></li>
-  % }
-</ul>
-% }
+<hr>
+<p>의류착용일</p>
+<p>
+  %= $order->wearon_date->ymd
+</p>
 
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
@@ -104,6 +102,8 @@
   % }
 </h4>
 <address class="well">
+  % my $user = $order->user;
+  % my $user_info = $user->user_info;
   % my $address = $order->user_address || $user_info;
   <strong><%= $user->name %></strong><br>
   %= $address->address2

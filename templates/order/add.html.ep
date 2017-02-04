@@ -105,18 +105,21 @@
     <li>
       % $cnt = 0;
       % for my $type ("라운드 반팔", "라운드 민소매", "탑", "셔츠", "승무원", "라운드 긴소매") {
-      <label class="radio-inline">
-        <input
-            class="radio"
-            name="blouse-type"
-            type="radio"
-            value="<%= $type %>"
-            % unless ($cnt) {
-            checked
-            % }
-        > <%= $type %> 블라우스
-      </label>
-      % $cnt++;
+        <label class="radio-inline">
+          <div class="thumbnail">
+            <img src="/assets/img/<%= $type %>.jpg" alt="<%= $type %>" width="100">
+          </div>
+          <input
+              class="radio"
+              name="blouse-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 블라우스
+        </label>
+        % $cnt++;
       % }
     </li>
   </ul>
@@ -147,7 +150,7 @@
   </p>
 
   <p>
-    <div id="datepicker-wearon-date" data-date="+3d"></div>
+    <div id="datepicker-wearon-date" data-date="+5d"></div>
     <input type="hidden" name="wearon_date" id="wearon_date">
   </p>
 

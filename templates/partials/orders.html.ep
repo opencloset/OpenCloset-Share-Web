@@ -1,6 +1,5 @@
-%#
-%# requires OpenCloset::Constants::Status, OpenCloset::Constants::Category
-%#
+% use OpenCloset::Constants::Category qw/%PRICE $TIE/;
+% use OpenCloset::Constants::Status qw/$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS/;
 
 % if ($orders->count) {
 <ul class="list-group">
@@ -36,7 +35,7 @@
       % for my $c (@categories) {
       <li>
         <span class="label label-primary">
-          %= $LABEL_MAP{$c}
+          %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
         </span>
         <code>
           % if ($c eq $TIE) {

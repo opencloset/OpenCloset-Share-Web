@@ -25,7 +25,14 @@ our $SHIPPING_FEE = 3000;
 =cut
 
 sub add {
-    my $self = shift;
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    my $failed = $self->check_measurement( $user, $user_info );
+    return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
+
+    $self->render;
 }
 
 =head2 create
@@ -116,12 +123,26 @@ sub create {
 
 =head2 list
 
-    # order.list
-    GET /orders?s=19
+    GET /orders
 
 =cut
 
 sub list {
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
+    $self->render( orders => $orders );
+}
+
+=head2 shipping_list
+
+    GET /orders/shipping?s=19
+
+=cut
+
+sub shipping_list {
     my $self = shift;
 
     return unless $self->admin_auth;
@@ -321,12 +342,32 @@ sub update_order {
     }
 
     if ( my $code = delete $input->{clothes_code} ) {
-        my $detail = $order->order_details( { name => $JACKET } )->next;
-        if ($detail) {
-            $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+        my $clothes = $self->schema->resultset('Clothes')->find( { code => $code } );
+        unless ($clothes) {
+            $self->log->warn("Not found clothes code: $code");
         }
         else {
-            $self->log->info("Not found clothes_code: $code");
+            my $detail = $order->order_details( { name => $JACKET } )->next;
+            if ($detail) {
+                $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+            }
+            else {
+                $self->log->info("Not found clothes_code: $code");
+            }
+
+            if ( my $bottom = $clothes->bottom ) {
+                my $category = $bottom->category;
+                my $detail = $order->order_details( { name => $category } )->next;
+                if ($detail) {
+                    $detail->update( { clothes_code => sprintf( '%05s', $bottom->code ) } );
+                }
+                else {
+                    $self->log->info( "Not found clothes_code: " . $bottom->code );
+                }
+            }
+            else {
+                $self->log->warn("Not found bottom: $code");
+            }
         }
     }
 
@@ -351,6 +392,7 @@ sub delete_order {
     return $self->error( 400, "Couldn't delete status($status_id) order" ) unless "@status_can_be_delete" =~ m/\b$status_id\b/;
 
     $order->delete;
+    $self->flash( message => '주문서가 삭제되었습니다.' );
     $self->render( json => { message => 'Deleted order successfully' } );
 }
 
