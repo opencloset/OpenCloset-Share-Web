@@ -11,7 +11,9 @@ $ ->
     $this.addClass('disabled')
     $.ajax $this.prop('href'),
       type: 'PUT'
-      data: { status_id: STATUS.choose_address }
+      data:
+        status_id: STATUS.choose_address
+        clothes_code: null
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
