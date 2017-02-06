@@ -136,6 +136,6 @@ $ ->
     todayHighlight: true
     format: 'yyyy-mm-dd'
 
-  $('.day').click (event) ->
+  $('#embedded-wearon-date .day').click (event) ->
       event.preventDefault()
       event.stopPropagation()
