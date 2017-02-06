@@ -40,7 +40,7 @@
             </li>
             <li>
               <a href="<%= url_for('/orders') %>">
-                <i class="fa fa-files-o" aria-hidden="true"></i>
+                <i class="fa fa-history" aria-hidden="true"></i>
                 대여기록
               </a>
             </li>
