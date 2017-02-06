@@ -14,8 +14,9 @@ has schema => sub { shift->app->schema };
 =cut
 
 sub create {
-    my $self = shift;
-    my $user = $self->stash('user');
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
 
     my $v = $self->validation;
     $v->required('address1');
@@ -34,6 +35,8 @@ sub create {
     my $address = $self->schema->resultset('UserAddress')->create(
         {
             user_id  => $user->id,
+            name     => $user->name,
+            phone    => $user_info->phone,
             address1 => $address1,
             address2 => $address2,
             address3 => $address3,
@@ -42,7 +45,9 @@ sub create {
 
     return $self->error( 500, 'Failed to create a new address' ) unless $address;
 
-    $self->render( json => { $address->get_columns }, status => 201 );
+    my %columns = $address->get_columns;
+    $columns{phone} = $self->formatted( 'phone', $columns{phone} );
+    $self->render( json => \%columns, status => 201 );
 }
 
 =head2 update_address
@@ -61,6 +66,9 @@ sub update_address {
     return $self->error( 400, "Permission denied" ) if $user->id != $address->user_id;
 
     my $v = $self->validation;
+    $v->optional('recipient');
+    $v->optional('phone')->like(qr/^01\d\-?\d{3,4}\-?\d{4}$/);
+    $v->optional('address1');
     $v->optional('address1');
     $v->optional('address2');
     $v->optional('address3');
@@ -73,9 +81,13 @@ sub update_address {
 
     my $input = $v->input;
     map { delete $input->{$_} } qw/name pk value/; # delete x-editable params
+    $input->{name} = delete $input->{recipient} if defined $input->{recipient};
+    $input->{phone} =~ s/\-//g if $input->{phone};
 
     $address->update($input);
-    $self->render( json => { $address->get_columns } );
+    my %columns = $address->get_columns;
+    $columns{phone} = $self->formatted( 'phone', $columns{phone} );
+    $self->render( json => \%columns );
 }
 
 =head2 delete_address

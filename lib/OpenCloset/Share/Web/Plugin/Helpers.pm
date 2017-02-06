@@ -58,6 +58,7 @@ sub register {
     $app->helper( check_measurement    => \&check_measurement );
     $app->helper( category_price       => \&category_price );
     $app->helper( merchant_uid         => \&merchant_uid );
+    $app->helper( formatted            => \&formatted );
 }
 
 =head1 HELPERS
@@ -753,6 +754,41 @@ sub merchant_uid {
     my $random = String::Random->new->randregex(q{-\w\w\w});
 
     return $prefix . $seconds . $microseconds . $random;
+}
+
+=head2 formatted( $type, $string )
+
+    %= formatted('phone', '01012345678')
+    # 010-1234-5678
+
+=cut
+
+sub formatted {
+    my ( $self, $type, $str ) = @_;
+    return '' unless $type;
+    return '' unless $str;
+
+    my $formatted = $str;
+    if ( $type eq 'phone' ) {
+        my $len = length $formatted;
+        my $head = substr( $formatted, 0, 3 );
+        my @rest;
+        if ( $len == 10 ) {
+            push @rest, substr( $formatted, 3, 3 );
+            push @rest, substr( $formatted, 6 );
+        }
+        elsif ( $len == 11 ) {
+            push @rest, substr( $formatted, 3, 4 );
+            push @rest, substr( $formatted, 7 );
+        }
+        else {
+            return $formatted;
+        }
+
+        $formatted = join( '-', $head, @rest );
+    }
+
+    return $formatted;
 }
 
 1;
