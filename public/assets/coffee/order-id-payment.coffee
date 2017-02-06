@@ -135,3 +135,7 @@ $ ->
     language: 'kr'
     todayHighlight: true
     format: 'yyyy-mm-dd'
+
+  $('.day').click (event) ->
+      event.preventDefault()
+      event.stopPropagation()
