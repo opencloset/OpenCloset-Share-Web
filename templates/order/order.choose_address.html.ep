@@ -76,6 +76,13 @@
     % }
   </ul>
 
+  <hr>
+  <p>
+    배송과 관련된 요청 및 문의사항
+  </p>
+  <textarea name="misc" class="form-control" rows="3"><%= $order->misc || '' %></textarea>
+  <hr>
+
   % my @categories = categories($order);
   % if (grep { /jacket/ } @categories and grep { /pants/ } @categories) {
   <button id="btn-choose-clothes" class="btn btn-default">의류다시선택</button>

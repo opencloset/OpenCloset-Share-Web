@@ -94,27 +94,33 @@
 
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
-<hr>
-<h4>
-  배송주소
-  % if ($order->status_id == $PAYMENT) {
-  <button id="btn-choose-address" class="btn btn-info btn-sm">다시선택</button>
-  % }
-</h4>
-<address>
-  % my $user = $order->user;
-  % my $user_info = $user->user_info;
-  % my $address = $order->user_address;
-  <strong><%= $address ? $address->name : $user->name %></strong>
-  <i class="fa fa-mobile" aria-hidden="true"></i>
-  %= formatted('phone', $address ? $address->phone : $user_info->phone)
-  <br>
-  %= $address ? $address->address2 : $user_info->address2
-  %= $address ? $address->address4 : $user_info->address4
-  <br>
-  <small class="text-muted">
-    %= $address ? $address->address3 : $user_info->address3
+  <hr>
+  <h4>
+    배송주소
+    % if ($order->status_id == $PAYMENT) {
+      <button id="btn-choose-address" class="btn btn-info btn-sm">다시선택</button>
+    % }
+  </h4>
+  <address>
+    % my $user = $order->user;
+    % my $user_info = $user->user_info;
+    % my $address = $order->user_address;
+    <strong><%= $address ? $address->name : $user->name %></strong>
+    <i class="fa fa-mobile" aria-hidden="true"></i>
+    %= formatted('phone', $address ? $address->phone : $user_info->phone)
+    <br>
+    %= $address ? $address->address2 : $user_info->address2
     %= $address ? $address->address4 : $user_info->address4
-  </small>
-</address>
+    <br>
+    <small class="text-muted">
+      %= $address ? $address->address3 : $user_info->address3
+      %= $address ? $address->address4 : $user_info->address4
+    </small>
+  </address>
+
+  % if (my $misc = $order->misc) {
+    <hr>
+    <h5>배송과 관련된 요청 및 문의사항</h5>
+    <pre><%= $misc %></pre>
+  % }
 % }
