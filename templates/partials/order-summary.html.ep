@@ -101,15 +101,20 @@
   <button id="btn-choose-address" class="btn btn-info btn-sm">다시선택</button>
   % }
 </h4>
-<address class="well">
+<address>
   % my $user = $order->user;
   % my $user_info = $user->user_info;
-  % my $address = $order->user_address || $user_info;
-  <strong><%= $user->name %></strong><br>
-  %= $address->address2
-  <%= $address->address4 %><br>
-  <small><%= $address->address3 %></small><br>
-  <abbr title="Phone">P:</abbr>
-  %= $user_info->phone
+  % my $address = $order->user_address;
+  <strong><%= $address ? $address->name : $user->name %></strong>
+  <i class="fa fa-mobile" aria-hidden="true"></i>
+  %= formatted('phone', $address ? $address->phone : $user_info->phone)
+  <br>
+  %= $address ? $address->address2 : $user_info->address2
+  %= $address ? $address->address4 : $user_info->address4
+  <br>
+  <small class="text-muted">
+    %= $address ? $address->address3 : $user_info->address3
+    %= $address ? $address->address4 : $user_info->address4
+  </small>
 </address>
 % }
