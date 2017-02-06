@@ -74,7 +74,7 @@
 
 <hr>
 
-<p>선호하는 색상</p>
+<h4>선호하는 색상</h4>
 % my @colors  = split /,/, $order->pre_color;
 <ul class="list-inline">
   % for my $color (@colors) {
@@ -87,10 +87,11 @@
 </ul>
 
 <hr>
-<p>의류착용일</p>
-<p>
-  %= $order->wearon_date->ymd
-</p>
+<h4>
+  의류착용일
+  <small><%= $order->wearon_date->ymd %></small>
+</h4>
+<div id="embedded-wearon-date" data-date="<%= $order->wearon_date->ymd %>"></div>
 
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {

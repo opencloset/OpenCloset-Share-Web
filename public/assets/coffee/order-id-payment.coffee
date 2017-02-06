@@ -130,3 +130,8 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+
+  $('#embedded-wearon-date').datepicker
+    language: 'kr'
+    todayHighlight: true
+    format: 'yyyy-mm-dd'
