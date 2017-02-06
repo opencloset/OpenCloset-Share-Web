@@ -229,12 +229,12 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        ## 의류착용일이 +3d 의 조건을 만족하는지 확인
+        ## 의류착용일이 +5d 의 조건을 만족하는지 확인
         my $fine        = 1;
         my $now         = $self->timezone( DateTime->now )->truncate( to => 'day' )->epoch;
         my $wearon_date = $self->timezone( $order->wearon_date )->truncate( to => 'day' )->epoch;
-        if ( $wearon_date - $now < 60 * 60 * 24 * 3 ) {
-            $self->log->info("Not enough wearon_date: +3d");
+        if ( $wearon_date - $now < 60 * 60 * 24 * 5 ) {
+            $self->log->info("Not enough wearon_date: +5d");
             $fine = 0;
         }
 
