@@ -100,28 +100,57 @@ sub detail {
     my $clothes  = $self->stash('clothes');
     my $order_id = $self->param('order_id');
 
-    my $code = $clothes->code =~ s/^0//r;
-    my $url  = $self->oavatar_url($code) . '/images';
+    my $top = $clothes->top;
+    my $bot = $clothes->bottom;
 
-    $self->log->debug("Clothes images URL: $url");
+    my ( @top, @bottom );
+    my ( @top_parts, @top_sizes, @bot_parts, @bot_sizes );
+    if ($top) {
+        my $code = $top->code =~ s/^0//r;
+        my $url  = $self->oavatar_url($code) . '/images';
 
-    my $http = HTTP::Tiny->new;
-    my $res = $http->get( $url, { headers => { Accept => 'application/json' } } );
+        $self->log->debug("Clothes images URL: $url");
 
-    my @images;
-    if ( $res->{success} ) {
-        my $urls = decode_json( $res->{content} );
-        @images = @$urls;
+        my $http = HTTP::Tiny->new;
+        my $res = $http->get( $url, { headers => { Accept => 'application/json' } } );
+
+        if ( $res->{success} ) {
+            my $urls = decode_json( $res->{content} );
+            @top = @$urls;
+        }
+        else {
+            $self->log->error("Failed to get $code images: $res->{reason}");
+        }
+
+        my @measurements = $self->clothes_measurements($top);
+        while ( my ( $part, $size ) = splice( @measurements, 0, 2 ) ) {
+            push @top_parts, $part;
+            push @top_sizes, $size;
+        }
     }
-    else {
-        $self->log->error("Failed to get $code images: $res->{reason}");
-    }
 
-    my @measurements = $self->clothes_measurements($clothes);
-    my ( @parts, @sizes );
-    while ( my ( $part, $size ) = splice( @measurements, 0, 2 ) ) {
-        push @parts, $part;
-        push @sizes, $size;
+    if ($bot) {
+        my $code = $bot->code =~ s/^0//r;
+        my $url  = $self->oavatar_url($code) . '/images';
+
+        $self->log->debug("Clothes images URL: $url");
+
+        my $http = HTTP::Tiny->new;
+        my $res = $http->get( $url, { headers => { Accept => 'application/json' } } );
+
+        if ( $res->{success} ) {
+            my $urls = decode_json( $res->{content} );
+            @bottom = @$urls;
+        }
+        else {
+            $self->log->error("Failed to get $code images: $res->{reason}");
+        }
+
+        my @measurements = $self->clothes_measurements($bot);
+        while ( my ( $part, $size ) = splice( @measurements, 0, 2 ) ) {
+            push @bot_parts, $part;
+            push @bot_sizes, $size;
+        }
     }
 
     my $order;
@@ -133,7 +162,12 @@ sub detail {
         return $self->error( 400, "Permission denied" ) if $user->id != $order->user_id;
     }
 
-    $self->stash( images => \@images, parts => \@parts, sizes => \@sizes, order => $order );
+    $self->stash(
+        top    => { clothes => $top, images => \@top,    parts => \@top_parts, sizes => \@top_sizes },
+        bottom => { clothes => $bot, images => \@bottom, parts => \@bot_parts, sizes => \@bot_sizes },
+        order  => $order,
+    );
+
     $self->respond_to(
         html => { template => 'clothes/detail' },
         json => sub {
