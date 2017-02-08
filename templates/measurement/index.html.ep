@@ -13,100 +13,108 @@
 
 <hr>
 
-<form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
-  <div class="form-group">
-    <label class="col-sm-2 control-label">키 <small>cm</small></label>
-    <div class="col-sm-10">
-      <input name="height" type="text" class="form-control" placeholder="키 cm" value="<%= $user_info->height || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">몸무게 <small>kg</small></label>
-    <div class="col-sm-10">
-      <input name="weight" type="text" class="form-control" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">가슴둘레 <small>cm</small></label>
-    <div class="col-sm-10">
-      <input name="bust" type="text" class="form-control" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="바지를 입는 부분의 둘레 / (바지를 입지 않는다면) 골반뼈 윗부분의 둘레">
-      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-      허리둘레 <small>cm</small>
-    </label>
-    <div class="col-sm-10">
-      <input name="waist" type="text" class="form-control" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="배꼽 7cm 윗부분의 둘레">
-      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-      윗배둘레 <small>cm</small>
-    </label>
-    <div class="col-sm-10">
-      <input name="topbelly" type="text" class="form-control" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="어깨뼈부터 손목뼈까지의 길이">
-      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-      팔길이 <small>cm</small>
-    </label>
-    <div class="col-sm-10">
-      <input name="arm" type="text" class="form-control" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>">
-    </div>
+<div class="row">
+  <div class="col-md-7">
+    <form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-2 control-label">키 <small>cm</small></label>
+        <div class="col-sm-10">
+          <input name="height" type="text" class="form-control m-preview-none" placeholder="키 cm" value="<%= $user_info->height || '' %>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">몸무게 <small>kg</small></label>
+        <div class="col-sm-10">
+          <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label">가슴둘레 <small>cm</small></label>
+        <div class="col-sm-10">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="가슴의 가장 굵은 부분을 둘러 잰 길이.">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" data-toggle="tooltip">
+          허리둘레 <small>cm</small>
+        </label>
+        <div class="col-sm-10">
+          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="허리의 둘레를 잰 길이.">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" data-toggle="tooltip">
+          윗배둘레 <small>cm</small>
+        </label>
+        <div class="col-sm-10">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="가슴 아래 배꼽 위에 있는 부분의 배의 둘레를 잰 길이.">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" data-toggle="tooltip">
+          팔길이 <small>cm</small>
+        </label>
+        <div class="col-sm-10">
+          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="어깨부터 손목까지의 길이.">
+        </div>
+      </div>
+
+      % my $gender = $user_info->gender || '';
+      % if ($gender eq 'male') {
+        <!-- male -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label" data-toggle="tooltip">
+            허벅지둘레 <small>cm</small>
+          </label>
+          <div class="col-sm-10">
+            <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="허벅지의 가장 두꺼운 부분의 둘레.">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label" data-toggle="tooltip">
+            다리길이 <small>cm</small>
+          </label>
+          <div class="col-sm-10">
+            <input name="leg" type="text" class="form-control m-preview" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>" title="허리부터 바닥까지의 길이.">
+          </div>
+        </div>
+      % } elsif ($gender eq 'female') {
+        <!-- female -->
+        <div class="form-group">
+          <label class="col-sm-2 control-label">엉덩이둘레 <small>cm</small></label>
+          <div class="col-sm-10">
+            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">무릎길이 <small>cm</small></label>
+          <div class="col-sm-10">
+            <input name="knee" type="text" class="form-control m-preview" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>">
+          </div>
+        </div>
+      % }
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">신발크기 <small>mm</small></label>
+        <div class="col-sm-10">
+          <input name="foot" type="text" class="form-control m-preview-none" placeholder="신발크기 mm" value="<%= $user_info->foot || '' %>">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default">저장</button>
+        </div>
+      </div>
+    </form>
   </div>
 
-  % my $gender = $user_info->gender || '';
-  % if ($gender eq 'male') {
-  <!-- male -->
-  <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="허벅지의 가장 두꺼운 부분의 둘레">
-      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-      허벅지둘레 <small>cm</small>
-    </label>
-    <div class="col-sm-10">
-      <input name="thigh" type="text" class="form-control" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>">
+  <div class="col-md-5">
+    <div id="measurement-preview">
+      <div class="thumbnail preview-img">
+        <img src="" alt="">
+      </div>
+      <p class="preview-desc"></p>
     </div>
   </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" data-toggle="tooltip" title="발바닥부터 골반뼈까지의 길이">
-      <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-      다리길이 <small>cm</small>
-    </label>
-    <div class="col-sm-10">
-      <input name="leg" type="text" class="form-control" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>">
-    </div>
-  </div>
-  % } elsif ($gender eq 'female') {
-  <!-- female -->
-  <div class="form-group">
-    <label class="col-sm-2 control-label">엉덩이둘레 <small>cm</small></label>
-    <div class="col-sm-10">
-      <input name="hip" type="text" class="form-control" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="col-sm-2 control-label">무릎길이 <small>cm</small></label>
-    <div class="col-sm-10">
-      <input name="knee" type="text" class="form-control" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>">
-    </div>
-  </div>
-  % }
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label">신발크기 <small>mm</small></label>
-    <div class="col-sm-10">
-      <input name="foot" type="text" class="form-control" placeholder="신발크기 mm" value="<%= $user_info->foot || '' %>">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">저장</button>
-    </div>
-  </div>
-</form>
+</div>
