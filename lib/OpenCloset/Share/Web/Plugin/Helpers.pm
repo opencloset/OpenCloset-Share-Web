@@ -244,7 +244,7 @@ sub clothes_measurements {
 
     my @sizes;
     for my $part (@parts) {
-        my $size = $clothes->get_column($part);
+        my $size = $part eq $CUFF ? $clothes->cuff : $clothes->get_column($part);
         next unless $size;
         my $label = $OpenCloset::Constants::Measurement::LABEL_MAP{$part} || $part;
         push @sizes, $label, $size;
