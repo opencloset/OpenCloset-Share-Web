@@ -175,6 +175,38 @@ sub shipping_list {
     $self->render( parcels => $rs, pageset => $pageset, today => $today );
 }
 
+=head2 dates
+
+    GET /orders/dates?wearon_date=yyyy-mm-dd
+
+=cut
+
+sub dates {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $wearon_date = $v->param('wearon_date');
+    if ($wearon_date) {
+        my $tz    = $self->config->{timezone};
+        my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
+        my $dt    = $strp->parse_datetime($wearon_date);
+        my $dates = $self->date_calc($dt);
+        map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
+        $self->render( json => $dates );
+    }
+    else {
+        $wearon_date = $self->date_calc;
+        $self->render( json => { wearon_date => $wearon_date->ymd } );
+    }
+}
+
 =head2 order_id
 
     under /orders/:order_id
