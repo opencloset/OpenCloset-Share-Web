@@ -149,14 +149,15 @@ sub shipping_list {
 
     my $p = $self->param('p') || 1;
     my $s = $self->param('s') || $PAYMENT_DONE;
-    my $q = $self->param('q');
+    my $w = $self->param('wearon_date');
 
-    ## TODO: $q 처리
-    my $cond = { status_id => $s };
+    my $cond = { 'me.status_id' => $s };
+    $cond->{'order.wearon_date'} = $w if $w;
     my $attr = {
         page     => $p,
         rows     => 20,
-        order_by => { -desc => 'update_date' },
+        join     => 'order',
+        order_by => { -asc => 'order.wearon_date' },
     };
 
     my $rs      = $self->schema->resultset('OrderParcel')->search( $cond, $attr );
@@ -170,7 +171,8 @@ sub shipping_list {
         }
     );
 
-    $self->render( parcels => $rs, pageset => $pageset );
+    my $today = DateTime->today( time_zone => $self->config->{timezone} );
+    $self->render( parcels => $rs, pageset => $pageset, today => $today );
 }
 
 =head2 order_id
