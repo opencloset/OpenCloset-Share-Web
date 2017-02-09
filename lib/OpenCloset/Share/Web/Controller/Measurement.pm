@@ -43,6 +43,8 @@ sub update {
     $v->optional('hip')->size( 2, 3 );
     $v->optional('knee')->size( 2, 3 );
     $v->optional('foot')->size( 3, 3 );
+    $v->optional('top_size')->size( 2, 3 );
+    $v->optional('bottom_size')->size( 2, 3 );
 
     if ( $v->has_error ) {
         my $failed = $v->failed;

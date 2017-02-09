@@ -65,6 +65,18 @@
         %= $user_info->knee || 0
       </span>
     </li>
+    <li>
+      <span class="label label-default" title="상의">
+        상의
+        %= $user_info->top_size || 0
+      </span>
+    </li>
+    <li>
+      <span class="label label-default" title="하의">
+        하의
+        %= $user_info->bottom_size || 0
+      </span>
+    </li>
     % }
   </ul>
 
@@ -88,4 +100,3 @@
     </li>
   </ul>
 </div>
-
