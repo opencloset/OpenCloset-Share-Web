@@ -822,10 +822,10 @@ sub date_calc {
         my $now      = DateTime->now( time_zone => $tz );
         my $hour     = $now->hour;
         my $year     = $now->year;
-        my $holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
+        my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
 
         my %holidays;
-        map { $holidays{$_}++ } @$holidays;
+        map { $holidays{$_}++ } @holidays;
 
         $days = $hour > 10 ? 4 : 3;
 
@@ -844,11 +844,11 @@ sub date_calc {
 
     $days ||= 3;                                            # 기본 대여일은 3박 4일
     my $year     = $wearon_date->year;
-    my $holidays = $self->holidays( $year, $year + 1 );     # 연말을 고려함
+    my @holidays = $self->holidays( $year, $year + 1 );     # 연말을 고려함
 
     my ( $n,        $dt );
     my ( %holidays, %dates );
-    map { $holidays{$_}++ } @$holidays;
+    map { $holidays{$_}++ } @holidays;
 
     $n  = $SHIPPING_BUFFER;
     $dt = $wearon_date->clone;
