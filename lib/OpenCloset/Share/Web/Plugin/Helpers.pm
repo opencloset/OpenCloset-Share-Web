@@ -59,6 +59,7 @@ sub register {
     $app->helper( category_price       => \&category_price );
     $app->helper( merchant_uid         => \&merchant_uid );
     $app->helper( formatted            => \&formatted );
+    $app->helper( date_calc            => \&date_calc );
 }
 
 =head1 HELPERS
@@ -789,6 +790,111 @@ sub formatted {
     }
 
     return $formatted;
+}
+
+=head2 date_calc( $wearon_date, $days )
+
+Default C<$days> 는 3박 4일의 C<3>
+
+    # 의류착용일(AM 10:00 이전) = 주말 + 공휴일 + 3일 부터
+    # 의류착용일(AM 10:00 이후) = 주말 + 공휴일 + 4일 부터
+    # 발송(예정)일 = 의류착용일 - 주말 - 공휴일 - 3일
+    # 대여기간 = 대여일 ~ 반납일
+    # 대여일 = 착용일 - 주말 - 공휴일 - 1일
+    # 반납일 = 대여일 + 주말 + 공휴일 + 3일
+    # 택배반납일 = 반납일 - 주말 - 공휴일 - 1일
+
+    my $closest_wearon_date = $self->date_calc;    # 가장 가까운 의류착용일
+    my $dates = $self->date_calc($closest_wearon_date);
+    # { shipping => $dt1, rental => $dt2, target => $dt3, parcel => $dt4 }
+
+=cut
+
+our $SHIPPING_BUFFER = 3;
+our $RENTAL_BUFFER   = 1;
+our $PARCEL_BUFFER   = 1;
+
+sub date_calc {
+    my ( $self, $wearon_date, $days ) = @_;
+    my $tz = $self->config->{timezone};
+
+    unless ($wearon_date) {
+        my $now      = DateTime->now( time_zone => $tz );
+        my $hour     = $now->hour;
+        my $year     = $now->year;
+        my $holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
+
+        my %holidays;
+        map { $holidays{$_}++ } @$holidays;
+
+        $days = $hour > 10 ? 4 : 3;
+
+        my $dt = DateTime->today( time_zone => $tz );
+        while ($days) {
+            $dt->add( days => 1 );                          # 1-7 (Mondays is 1)
+            my $dow = $dt->day_of_week;
+            next if $dow > 5;
+            my $ymd = $dt->ymd;
+            next if $holidays{$ymd};
+            $days--;
+        }
+
+        return $dt;
+    }
+
+    $days ||= 3;                                            # 기본 대여일은 3박 4일
+    my $year     = $wearon_date->year;
+    my $holidays = $self->holidays( $year, $year + 1 );     # 연말을 고려함
+
+    my ( $n,        $dt );
+    my ( %holidays, %dates );
+    map { $holidays{$_}++ } @$holidays;
+
+    $n  = $SHIPPING_BUFFER;
+    $dt = $wearon_date->clone;
+    while ($n) {
+        $dt->subtract( days => 1 );
+        next if $dt->day_of_week > 5;
+        next if $holidays{ $dt->ymd };
+        $n--;
+    }
+
+    $dates{shipping} = $dt->clone;
+
+    $n  = $RENTAL_BUFFER;
+    $dt = $wearon_date->clone;
+    while ($n) {
+        $dt->subtract( days => 1 );
+        next if $dt->day_of_week > 5;
+        next if $holidays{ $dt->ymd };
+        $n--;
+    }
+
+    $dates{rental} = $dt->clone;
+
+    $n  = $days;
+    $dt = $dates{rental}->clone;
+    while ($n) {
+        $dt->add( days => 1 );
+        next if $dt->day_of_week > 5;
+        next if $holidays{ $dt->ymd };
+        $n--;
+    }
+
+    $dates{target} = $dt->clone;
+
+    $n  = $PARCEL_BUFFER;
+    $dt = $dates{target}->clone;
+    while ($n) {
+        $dt->subtract( days => 1 );
+        next if $dt->day_of_week > 5;
+        next if $holidays{ $dt->ymd };
+        $n--;
+    }
+
+    $dates{parcel} = $dt->clone;
+
+    return \%dates;
 }
 
 1;

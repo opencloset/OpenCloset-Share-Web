@@ -1,29 +1,23 @@
 $ ->
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
-    startDate: '+5d'
     endDate: '+1m'
     todayHighlight: true
     format: 'yyyy-mm-dd'
 
   date_calc = (wearon_date) ->
-    # 대여기간 = 대여일 ~ 반납일
-    # 발송(예정)일 = 의류착용일 - 2일 - 주말 - 공휴일
-    # 대여일 = 발송일
-    # 반납일 = 대여일 + 4일
-    # 택배반납일 = 반납일 - 1일
-
-    $('#wearon_date').val(wearon_date)
-    shipping_date = moment(wearon_date).subtract(2, 'days').format('YYYY-MM-DD')
-    rental_date   = shipping_date
-    target_date   = moment(rental_date).add(4, 'days').format('YYYY-MM-DD')
-    parcel_date   = moment(target_date).subtract(1, 'days').format('YYYY-MM-DD')
-    $('#shipping-date').text(shipping_date)
-    $('#rental-target-date').text("#{rental_date} ~ #{target_date}")
-    $('#parcel-date').text(parcel_date)
-    $('#rental-date').text(rental_date)
-    $('#target-date').text(target_date)
-    $('#wearon-date').text(wearon_date)
+    $.ajax "/orders/dates?wearon_date=#{wearon_date}",
+      type: 'GET'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $('#shipping-date').text(data.shipping)
+        $('#rental-target-date').text("#{data.rental} ~ #{data.target}")
+        $('#parcel-date').text(data.parcel)
+        $('#rental-date').text(data.rental)
+        $('#target-date').text(data.target)
+        $('#wearon-date').text(wearon_date)
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
 
   $('#datepicker-wearon-date').on 'changeDate', ->
     val = $('#datepicker-wearon-date').datepicker('getFormattedDate')

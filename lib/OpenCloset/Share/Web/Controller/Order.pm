@@ -29,10 +29,12 @@ sub add {
     my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
 
+    my $closest_wearon_date = $self->date_calc;
+
     my $failed = $self->check_measurement( $user, $user_info );
     return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
 
-    $self->render;
+    $self->render( closest_wearon_date => $closest_wearon_date );
 }
 
 =head2 create
@@ -173,6 +175,38 @@ sub shipping_list {
 
     my $today = DateTime->today( time_zone => $self->config->{timezone} );
     $self->render( parcels => $rs, pageset => $pageset, today => $today );
+}
+
+=head2 dates
+
+    GET /orders/dates?wearon_date=yyyy-mm-dd
+
+=cut
+
+sub dates {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $wearon_date = $v->param('wearon_date');
+    if ($wearon_date) {
+        my $tz    = $self->config->{timezone};
+        my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
+        my $dt    = $strp->parse_datetime($wearon_date);
+        my $dates = $self->date_calc($dt);
+        map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
+        $self->render( json => $dates );
+    }
+    else {
+        $wearon_date = $self->date_calc;
+        $self->render( json => { wearon_date => $wearon_date->ymd } );
+    }
 }
 
 =head2 order_id
