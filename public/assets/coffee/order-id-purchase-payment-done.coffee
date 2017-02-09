@@ -54,7 +54,7 @@ $ ->
         data.status     = OpenCloset.status[data.status_id]
         data.labelColor = OpenCloset.status.color[data.status_id]
         data.disabled   = switch data.status_id
-          when "2", "3", "7", "8" then true
+          when "2", "3", "7", "8", "45", "46", "47" then true
           else false
         template = JST['clothes-item']
         html     = template(data)
