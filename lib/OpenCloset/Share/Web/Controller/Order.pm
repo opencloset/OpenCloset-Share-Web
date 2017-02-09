@@ -29,10 +29,12 @@ sub add {
     my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
 
+    my $closest_wearon_date = $self->date_calc;
+
     my $failed = $self->check_measurement( $user, $user_info );
     return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
 
-    $self->render;
+    $self->render( closest_wearon_date => $closest_wearon_date );
 }
 
 =head2 create

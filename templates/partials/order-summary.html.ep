@@ -3,6 +3,8 @@
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
+% my $dates = date_calc(timezone($order->wearon_date));
+
 %= include 'partials/user-info', user => $order->user;
 
 <hr>
@@ -87,10 +89,34 @@
 </ul>
 
 <hr>
-<h4>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  대여기간
+</h5>
+<p>
+  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $dates->{target}->ymd %></span>
+</p>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  발송(예정)일
+</h5>
+<p><%= $dates->{shipping}->ymd %></p>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
-  <small><%= $order->wearon_date->ymd %></small>
-</h4>
+</h5>
+<p><%= $order->wearon_date->ymd %></p>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  반납택배발송일
+  <small>택배로 반납하실 경우 반납일 하루전에 보내주셔야 합니다.</small>
+</h5>
+<p><%= $dates->{parcel}->ymd %></p>
+
 <div id="embedded-wearon-date" data-date="<%= $order->wearon_date->ymd %>"></div>
 
 % my $status_id = $order->status_id;

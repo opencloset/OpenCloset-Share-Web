@@ -152,7 +152,7 @@
 
   <hr>
 
-  <div id="datepicker-wearon-date" data-date="+5d"></div>
+  <div id="datepicker-wearon-date" data-date-start-date="<%= $closest_wearon_date->ymd %>" data-date="<%= $closest_wearon_date->ymd %>"></div>
   <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
@@ -161,31 +161,31 @@
 
   <hr>
 
-  <h4>
+  <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     대여기간
-  </h4>
+  </h5>
   <p>
     <span id="rental-date" class="label label-info"></span> ~ <span id="target-date" class="label label-info"></span>
   </p>
 
-  <h4>
+  <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     발송(예정)일
-  </h4>
+  </h5>
   <p id="shipping-date"></p>
 
-  <h4>
+  <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     의류착용일
-  </h4>
+  </h5>
   <p id="wearon-date"></p>
 
-  <h4>
+  <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     반납택배발송일
     <small>택배로 반납하실 경우 반납일 하루전에 보내주셔야 합니다.</small>
-  </h4>
+  </h5>
   <p id="parcel-date"></p>
 
   <button class="btn btn-primary" type="submit">선택완료</button>
