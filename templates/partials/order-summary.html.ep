@@ -64,11 +64,23 @@
     % }
   </ul>
 
-  <p class="help-block">
-    택배비는 <code>3,000</code>원 입니다.
-  </p>
+  % my $additional = $order->order_details({ desc => 'additional' });
+  % while (my $detail = $additional->next) {
+    % my $name = $detail->name;
+    % my $fee  = $detail->price;
+    % $price += $fee;
+    <div class="panel panel-default">
+      <div class="panel-body">
+        + <%= $name %>:
+        <code>
+          %= commify($fee)
+        </code>
+      </div>
+    </div>
+  % }
 
   <h3 class="no-margin">
+    합계
     <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
     <small>원</small>
   </h3>
@@ -95,27 +107,14 @@
   대여기간
 </h5>
 <p>
-  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $dates->{target}->ymd %></span>
+  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $order->user_target_date->ymd %></span>
 </p>
-
-<h5>
-  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
-  발송(예정)일
-</h5>
-<p><%= $dates->{shipping}->ymd %></p>
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
 </h5>
 <p><%= $order->wearon_date->ymd %></p>
-
-<h5>
-  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
-  반납택배발송일
-  <small>택배로 반납하실 경우 반납일 하루전에 보내주셔야 합니다.</small>
-</h5>
-<p><%= $dates->{parcel}->ymd %></p>
 
 <div id="embedded-wearon-date" data-date="<%= $order->wearon_date->ymd %>"></div>
 

@@ -5,8 +5,9 @@ $ ->
     todayHighlight: true
     format: 'yyyy-mm-dd'
 
-  date_calc = (wearon_date) ->
-    $.ajax "/orders/dates?wearon_date=#{wearon_date}",
+  date_calc = (wearon_date, days) ->
+    days = '' unless days
+    $.ajax "/orders/dates?wearon_date=#{wearon_date}&days=#{days}",
       type: 'GET'
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
@@ -20,8 +21,10 @@ $ ->
       complete: (jqXHR, textStatus) ->
 
   $('#datepicker-wearon-date').on 'changeDate', ->
-    val = $('#datepicker-wearon-date').datepicker('getFormattedDate')
-    date_calc(val)
+    val  = $('#datepicker-wearon-date').datepicker('getFormattedDate')
+    days = $('#rental-period option:selected').val()
+    $('#wearon_date').val(val)
+    date_calc(val, days)
   .trigger('changeDate')
 
   $('input[data-toggle="toggle"]').change ->
@@ -45,3 +48,7 @@ $ ->
   else if gender is 'female'
     for category in ['jacket', 'skirt', 'blouse']
       $("input[name=category-#{category}]").bootstrapToggle('on')
+
+  $('form').on 'change', '#rental-period', (e) ->
+    wearon_date = $('#datepicker-wearon-date').datepicker('getFormattedDate')
+    date_calc(wearon_date, $(e.target).val())

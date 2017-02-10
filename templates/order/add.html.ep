@@ -143,7 +143,7 @@
   </div>
 
   <hr>
-
+p
   <h3>의류착용일</h3>
   <p>
     <strong>달력에서 의류착용일을 선택해주세요.</strong><br>
@@ -164,10 +164,22 @@
   <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     대여기간
+    <small>
+      <select id="rental-period" name="rental-period">
+        <option value="3">3박4일</option>
+        <option value="4">4박5일 +1일 연장(+20%)</option>
+        <option value="5">5박6일 +2일 연장(+40%)</option>
+        <option value="6">6박7일 +3일 연장(+60%)</option>
+        <option value="7">7박8일 +4일 연장(+80%)</option>
+        <option value="8">8박9일 +5일 연장(+100%)</option>
+        <option value="9">9박10일 +6일 연장(+120%)</option>
+      </select>
+    </small>
   </h5>
   <p>
     <span id="rental-date" class="label label-info"></span> ~ <span id="target-date" class="label label-info"></span>
   </p>
+  <p class="help-block">기본 대여기간은 3박4일 입니다. 하루 연장비는 대여료의 20% 입니다.</p>
 
   <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
