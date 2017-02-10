@@ -291,11 +291,12 @@ sub order {
     }
     elsif ( $status_id == $PAYMENT ) {
         ## 의류착용일이 +5d 의 조건을 만족하는지 확인
-        my $fine        = 1;
-        my $now         = $self->timezone( DateTime->now )->truncate( to => 'day' )->epoch;
-        my $wearon_date = $self->timezone( $order->wearon_date )->truncate( to => 'day' )->epoch;
-        if ( $wearon_date - $now < 60 * 60 * 24 * 5 ) {
+        my $fine                = 1;
+        my $wearon_date         = $self->timezone( $order->wearon_date );
+        my $closest_wearon_date = $self->date_calc;
+        if ( $wearon_date->epoch < $closest_wearon_date->epoch ) {
             $self->log->info("Not enough wearon_date: +5d");
+            $self->log->info("wearon_date($wearon_date), closest_wearon_date($closest_wearon_date)");
             $fine = 0;
         }
 
