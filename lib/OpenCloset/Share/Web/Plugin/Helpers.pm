@@ -704,8 +704,8 @@ sub check_measurement {
 
 =head2 category_price($order, $category?)
 
-    # 배송비포함
-    my $price = $self->category_price($order);     # 33000
+    # 배송비미포함
+    my $price = $self->category_price($order);     # 30000
 
     my $tie_price = $self->category_price($order, $TIE);     # 2000 or 0
 
@@ -717,7 +717,7 @@ sub category_price {
 
     return $PRICE{$category} if $category && $category ne $TIE;
 
-    my $price = 3_000; # 배송비
+    my $price = 0;
     my %seen;
     my @categories = $self->categories($order);
 
