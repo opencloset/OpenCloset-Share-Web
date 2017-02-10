@@ -803,8 +803,8 @@ Default C<$days> 는 3박 4일의 C<3>
     # 발송(예정)일 = 의류착용일 - 주말 - 공휴일 - 3일
     # 대여기간 = 대여일 ~ 반납일
     # 대여일 = 착용일 - 주말 - 공휴일 - 1일
-    # 반납일 = 대여일 + 주말 + 공휴일 + 3일
-    # 택배반납일 = 반납일 - 주말 - 공휴일 - 1일
+    # 반납일 = 대여일 + 3일(대여기간)
+    # 택배반납일 = 반납일 - 1일
 
     my $closest_wearon_date = $self->date_calc;    # 가장 가까운 의류착용일
     my $dates = $self->date_calc($closest_wearon_date);
@@ -872,8 +872,6 @@ sub date_calc {
     $dt = $dates{rental}->clone;
     while ($n) {
         $dt->add( days => 1 );
-        next if $dt->day_of_week > 5;
-        next if $holidays{ $dt->ymd };
         $n--;
     }
 
@@ -883,8 +881,6 @@ sub date_calc {
     $dt = $dates{target}->clone;
     while ($n) {
         $dt->subtract( days => 1 );
-        next if $dt->day_of_week > 5;
-        next if $holidays{ $dt->ymd };
         $n--;
     }
 
