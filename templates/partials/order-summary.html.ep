@@ -112,22 +112,9 @@
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
-  발송(예정)일
-</h5>
-<p><%= $dates->{shipping}->ymd %></p>
-
-<h5>
-  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
 </h5>
 <p><%= $order->wearon_date->ymd %></p>
-
-<h5>
-  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
-  반납택배발송일
-  <small>택배로 반납하실 경우 반납일 하루전에 보내주셔야 합니다.</small>
-</h5>
-<p><%= $dates->{parcel}->ymd %></p>
 
 <div id="embedded-wearon-date" data-date="<%= $order->wearon_date->ymd %>"></div>
 
