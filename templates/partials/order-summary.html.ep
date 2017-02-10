@@ -64,11 +64,23 @@
     % }
   </ul>
 
-  <p class="help-block">
-    택배비는 <code>3,000</code>원 입니다.
-  </p>
+  % my $additional = $order->order_details({ desc => 'additional' });
+  % while (my $detail = $additional->next) {
+    % my $name = $detail->name;
+    % my $fee  = $detail->price;
+    % $price += $fee;
+    <div class="panel panel-default">
+      <div class="panel-body">
+        + <%= $name %>:
+        <code>
+          %= commify($fee)
+        </code>
+      </div>
+    </div>
+  % }
 
   <h3 class="no-margin">
+    합계
     <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>
     <small>원</small>
   </h3>
