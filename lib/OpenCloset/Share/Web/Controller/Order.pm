@@ -7,6 +7,7 @@ use DateTime;
 use Encode qw/encode_utf8/;
 use JSON qw/decode_json/;
 
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT/;

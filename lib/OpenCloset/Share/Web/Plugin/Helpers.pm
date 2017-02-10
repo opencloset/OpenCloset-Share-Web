@@ -11,6 +11,7 @@ use String::Random;
 use Time::HiRes;
 
 use OpenCloset::Schema;
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER $RENTAL_BUFFER $PARCEL_BUFFER/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT/;
@@ -810,10 +811,6 @@ Default C<$days> 는 3박 4일의 C<3>
 
 =cut
 
-our $SHIPPING_BUFFER = 3;
-our $RENTAL_BUFFER   = 1;
-our $PARCEL_BUFFER   = 1;
-
 sub date_calc {
     my ( $self, $wearon_date, $days ) = @_;
     my $tz = $self->config->{timezone};
@@ -827,22 +824,20 @@ sub date_calc {
         my %holidays;
         map { $holidays{$_}++ } @holidays;
 
-        $days = $hour > 10 ? 4 : 3;
+        $days = $hour > 10 ? 4 : 3;                         # AM 10:00 이 기준
 
         my $dt = DateTime->today( time_zone => $tz );
         while ($days) {
             $dt->add( days => 1 );                          # 1-7 (Mondays is 1)
-            my $dow = $dt->day_of_week;
-            next if $dow > 5;
-            my $ymd = $dt->ymd;
-            next if $holidays{$ymd};
+            next if $dt->day_of_week > 5;
+            next if $holidays{ $dt->ymd };
             $days--;
         }
 
         return $dt;
     }
 
-    $days ||= 3;                                            # 기본 대여일은 3박 4일
+    $days ||= $DEFAULT_RENTAL_PERIOD;                       # 기본 대여일은 3박 4일
     my $year     = $wearon_date->year;
     my @holidays = $self->holidays( $year, $year + 1 );     # 연말을 고려함
 
