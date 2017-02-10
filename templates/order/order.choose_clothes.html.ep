@@ -11,22 +11,22 @@
 
 <p>
   <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-  열린옷장의 누적 대여기록과 신체치수를 바탕으로 의류가 추천되었습니다.
+  열린옷장의 누적 대여기록과 신체치수를 바탕으로 <%= $user->name %>님의 사이즈에 잘 맞는 의류가 추천됩니다.
 </p>
 
 <p>
   <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-  마음에 드는 자켓사진을 선택해서 진행하시거나 <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a> 버튼을 눌러주세요.
+  추천된 의류 중 마음에 드는 자켓사진을 선택해 주세요. 의류를 선택하여 상세 사이즈를 확인 한 후, 의류를 대여해주세요.
 </p>
 
 <p>
   <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
-  추천된 의류가 없으면 <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a> 버튼을 눌러주세요.
+  마음에 드는 의류가 없거나, 추천된 의류가 없는 경우 <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a> 버튼을 눌러주세요.
 </p>
 
 <p>
   <i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>
-  추천대여란? 옷장지기가 주문서를 보고 의류를 대신 골라 드립니다.
+  추천대여는 <%= $user->name %>님에게 맞는 사이즈의 의류 중에서 열린옷장이 가장 적합하다고 판단하는 의류를 추천하여 택배 발송하는 제도를 말합니다.
 </p>
 
 <hr>
