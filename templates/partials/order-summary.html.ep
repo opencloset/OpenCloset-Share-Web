@@ -95,7 +95,7 @@
   대여기간
 </h5>
 <p>
-  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $dates->{target}->ymd %></span>
+  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $order->user_target_date->ymd %></span>
 </p>
 
 <h5>

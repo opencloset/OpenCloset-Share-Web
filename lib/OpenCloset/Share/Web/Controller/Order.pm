@@ -14,7 +14,7 @@ use OpenCloset::Constants::Status
 
 has schema => sub { shift->app->schema };
 
-our $SHIPPING_FEE = 3000;
+our $SHIPPING_FEE = 3_000;
 
 =head1 METHODS
 
@@ -52,6 +52,7 @@ sub create {
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('rental-period')->like(qr/^\d+$/);
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
@@ -82,23 +83,29 @@ sub create {
     my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
+    my $rental_period = $v->param('rental-period');
+    my $dates = $self->date_calc( $dt_wearon, $rental_period );
+
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
-        online      => 1,
-        user_id     => $user->id,
-        status_id   => $status_id,
-        wearon_date => $wearon_date,
-        pre_color   => $v->param('pre_color'),
+        online           => 1,
+        user_id          => $user->id,
+        status_id        => $status_id,
+        wearon_date      => $wearon_date,
+        user_target_date => $dates->{target}->datetime(),
+        pre_color        => $v->param('pre_color'),
     };
     map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
     my $order = $self->schema->resultset('Order')->create($param);
 
     return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
+    my $sum = 0;
     for my $category (@categories) {
         my $desc;
         $desc = $v->param('shirt-type')  if $category eq $SHIRT;
         $desc = $v->param('blouse-type') if $category eq $BLOUSE;
+        $sum += $PRICE{$category};
         $order->create_related(
             'order_details',
             {
@@ -116,8 +123,22 @@ sub create {
             name        => '배송비',
             price       => $SHIPPING_FEE,
             final_price => $SHIPPING_FEE,
+            desc        => 'additional',
         }
     );
+
+    if ( my $days = $rental_period - $DEFAULT_RENTAL_PERIOD ) {
+        my $extension_fee = $sum * 0.2 * $days;
+        $order->create_related(
+            'order_details',
+            {
+                name        => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $days, 3 + $days + 1, $days, 20 * $days ),
+                price       => $extension_fee,
+                final_price => $extension_fee,
+                desc        => 'additional',
+            }
+        );
+    }
 
     $guard->commit;
 
@@ -189,6 +210,7 @@ sub dates {
 
     my $v = $self->validation;
     $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->optional('days')->like(qr/^\d+$/);
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -196,11 +218,12 @@ sub dates {
     }
 
     my $wearon_date = $v->param('wearon_date');
+    my $days = $v->param('days') || $DEFAULT_RENTAL_PERIOD;
     if ($wearon_date) {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
         my $dt    = $strp->parse_datetime($wearon_date);
-        my $dates = $self->date_calc($dt);
+        my $dates = $self->date_calc( $dt, $days );
         map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
         $self->render( json => $dates );
     }
