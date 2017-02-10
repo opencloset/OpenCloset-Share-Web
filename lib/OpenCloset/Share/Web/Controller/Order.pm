@@ -88,12 +88,13 @@ sub create {
 
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
-        online           => 1,
-        user_id          => $user->id,
-        status_id        => $status_id,
-        wearon_date      => $wearon_date,
-        user_target_date => $dates->{target}->datetime(),
-        pre_color        => $v->param('pre_color'),
+        online      => 1,
+        user_id     => $user->id,
+        status_id   => $status_id,
+        wearon_date => $wearon_date,
+        rental_date => $dates->{rental}->datetime(),
+        target_date => $dates->{target}->datetime(),
+        pre_color   => $v->param('pre_color'),
     };
     map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
     my $order = $self->schema->resultset('Order')->create($param);
