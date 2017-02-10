@@ -107,16 +107,16 @@
   대여기간
 </h5>
 <p>
-  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $order->target_date->ymd %></span>
+  <span class="label label-info"><%= $dates->{rental}->ymd %></span> ~ <span class="label label-info"><%= $order->target_date ? $order->target_date->ymd : '지정되지않음' %></span>
 </p>
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
 </h5>
-<p><%= $order->wearon_date->ymd %></p>
+<p><%= $order->wearon_date ? $order->wearon_date->ymd : '지정되지않음' %></p>
 
-<div id="embedded-wearon-date" data-date="<%= $order->wearon_date->ymd %>"></div>
+<div id="embedded-wearon-date" data-date="<%= $order->wearon_date ? $order->wearon_date->ymd : '' %>"></div>
 
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
