@@ -19,12 +19,7 @@ $ ->
       params[params.name] = params.value
       params
 
-  from = moment().add(1, 'days').format('YYYY-MM-DD')
-  to   = moment().add(4, 'days').format('YYYY-MM-DD')
-  $('#from-date').val(from)
-  $('#rental_date').val(from)
-  $('#to-date').val(to)
-  $('#target_date').val(to)
+  $('.total-price').text($('#order-price').text())
   $('.datepicker').datepicker
     language: 'kr'
     startDate: '+1d'
