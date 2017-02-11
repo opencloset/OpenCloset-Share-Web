@@ -3,10 +3,13 @@
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
 %   '/assets/components/moment/moment.js',
-%   'https://service.iamport.kr/js/iamport.payment-1.1.1.js',
+%   '/assets/extlib/iamport.payment-1.1.1.js',
+%   '/assets/components/remodal/dist/remodal.min.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
-%   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css'
+%   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
+%   '/assets/components/remodal/dist/remodal.css',
+%   '/assets/components/remodal/dist/remodal-default-theme.css'
 % ];
 
 % use OpenCloset::Constants::Category qw/%PRICE/;
