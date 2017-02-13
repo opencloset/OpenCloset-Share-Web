@@ -125,6 +125,7 @@ sub _private_routes {
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
     $order->post('/payments')->to('order#create_payment');
+    $order->post('/coupon')->to('order#insert_coupon');
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');

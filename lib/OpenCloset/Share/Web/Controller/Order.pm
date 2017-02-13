@@ -6,6 +6,7 @@ use DateTime::Format::Strptime;
 use DateTime;
 use Encode qw/encode_utf8/;
 use JSON qw/decode_json/;
+use Try::Tiny;
 
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
@@ -572,6 +573,78 @@ sub create_payment {
 
     return $self->error( 500, "Failed to create a new payment" ) unless $payment;
     $self->render( json => { $payment->get_columns } );
+}
+
+=head2 insert_coupon
+
+    POST /orders/:order_id/coupon
+
+=cut
+
+sub insert_coupon {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    my $v = $self->validation;
+    $v->required('coupon_id');
+    return $self->error( 400, "coupon_id is required" ) if $v->has_error;
+
+    my $coupon_id      = $self->param('coupon_id');
+    my $coupon         = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    my $type           = $coupon->type;
+    my $price_pay_with = '쿠폰';
+    if ( $type eq 'suit' ) {
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $coupon->update( { status => 'used' } );
+            $self->transfer_order( $coupon, $order );
+            $self->payment_done($order);
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+    }
+    elsif ( $type eq 'default' ) {
+        my $price = $coupon->price;
+        $price_pay_with .= '+';
+
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $coupon->update( { status => 'used' } );
+            $order->create_related(
+                'order_details',
+                {
+                    name        => $self->commify($price) . " 쿠폰($coupon_id)",
+                    price       => $price * -1,
+                    final_price => $price * -1,
+                    desc        => 'additional',
+                }
+            );
+
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+
+    }
+    else {
+        return $self->error( 500, "Unknown coupon type: $type" );
+    }
+
+    my %columns = $order->get_columns;
+    $self->render( json => \%columns );
 }
 
 1;
