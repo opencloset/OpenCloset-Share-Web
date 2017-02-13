@@ -59,12 +59,12 @@
 <div id="coupon-modal" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg modal-coupon" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">쿠폰코드를 입력하세요</h4>
-      </div>
-      <div class="modal-body">
-        <form action="<%= url_for('/coupon') %>">
+      <form action="<%= url_for('/coupon/validate')->query(order_id => $order->id) %>">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">쿠폰코드를 입력하세요</h4>
+        </div>
+        <div class="modal-body">
           <div class="form-group">
             <div class="row">
               <div class="col-md-4">
@@ -76,14 +76,13 @@
               <div class="col-md-4">
                 <input name="code" type="text" class="form-control" placeholder="JY9L">
               </div>
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-success btn-block btn-submit">입력</button>
+              </div>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-        <button type="button" class="btn btn-success">쿠폰을 사용합니다</button>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

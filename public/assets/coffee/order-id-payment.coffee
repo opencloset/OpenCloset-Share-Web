@@ -121,3 +121,23 @@ $ ->
         $this.removeClass('disabled')
 
   $('input[name=code]').mask('AAAA')
+  $('#coupon-modal').on 'shown.bs.modal', (e) ->
+    $('input[name=code]:first').focus()
+  $('#coupon-modal form').submit (e) ->
+    $this = $(@)
+    e.preventDefault()
+
+    action = $this.prop('action')
+    $.ajax action,
+      type: 'POST'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
+        template = JST['coupon/info']
+        html     = template(data)
+        $('#coupon-modal .modal-content').append(html)
+      error: (jqXHR, textStatus, errorThrown) ->
+        template = JST['coupon/error']
+        html     = template({ error: jqXHR.responseJSON.error })
+        $('#coupon-modal .modal-content').append(html)
+      complete: (jqXHR, textStatus) ->
