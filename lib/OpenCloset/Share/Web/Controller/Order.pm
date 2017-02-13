@@ -533,7 +533,7 @@ sub update_parcel {
 
 =head2 create_payment
 
-    POST /order/:id/payments
+    POST /order/:order_id/payments
 
 =cut
 
