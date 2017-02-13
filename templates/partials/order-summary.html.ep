@@ -116,8 +116,6 @@
 </h5>
 <p><%= $order->wearon_date ? $order->wearon_date->ymd : '지정되지않음' %></p>
 
-<div id="embedded-wearon-date" data-date="<%= $order->wearon_date ? $order->wearon_date->ymd : '' %>"></div>
-
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
   <hr>

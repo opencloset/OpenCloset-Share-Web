@@ -95,17 +95,6 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
 
-  $('#datepicker-wearon-date').datepicker
-    language: 'kr'
-    startDate: '+5d'
-    endDate: '+1m'
-    todayHighlight: true
-    format: 'yyyy-mm-dd'
-
-  $('#datepicker-wearon-date').on 'changeDate', ->
-    val = $('#datepicker-wearon-date').datepicker('getFormattedDate')
-    $('#wearon_date').val(val)
-
   $('#form-wearon-date').submit (e) ->
     e.preventDefault()
     $this = $(@)
@@ -130,12 +119,3 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
-
-  $('#embedded-wearon-date').datepicker
-    language: 'kr'
-    todayHighlight: true
-    format: 'yyyy-mm-dd'
-
-  $('#embedded-wearon-date .day').click (event) ->
-      event.preventDefault()
-      event.stopPropagation()
