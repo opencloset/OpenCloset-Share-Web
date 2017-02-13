@@ -53,7 +53,7 @@ sub create {
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->required('rental-period')->like(qr/^\d+$/);
+    $v->required('additional_day')->like(qr/^\d+$/);
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
@@ -84,18 +84,19 @@ sub create {
     my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
-    my $rental_period = $v->param('rental-period');
-    my $dates = $self->date_calc( $dt_wearon, $rental_period );
+    my $additional_day = $v->param('additional_day');
+    my $dates = $self->date_calc( $dt_wearon, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
-        online      => 1,
-        user_id     => $user->id,
-        status_id   => $status_id,
-        wearon_date => $wearon_date,
-        rental_date => $dates->{rental}->datetime(),
-        target_date => $dates->{target}->datetime(),
-        pre_color   => $v->param('pre_color'),
+        online         => 1,
+        user_id        => $user->id,
+        status_id      => $status_id,
+        wearon_date    => $wearon_date,
+        rental_date    => $dates->{rental}->datetime(),
+        target_date    => $dates->{target}->datetime(),
+        pre_color      => $v->param('pre_color'),
+        additional_day => $additional_day,
     };
     map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
     my $order = $self->schema->resultset('Order')->create($param);
@@ -129,13 +130,13 @@ sub create {
         }
     );
 
-    if ( my $days = $rental_period - $DEFAULT_RENTAL_PERIOD ) {
-        my $extension_fee = $sum * 0.2 * $days;
+    if ($additional_day) {
+        my $extension_fee = $sum * 0.2 * $additional_day;
         $order->create_related(
             'order_details',
             {
-                name        => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $days, 3 + $days + 1, $days, 20 * $days ),
-                price       => $extension_fee,
+                name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
+                price => $extension_fee,
                 final_price => $extension_fee,
                 desc        => 'additional',
             }
@@ -220,7 +221,8 @@ sub dates {
     }
 
     my $wearon_date = $v->param('wearon_date');
-    my $days = $v->param('days') || $DEFAULT_RENTAL_PERIOD;
+    my $days = $v->param('days') || 0;
+    $days += $DEFAULT_RENTAL_PERIOD;
     if ($wearon_date) {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
