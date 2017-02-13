@@ -77,7 +77,7 @@
                 <input name="code" type="text" class="form-control" placeholder="JY9L">
               </div>
               <div class="col-md-12">
-                <button type="submit" class="btn btn-success btn-block btn-submit">입력</button>
+                <button type="submit" class="btn btn-primary btn-block btn-submit">입력</button>
               </div>
             </div>
           </div>

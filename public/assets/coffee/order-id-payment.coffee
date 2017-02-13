@@ -95,18 +95,6 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
 
-  $('#form-wearon-date').submit (e) ->
-    e.preventDefault()
-    $this = $(@)
-    action = $this.prop('action')
-    $.ajax action,
-      type: 'PUT'
-      data: { wearon_date: $('#wearon_date').val() }
-      success: (data, textStatus, jqXHR) ->
-        location.reload()
-      error: (jqXHR, textStatus, errorThrown) ->
-      complete: (jqXHR, textStatus) ->
-
   $('#btn-choose-address:not(.disabled)').click (e) ->
     e.preventDefault()
     $this = $(@)
@@ -124,20 +112,39 @@ $ ->
   $('#coupon-modal').on 'shown.bs.modal', (e) ->
     $('input[name=code]:first').focus()
   $('#coupon-modal form').submit (e) ->
-    $this = $(@)
     e.preventDefault()
+
+    $this = $(@)
+    $submit = $this.find('.btn-submit')
+    return if $submit.hasClass('disabled')
 
     action = $this.prop('action')
     $.ajax action,
       type: 'POST'
+      data: $this.serialize()
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
+        $submit.addClass('disabled')
         # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
         template = JST['coupon/info']
         html     = template(data)
+        $('#coupon-modal .modal-footer').remove()
         $('#coupon-modal .modal-content').append(html)
       error: (jqXHR, textStatus, errorThrown) ->
         template = JST['coupon/error']
         html     = template({ error: jqXHR.responseJSON.error })
+        $('#coupon-modal .modal-footer').remove()
         $('#coupon-modal .modal-content').append(html)
+      complete: (jqXHR, textStatus) ->
+
+  $('#coupon-modal').on 'click', '#btn-coupon-use', (e) ->
+    e.preventDefault()
+    coupon_id = $(@).data('coupon-id')
+    $.ajax "#{location.href}/coupon",
+      type: 'POST'
+      data: { coupon_id: coupon_id }
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
