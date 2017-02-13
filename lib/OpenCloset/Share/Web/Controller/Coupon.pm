@@ -21,8 +21,8 @@ sub validate {
     my $order_id = $self->param('order_id');
     my $codes    = $v->every_param('code');
     my $code     = join( '-', @$codes );
-    my ( $coupon, $err ) = $self->validate_code($code);
-    $self->error( 400, $err ) if $err;
+    my ( $coupon, $err ) = $self->coupon_validate($code);
+    return $self->error( 400, $err ) if $err;
 
     my %columns = $coupon->get_columns;
     $self->render( json => \%columns );
