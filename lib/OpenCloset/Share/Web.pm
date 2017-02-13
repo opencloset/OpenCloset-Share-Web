@@ -105,6 +105,7 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
+    $r->post('/coupon/validate')->to('coupon#validate');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
