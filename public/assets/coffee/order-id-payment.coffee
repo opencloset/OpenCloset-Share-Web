@@ -119,3 +119,5 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+
+  $('input[name=code]').mask('AAAA')

@@ -4,7 +4,7 @@
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
 %   '/assets/components/moment/moment.js',
 %   '/assets/extlib/iamport.payment-1.1.1.js',
-%   '/assets/components/remodal/dist/remodal.min.js',
+%   '/assets/components/jquery-mask-plugin/dist/jquery.mask.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
 %   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
@@ -35,16 +35,16 @@
   </h5>
   % my ($addr, $addr2);
   % if ($user_address) {
-    %   $addr  = $user_address->address2 . ' ' . $user_address->address4;
-    %   $addr2 = $user_address->address3 . ' ' . $user_address->address4;
+    % $addr  = $user_address->address2 . ' ' . $user_address->address4;
+    % $addr2 = $user_address->address3 . ' ' . $user_address->address4;
   % } else {
-    %   $addr  = $user_info->address2 . ' ' . $user_info->address4;
-    %   $addr2 = $user_info->address3 . ' ' . $user_info->address4;
+    % $addr  = $user_info->address2 . ' ' . $user_info->address4;
+    % $addr2 = $user_info->address3 . ' ' . $user_info->address4;
   % }
   <div id="payment-info" data-email="<%= $user->email %>" data-name="<%= $user->name %>" data-phone="<%= $user_info->phone %>" data-address1="<%= $addr %>" data-address2="<%= $addr2 %>" data-order-id="<%= $order->id %>"></div>
 
   <button id="btn-payment" class="btn btn-primary" type="button">결제를 진행합니다</button>
-  <button id="btn-payment-coupon" class="btn btn-default btn-sm" type="button">쿠폰을 사용하겠습니다</button>
+  <button class="btn btn-default btn-sm" type="button" data-toggle="modal" data-target="#coupon-modal">쿠폰을 사용하겠습니다</button>
 % } else {
 
   <div class="alert alert-danger">
@@ -55,3 +55,35 @@
     <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
   </p>
 % }
+
+<div id="coupon-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg modal-coupon" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">쿠폰코드를 입력하세요</h4>
+      </div>
+      <div class="modal-body">
+        <form action="<%= url_for('/coupon') %>">
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-4">
+                <input name="code" type="text" class="form-control" placeholder="GJ8U">
+              </div>
+              <div class="col-md-4">
+                <input name="code" type="text" class="form-control" placeholder="QY87">
+              </div>
+              <div class="col-md-4">
+                <input name="code" type="text" class="form-control" placeholder="JY9L">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-success">쿠폰을 사용합니다</button>
+      </div>
+    </div>
+  </div>
+</div>
