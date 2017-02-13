@@ -72,7 +72,8 @@
     % $price += $fee;
     <div class="panel panel-default">
       <div class="panel-body">
-        + <%= $name %>:
+        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+        <%= $name %>:
         <code>
           %= commify($fee)
         </code>
