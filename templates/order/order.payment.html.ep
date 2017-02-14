@@ -7,9 +7,7 @@
 %   '/assets/components/jquery-mask-plugin/dist/jquery.mask.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
-%   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
-%   '/assets/components/remodal/dist/remodal.css',
-%   '/assets/components/remodal/dist/remodal-default-theme.css'
+%   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css'
 % ];
 
 % use OpenCloset::Constants::Category qw/%PRICE/;
