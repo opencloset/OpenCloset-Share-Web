@@ -1,9 +1,10 @@
 % use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT/;
 % use OpenCloset::Constants::Category qw/$SHIRT $TIE $BLOUSE %PRICE/;
+% use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
-% my $dates = date_calc(timezone($order->wearon_date));
+% my $dates = date_calc(timezone($order->wearon_date), $order->additional_day + $DEFAULT_RENTAL_PERIOD);
 
 %= include 'partials/user-info', user => $order->user;
 
@@ -71,7 +72,8 @@
     % $price += $fee;
     <div class="panel panel-default">
       <div class="panel-body">
-        + <%= $name %>:
+        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+        <%= $name %>:
         <code>
           %= commify($fee)
         </code>
@@ -112,11 +114,21 @@
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  발송(예정)일
+</h5>
+<p><%= $dates->{shipping}->ymd %></p>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
 </h5>
 <p><%= $order->wearon_date ? $order->wearon_date->ymd : '지정되지않음' %></p>
 
-<div id="embedded-wearon-date" data-date="<%= $order->wearon_date ? $order->wearon_date->ymd : '' %>"></div>
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  반납택배발송일
+</h5>
+<p><%= $dates->{parcel}->ymd %></p>
 
 % my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {

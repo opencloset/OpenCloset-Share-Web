@@ -95,29 +95,6 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
 
-  $('#datepicker-wearon-date').datepicker
-    language: 'kr'
-    startDate: '+5d'
-    endDate: '+1m'
-    todayHighlight: true
-    format: 'yyyy-mm-dd'
-
-  $('#datepicker-wearon-date').on 'changeDate', ->
-    val = $('#datepicker-wearon-date').datepicker('getFormattedDate')
-    $('#wearon_date').val(val)
-
-  $('#form-wearon-date').submit (e) ->
-    e.preventDefault()
-    $this = $(@)
-    action = $this.prop('action')
-    $.ajax action,
-      type: 'PUT'
-      data: { wearon_date: $('#wearon_date').val() }
-      success: (data, textStatus, jqXHR) ->
-        location.reload()
-      error: (jqXHR, textStatus, errorThrown) ->
-      complete: (jqXHR, textStatus) ->
-
   $('#btn-choose-address:not(.disabled)').click (e) ->
     e.preventDefault()
     $this = $(@)
@@ -131,11 +108,43 @@ $ ->
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
 
-  $('#embedded-wearon-date').datepicker
-    language: 'kr'
-    todayHighlight: true
-    format: 'yyyy-mm-dd'
+  $('input[name=code]').mask('AAAA')
+  $('#coupon-modal').on 'shown.bs.modal', (e) ->
+    $('input[name=code]:first').focus()
+  $('#coupon-modal form').submit (e) ->
+    e.preventDefault()
 
-  $('#embedded-wearon-date .day').click (event) ->
-      event.preventDefault()
-      event.stopPropagation()
+    $this = $(@)
+    $submit = $this.find('.btn-submit')
+    return if $submit.hasClass('disabled')
+
+    action = $this.prop('action')
+    $.ajax action,
+      type: 'POST'
+      data: $this.serialize()
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $submit.addClass('disabled')
+        # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
+        template = JST['coupon/info']
+        html     = template(data)
+        $('#coupon-modal .modal-footer').remove()
+        $('#coupon-modal .modal-content').append(html)
+      error: (jqXHR, textStatus, errorThrown) ->
+        template = JST['coupon/error']
+        html     = template({ error: jqXHR.responseJSON.error })
+        $('#coupon-modal .modal-footer').remove()
+        $('#coupon-modal .modal-content').append(html)
+      complete: (jqXHR, textStatus) ->
+
+  $('#coupon-modal').on 'click', '#btn-coupon-use', (e) ->
+    e.preventDefault()
+    coupon_id = $(@).data('coupon-id')
+    $.ajax "#{location.href}/coupon",
+      type: 'POST'
+      data: { coupon_id: coupon_id }
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->

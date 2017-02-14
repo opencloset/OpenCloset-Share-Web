@@ -22,7 +22,7 @@ $ ->
 
   $('#datepicker-wearon-date').on 'changeDate', ->
     val  = $('#datepicker-wearon-date').datepicker('getFormattedDate')
-    days = $('#rental-period option:selected').val()
+    days = $('#additional-day option:selected').val()
     $('#wearon_date').val(val)
     date_calc(val, days)
   .trigger('changeDate')
@@ -49,6 +49,6 @@ $ ->
     for category in ['jacket', 'skirt', 'blouse']
       $("input[name=category-#{category}]").bootstrapToggle('on')
 
-  $('form').on 'change', '#rental-period', (e) ->
+  $('form').on 'change', '#additional-day', (e) ->
     wearon_date = $('#datepicker-wearon-date').datepicker('getFormattedDate')
     date_calc(wearon_date, $(e.target).val())

@@ -26,7 +26,7 @@
 
 <p>
   <i class="fa fa-fw fa-question-circle" aria-hidden="true"></i>
-  추천대여는 <%= $user->name %>님에게 맞는 사이즈의 의류 중에서 열린옷장이 가장 적합하다고 판단하는 의류를 추천하여 택배 발송하는 제도를 말합니다.
+  <a class="btn btn-success btn-xs btn-recommend" href="<%= url_for %>">추천대여</a>는 <%= $user->name %>님에게 맞는 사이즈의 의류 중에서 열린옷장이 가장 적합하다고 판단하는 의류를 추천하여 택배 발송하는 제도를 말합니다.
 </p>
 
 <hr>

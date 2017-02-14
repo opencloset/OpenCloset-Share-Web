@@ -6,6 +6,7 @@ use DateTime::Format::Strptime;
 use DateTime;
 use Encode qw/encode_utf8/;
 use JSON qw/decode_json/;
+use Try::Tiny;
 
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
@@ -52,7 +53,7 @@ sub create {
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->required('rental-period')->like(qr/^\d+$/);
+    $v->required('additional_day')->like(qr/^\d+$/);
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
@@ -83,18 +84,19 @@ sub create {
     my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
-    my $rental_period = $v->param('rental-period');
-    my $dates = $self->date_calc( $dt_wearon, $rental_period );
+    my $additional_day = $v->param('additional_day');
+    my $dates = $self->date_calc( $dt_wearon, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
-        online      => 1,
-        user_id     => $user->id,
-        status_id   => $status_id,
-        wearon_date => $wearon_date,
-        rental_date => $dates->{rental}->datetime(),
-        target_date => $dates->{target}->datetime(),
-        pre_color   => $v->param('pre_color'),
+        online         => 1,
+        user_id        => $user->id,
+        status_id      => $status_id,
+        wearon_date    => $wearon_date,
+        rental_date    => $dates->{rental}->datetime(),
+        target_date    => $dates->{target}->datetime(),
+        pre_color      => $v->param('pre_color'),
+        additional_day => $additional_day,
     };
     map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
     my $order = $self->schema->resultset('Order')->create($param);
@@ -128,13 +130,13 @@ sub create {
         }
     );
 
-    if ( my $days = $rental_period - $DEFAULT_RENTAL_PERIOD ) {
-        my $extension_fee = $sum * 0.2 * $days;
+    if ($additional_day) {
+        my $extension_fee = $sum * 0.2 * $additional_day;
         $order->create_related(
             'order_details',
             {
-                name        => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $days, 3 + $days + 1, $days, 20 * $days ),
-                price       => $extension_fee,
+                name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
+                price => $extension_fee,
                 final_price => $extension_fee,
                 desc        => 'additional',
             }
@@ -219,7 +221,8 @@ sub dates {
     }
 
     my $wearon_date = $v->param('wearon_date');
-    my $days = $v->param('days') || $DEFAULT_RENTAL_PERIOD;
+    my $days = $v->param('days') || 0;
+    $days += $DEFAULT_RENTAL_PERIOD;
     if ($wearon_date) {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
@@ -291,11 +294,12 @@ sub order {
     }
     elsif ( $status_id == $PAYMENT ) {
         ## 의류착용일이 +5d 의 조건을 만족하는지 확인
-        my $fine        = 1;
-        my $now         = $self->timezone( DateTime->now )->truncate( to => 'day' )->epoch;
-        my $wearon_date = $self->timezone( $order->wearon_date )->truncate( to => 'day' )->epoch;
-        if ( $wearon_date - $now < 60 * 60 * 24 * 5 ) {
+        my $fine                = 1;
+        my $wearon_date         = $self->timezone( $order->wearon_date );
+        my $closest_wearon_date = $self->date_calc;
+        if ( $wearon_date->epoch < $closest_wearon_date->epoch ) {
             $self->log->info("Not enough wearon_date: +5d");
+            $self->log->info("wearon_date($wearon_date), closest_wearon_date($closest_wearon_date)");
             $fine = 0;
         }
 
@@ -531,7 +535,7 @@ sub update_parcel {
 
 =head2 create_payment
 
-    POST /order/:id/payments
+    POST /order/:order_id/payments
 
 =cut
 
@@ -571,6 +575,78 @@ sub create_payment {
 
     return $self->error( 500, "Failed to create a new payment" ) unless $payment;
     $self->render( json => { $payment->get_columns } );
+}
+
+=head2 insert_coupon
+
+    POST /orders/:order_id/coupon
+
+=cut
+
+sub insert_coupon {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    my $v = $self->validation;
+    $v->required('coupon_id');
+    return $self->error( 400, "coupon_id is required" ) if $v->has_error;
+
+    my $coupon_id      = $self->param('coupon_id');
+    my $coupon         = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    my $type           = $coupon->type;
+    my $price_pay_with = '쿠폰';
+    if ( $type eq 'suit' ) {
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $coupon->update( { status => 'used' } );
+            $self->transfer_order( $coupon, $order );
+            $self->payment_done($order);
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+    }
+    elsif ( $type eq 'default' ) {
+        my $price = $coupon->price;
+        $price_pay_with .= '+';
+
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $coupon->update( { status => 'used' } );
+            $order->create_related(
+                'order_details',
+                {
+                    name        => $self->commify($price) . " 쿠폰($coupon_id)",
+                    price       => $price * -1,
+                    final_price => $price * -1,
+                    desc        => 'additional',
+                }
+            );
+
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+
+    }
+    else {
+        return $self->error( 500, "Unknown coupon type: $type" );
+    }
+
+    my %columns = $order->get_columns;
+    $self->render( json => \%columns );
 }
 
 1;
