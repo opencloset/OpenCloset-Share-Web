@@ -4,6 +4,7 @@ use Mojo::Base 'Mojolicious::Controller';
 use Try::Tiny;
 use Mojo::JSON qw/decode_json/;
 
+use OpenCloset::Constants qw/%PAY_METHOD_MAP/;
 use OpenCloset::Constants::Status qw/$WAITING_DEPOSIT/;
 
 has schema => sub { shift->app->schema };
@@ -46,8 +47,9 @@ sub payment_id {
 sub update_payment {
     my $self    = shift;
     my $payment = $self->stash("payment");
+    my $order   = $payment->order;
 
-    return $self->error( 400, "Not found order from payment: " . $payment->id ) unless $payment->order;
+    return $self->error( 400, "Not found order from payment: " . $payment->id ) unless $order;
 
     #
     # parameter check & fetch
@@ -102,6 +104,12 @@ sub update_payment {
                     detail => $json,
                 },
             );
+
+            if ( $info_status eq 'paid' ) {
+                my $pay_with = $order->price_pay_with || '';
+                $pay_with .= $PAY_METHOD_MAP{$pay_method};
+                $order->update( { price_pay_with => $pay_with } );
+            }
 
             $guard->commit;
 
@@ -190,7 +198,12 @@ sub callback {
 
     return $self->error( 500, $error ) unless $payment_log;
 
-    $self->payment_done($order) if $status eq 'paid';
+    if ( $status eq 'paid' ) {
+        my $pay_with = $order->price_pay_with || '';
+        $pay_with .= $PAY_METHOD_MAP{$pay_method};
+        $order->update( { price_pay_with => $pay_with } );
+        $self->payment_done($order);
+    }
     $self->redirect_to( $self->url_for( 'order.order', { order_id => $order->id } ) );
 }
 

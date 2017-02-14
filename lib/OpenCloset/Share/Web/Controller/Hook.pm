@@ -5,6 +5,8 @@ use Mojo::JSON;
 
 use Try::Tiny;
 
+use OpenCloset::Constants qw/%PAY_METHOD_MAP/;
+
 has schema => sub { shift->app->schema };
 
 =head1 METHODS
@@ -35,7 +37,8 @@ sub iamport {
     }
 
     my $payment_id = $payment->id;
-    return $self->error( 404, "Not found order: payment_id($payment_id)" ) unless $payment->order;
+    my $order      = $payment->order;
+    return $self->error( 404, "Not found order: payment_id($payment_id)" ) unless $order;
 
     my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
     return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
@@ -129,7 +132,11 @@ sub iamport {
                 detail => $json,
             },
         );
-        $self->payment_done( $payment->order );
+
+        my $pay_with = $order->price_pay_with || '';
+        $pay_with .= $PAY_METHOD_MAP{ $payment->pay_method };
+        $order->update( { price_pay_with => $pay_with } );
+        $self->payment_done($order);
     }
 
     $self->render( text => "OK" );
