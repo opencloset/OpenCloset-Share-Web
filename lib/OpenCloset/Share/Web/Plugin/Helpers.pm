@@ -800,6 +800,7 @@ Default C<$days> 는 3박 4일의 C<3>
 
     # 의류착용일(AM 10:00 이전) = 주말 + 공휴일 + 3일 부터
     # 의류착용일(AM 10:00 이후) = 주말 + 공휴일 + 4일 부터
+    # 의류착용일(주말 또는 공휴일) = 주말 + 공휴일 + 4일 부터    # AM 10:00 와는 상관없음
     # 발송(예정)일 = 의류착용일 - 주말 - 공휴일 - 3일
     # 대여기간 = 대여일 ~ 반납일
     # 대여일 = 착용일 - 주말 - 공휴일 - 1일
@@ -826,10 +827,11 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         $days = $hour > 10 ? 4 : 3;                         # AM 10:00 이 기준
+        $days = 4 if $now->day_of_week > 5 || $holidays{ $now->ymd }; # 쉬는날에는 +4일 부터 가능
 
         my $dt = DateTime->today( time_zone => $tz );
         while ($days) {
-            $dt->add( days => 1 );                          # 1-7 (Mondays is 1)
+            $dt->add( days => 1 );                                    # 1-7 (Mondays is 1)
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };
             $days--;
@@ -838,9 +840,9 @@ sub date_calc {
         return $dt;
     }
 
-    $days ||= $DEFAULT_RENTAL_PERIOD;                       # 기본 대여일은 3박 4일
+    $days ||= $DEFAULT_RENTAL_PERIOD;                                 # 기본 대여일은 3박 4일
     my $year     = $wearon_date->year;
-    my @holidays = $self->holidays( $year, $year + 1 );     # 연말을 고려함
+    my @holidays = $self->holidays( $year, $year + 1 );               # 연말을 고려함
 
     my ( $n,        $dt );
     my ( %holidays, %dates );
