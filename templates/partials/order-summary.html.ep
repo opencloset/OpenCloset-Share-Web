@@ -116,7 +116,7 @@
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   발송(예정)일
 </h5>
-<p><%= $dates->{shipping}->ymd %></p>
+<p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $deadline->ymd(''), $deadline->hour, $deadline->minute) %>"><%= $dates->{shipping}->ymd %></p>
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
