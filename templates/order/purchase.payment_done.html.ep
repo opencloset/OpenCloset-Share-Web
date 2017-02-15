@@ -64,6 +64,10 @@
       </td>
     </tr>
     <tr>
+      <th>결제방법</th>
+      <td><%= $order->price_pay_with || '' %></td>
+    </tr>
+    <tr>
       <th>대여기간</th>
       <td>
         <span class="label label-info"><%= $order->rental_date ? $order->rental_date->ymd : '지정되지않음' %></span>
