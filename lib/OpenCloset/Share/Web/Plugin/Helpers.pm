@@ -2,8 +2,10 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use DateTime;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
+use Encode qw/encode_utf8/;
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;

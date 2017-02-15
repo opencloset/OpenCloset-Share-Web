@@ -394,6 +394,9 @@ sub update_order {
                 $self->partial_returned( $order, $clothes_code );
             }
         }
+        elsif ( $status_id == $WAITING_DEPOSIT ) {
+            $self->waiting_deposit($order);
+        }
         else {
             $input->{status_id} = $status_id;
         }

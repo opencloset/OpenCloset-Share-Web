@@ -183,7 +183,7 @@ sub callback {
             );
             die "Failed to create a Payment log" unless $log;
             if ( $status eq 'ready' && $pay_method eq 'vbank' ) {
-                $order->update( { status_id => $WAITING_DEPOSIT } );
+                $self->waiting_deposit( $order, $log );
             }
             $guard->commit;
 
