@@ -46,6 +46,7 @@ sub register {
     $app->helper( order2link           => \&order2link );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
+    $app->helper( waiting_deposit      => \&waiting_deposit );
     $app->helper( waiting_shipped      => \&waiting_shipped );
     $app->helper( returned             => \&returned );
     $app->helper( partial_returned     => \&partial_returned );
@@ -339,6 +340,60 @@ sub payment_done {
         $self->log->error( "Couldn't find a clothes: " . $detail->clothes_code );
         return $order;
     }
+
+    return $order;
+}
+
+=head2 waiting_deposit($order)
+
+    # 결제대기 -> 입금대기
+    $self->waiting_deposit($order, $payment_log?);
+
+=cut
+
+sub waiting_deposit {
+    my ( $self, $order, $payment_log ) = @_;
+    return unless $order;
+    return $order if $order->status_id == $WAITING_DEPOSIT;
+
+    $order->update( { status_id => $WAITING_DEPOSIT } );
+
+    $payment_log ||= $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+
+    unless ($payment_log) {
+        $self->log->error("Not found ready status payment log");
+        return $order;
+    }
+
+    my $detail = $payment_log->detail;
+    unless ($detail) {
+        $self->log->error("Not found payment info");
+        return $order;
+    }
+
+    my $payment_info = decode_json( encode_utf8($detail) );
+    my $epoch        = $payment_info->{response}{vbank_date};
+    unless ($epoch) {
+        $self->log->error("Wrong payment info: $detail");
+        $self->log->error("Couldn't find vbank due date.");
+        return $order;
+    }
+
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $tz        = $self->config->{timezone};
+    my $due       = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
+    my $msg       = $self->render_to_string(
+        'sms/payment/waiting_deposit',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        due          => $due,
+        payment_info => $payment_info
+    );
+
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
 
     return $order;
 }
