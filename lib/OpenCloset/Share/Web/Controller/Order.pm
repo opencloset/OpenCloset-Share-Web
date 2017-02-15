@@ -262,7 +262,8 @@ sub order_id {
         return;
     }
 
-    $self->stash( order => $order );
+    my $deadline = $self->payment_deadline($order);
+    $self->stash( order => $order, deadline => $deadline );
     return 1;
 }
 
@@ -295,15 +296,9 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        my $wearon_date = $self->timezone( $order->wearon_date );
-        my $dates       = $self->date_calc( { wearon => $wearon_date } );
-        my $deadline    = $dates->{shipping}->clone;
-        $deadline->set_hour(10);
-
         $self->render(
             template     => 'order/order.payment',
             user_address => $order->user_address,
-            deadline     => $deadline,
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
