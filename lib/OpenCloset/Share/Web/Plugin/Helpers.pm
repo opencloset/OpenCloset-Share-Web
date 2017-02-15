@@ -796,20 +796,18 @@ sub formatted {
 =head2 date_calc( $wearon_date, $days )
 
 Default C<$days> 는 3박 4일의 C<3>
-의류착용일과 대여기간을 기준으로 대여일과 반납일, 택배발송일을 계산합니다.
+발송(예정)일 또는 의류착용일과 대여기간을 기준으로 발송(예정)일, 대여일, 의류착용일, 반납일, 택배발송일을 계산합니다.
 
-    # 의류착용일(AM 10:00 이전) = 주말 + 공휴일 + 3일 부터
-    # 의류착용일(AM 10:00 이후) = 주말 + 공휴일 + 4일 부터
-    # 의류착용일(주말 또는 공휴일) = 주말 + 공휴일 + 4일 부터    # AM 10:00 와는 상관없음
-    # 발송(예정)일 = 의류착용일 - 주말 - 공휴일 - 3일
-    # 대여기간 = 대여일 ~ 반납일
-    # 대여일 = 착용일 - 주말 - 공휴일 - 1일
-    # 반납일 = 대여일 + 3일(대여기간)
-    # 택배반납일 = 반납일 - 1일
+    # 발송(예정)일 = 주말 + 공휴일 + 0일    # AM 10:00 이전
+    # 발송(예정)일 = 주말 + 공휴일 + 1일    # AM 10:00 이후
+    # 대여일      = 발송(예정)일 + 공휴일 + 주말 + 2일
+    # 의류착용일   = 대여일 + 1일
+    # 반납일      = 대여일 + 대여기간(default 3일)
+    # 택배일      = 반납일 - 1일
 
-    my $closest_wearon_date = $self->date_calc;    # 가장 가까운 의류착용일
-    my $dates = $self->date_calc($closest_wearon_date);
-    # { shipping => $dt1, rental => $dt2, target => $dt3, parcel => $dt4 }
+    my $shipping_date = $self->date_calc;    # 가장 가까운 발송(예정)일
+    my $dates = $self->date_calc({ shipping => $shipping_date });
+    # { shipping => $dt1, rental => $dt2, wearon => $dt3, target => $dt4, parcel => $dt5 }
 
 =cut
 
