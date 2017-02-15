@@ -33,7 +33,7 @@
   </h5>
 
   <div class="alert alert-warning">
-    결제마감날짜 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong> 까지 입금해주세요.
+    결제마감날짜까지 입금해주세요 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
   </div>
 
   % my ($addr, $addr2);
@@ -51,11 +51,10 @@
 % } else {
 
   <div class="alert alert-danger">
-    결제 마감시간이 지난 주문서 입니다.
-    <strong><%= $deadline->datetime %></strong>
+    결제마감날짜가 지난 주문서 입니다 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
   </div>
 
-  <p>
+  <p class="help-block">
     <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
   </p>
 % }
