@@ -295,22 +295,15 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        ## 의류착용일이 +5d 의 조건을 만족하는지 확인
-        my $fine                = 1;
-        my $wearon_date         = $self->timezone( $order->wearon_date );
-        my $shipping_date       = $self->date_calc;
-        my $dates               = $self->date_calc( { shipping => $shipping_date } );
-        my $closest_wearon_date = $dates->{wearon};
-        if ( $wearon_date->epoch < $closest_wearon_date->epoch ) {
-            $self->log->info("Not enough wearon_date: +5d");
-            $self->log->info("wearon_date($wearon_date), closest_wearon_date($closest_wearon_date)");
-            $fine = 0;
-        }
+        my $wearon_date = $self->timezone( $order->wearon_date );
+        my $dates       = $self->date_calc( { wearon => $wearon_date } );
+        my $deadline    = $dates->{shipping}->clone;
+        $deadline->set_hour(10);
 
         $self->render(
-            template         => 'order/order.payment',
-            user_address     => $order->user_address,
-            fine_wearon_date => $fine,
+            template     => 'order/order.payment',
+            user_address => $order->user_address,
+            deadline     => $deadline,
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
