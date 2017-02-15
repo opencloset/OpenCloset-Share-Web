@@ -704,7 +704,7 @@ sub blouse_type {
     }
     else {
         my $details = $order->order_details;
-        my $detail = $details->search_like( { clothes_code => '0B%' }, { rows => 1 } )->single;
+        my $detail = $details->search( { clothes_code => { -like => '0B%' } }, { rows => 1 } )->single;
         $type = $detail->desc || '' if $detail;
     }
 
