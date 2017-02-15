@@ -546,7 +546,13 @@ sub create_payment {
     }
     my $pay_method = $v->param("pay_method");
 
-    my $amount  = $self->category_price($order);
+    my $amount = $self->category_price($order);
+    my $additional = $order->order_details( { desc => 'additional' } );
+    while ( my $detail = $additional->next ) {
+        my $fee = $detail->price;
+        $amount += $fee;
+    }
+
     my $iamport = $self->config->{iamport};
     my $key     = $iamport->{key};
     my $secret  = $iamport->{secret};
