@@ -152,7 +152,7 @@
 
   <hr>
 
-  <div id="datepicker-wearon-date" data-date-start-date="<%= $closest_wearon_date->ymd %>" data-date="<%= $closest_wearon_date->ymd %>"></div>
+  <div id="datepicker-wearon-date" data-date-start-date="<%= $dates->{wearon}->ymd %>" data-date="<%= $dates->{wearon}->ymd %>"></div>
   <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>

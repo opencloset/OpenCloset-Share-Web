@@ -31,12 +31,13 @@ sub add {
     my $user      = $self->stash('user');
     my $user_info = $self->stash('user_info');
 
-    my $closest_wearon_date = $self->date_calc;
+    my $shipping_date = $self->date_calc;
+    my $dates = $self->date_calc( { shipping => $shipping_date } );
 
     my $failed = $self->check_measurement( $user, $user_info );
     return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
 
-    $self->render( closest_wearon_date => $closest_wearon_date );
+    $self->render( dates => $dates );
 }
 
 =head2 create
@@ -85,7 +86,7 @@ sub create {
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $additional_day = $v->param('additional_day');
-    my $dates = $self->date_calc( $dt_wearon, $additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
     my $guard = $self->schema->txn_scope_guard;
     my $param = {
@@ -227,13 +228,14 @@ sub dates {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
         my $dt    = $strp->parse_datetime($wearon_date);
-        my $dates = $self->date_calc( $dt, $days );
+        my $dates = $self->date_calc( { wearon => $dt }, $days );
         map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
         $self->render( json => $dates );
     }
     else {
-        $wearon_date = $self->date_calc;
-        $self->render( json => { wearon_date => $wearon_date->ymd } );
+        my $shipping_date = $self->date_calc;
+        my $dates = $self->date_calc( { shipping => $shipping_date } );
+        $self->render( json => { wearon_date => $dates->{wearon}->ymd } );
     }
 }
 
@@ -296,7 +298,9 @@ sub order {
         ## 의류착용일이 +5d 의 조건을 만족하는지 확인
         my $fine                = 1;
         my $wearon_date         = $self->timezone( $order->wearon_date );
-        my $closest_wearon_date = $self->date_calc;
+        my $shipping_date       = $self->date_calc;
+        my $dates               = $self->date_calc( { shipping => $shipping_date } );
+        my $closest_wearon_date = $dates->{wearon};
         if ( $wearon_date->epoch < $closest_wearon_date->epoch ) {
             $self->log->info("Not enough wearon_date: +5d");
             $self->log->info("wearon_date($wearon_date), closest_wearon_date($closest_wearon_date)");

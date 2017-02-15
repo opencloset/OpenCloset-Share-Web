@@ -72,7 +72,7 @@
       </td>
       % my $wearon_date = $order->wearon_date;
       % my $ymd = $order->wearon_date->ymd;
-      % my $dates = date_calc($wearon_date);
+      % my $dates = date_calc({wearon => $wearon_date});
       <td>
         % my $epoch = $dates->{shipping}->epoch;
         % if ($epoch < $today->epoch) {

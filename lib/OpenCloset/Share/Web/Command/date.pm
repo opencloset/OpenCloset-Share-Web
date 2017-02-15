@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Command';
 use DateTime::Format::Strptime;
 use DateTime;
 
-use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER $RENTAL_BUFFER $PARCEL_BUFFER/;
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER/;
 
 has description => 'Date calculator';
 has usage       => "Usage: APPLICATION date ymd(today)\n";
@@ -47,37 +47,42 @@ sub run {
         $dt = DateTime->now( time_zone => $tz );
     }
 
-    my $wearon_date = $self->wearon_date($dt);
-    my $dates       = $self->app->date_calc($wearon_date);
-    $dates->{wearon} = $wearon_date;
+    my $shipping_date = $self->shipping_date($dt);
+    my $dates = $self->app->date_calc( { shipping => $shipping_date } );
     print $dt->ymd . ' (' . $WEEK_MAP{ $dt->day_of_week } . ') ' . $dt->hms . " 기준\n";
     printf "발송: %s(%s)\n", $dates->{shipping}->ymd, $WEEK_MAP{ $dates->{shipping}->day_of_week };
     printf "대여: %s(%s)\n", $dates->{rental}->ymd,   $WEEK_MAP{ $dates->{rental}->day_of_week };
-    printf "착용: %s(%s)\n", $wearon_date->ymd, $WEEK_MAP{ $wearon_date->day_of_week };
-    printf "택배: %s(%s)\n", $dates->{parcel}->ymd, $WEEK_MAP{ $dates->{parcel}->day_of_week };
-    printf "반납: %s(%s)\n", $dates->{target}->ymd, $WEEK_MAP{ $dates->{target}->day_of_week };
+    printf "착용: %s(%s)\n", $dates->{wearon}->ymd,   $WEEK_MAP{ $dates->{wearon}->day_of_week };
+    printf "택배: %s(%s)\n", $dates->{parcel}->ymd,   $WEEK_MAP{ $dates->{parcel}->day_of_week };
+    printf "반납: %s(%s)\n", $dates->{target}->ymd,   $WEEK_MAP{ $dates->{target}->day_of_week };
 }
 
-sub wearon_date {
+sub shipping_date {
     my ( $self, $today ) = @_;
     my $tz = $self->app->config->{timezone};
 
+    $today = DateTime->now( time_zone => $tz ) unless $today;
     my $hour     = $today->hour;
     my $year     = $today->year;
     my @holidays = $self->app->holidays( $year, $year + 1 ); # 연말을 고려함
-
     my %holidays;
     map { $holidays{$_}++ } @holidays;
 
-    my $days = $hour > 10 ? 4 : 3;                           # AM 10:00 이 기준
-    $days = 4 if $today->day_of_week > 5 || $holidays{ $today->ymd }; # 쉬는날에는 +4일 부터 가능
-
     my $dt = $today->clone->truncate( to => 'day' );
-    while ($days) {
-        $dt->add( days => 1 );                                        # 1-7 (Mondays is 1)
-        next if $dt->day_of_week > 5;
-        next if $holidays{ $dt->ymd };
-        $days--;
+    if ( $holidays{ $today->ymd } || $hour > 10 ) {
+        $dt->add( days => 1 );
+        while (1) {
+            $dt->add( days => 1 ) if $dt->day_of_week > 5;
+            $dt->add( days => 1 ) if $holidays{ $dt->ymd };
+            last;
+        }
+    }
+    else {
+        while (1) {
+            $dt->add( days => 1 ) if $dt->day_of_week > 5;
+            $dt->add( days => 1 ) if $holidays{ $dt->ymd };
+            last;
+        }
     }
 
     return $dt;

@@ -4,7 +4,7 @@
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
-% my $dates = date_calc(timezone($order->wearon_date), $order->additional_day + $DEFAULT_RENTAL_PERIOD);
+% my $dates = date_calc({ wearon => timezone($order->wearon_date) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD);
 
 %= include 'partials/user-info', user => $order->user;
 
