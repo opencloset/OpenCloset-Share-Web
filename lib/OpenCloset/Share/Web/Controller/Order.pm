@@ -262,7 +262,8 @@ sub order_id {
         return;
     }
 
-    $self->stash( order => $order );
+    my $deadline = $self->payment_deadline($order);
+    $self->stash( order => $order, deadline => $deadline );
     return 1;
 }
 
@@ -295,22 +296,9 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        ## 의류착용일이 +5d 의 조건을 만족하는지 확인
-        my $fine                = 1;
-        my $wearon_date         = $self->timezone( $order->wearon_date );
-        my $shipping_date       = $self->date_calc;
-        my $dates               = $self->date_calc( { shipping => $shipping_date } );
-        my $closest_wearon_date = $dates->{wearon};
-        if ( $wearon_date->epoch < $closest_wearon_date->epoch ) {
-            $self->log->info("Not enough wearon_date: +5d");
-            $self->log->info("wearon_date($wearon_date), closest_wearon_date($closest_wearon_date)");
-            $fine = 0;
-        }
-
         $self->render(
-            template         => 'order/order.payment',
-            user_address     => $order->user_address,
-            fine_wearon_date => $fine,
+            template     => 'order/order.payment',
+            user_address => $order->user_address,
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
@@ -558,7 +546,13 @@ sub create_payment {
     }
     my $pay_method = $v->param("pay_method");
 
-    my $amount  = $self->category_price($order);
+    my $amount = $self->category_price($order);
+    my $additional = $order->order_details( { desc => 'additional' } );
+    while ( my $detail = $additional->next ) {
+        my $fee = $detail->price;
+        $amount += $fee;
+    }
+
     my $iamport = $self->config->{iamport};
     my $key     = $iamport->{key};
     my $secret  = $iamport->{secret};

@@ -61,6 +61,7 @@ sub register {
     $app->helper( merchant_uid         => \&merchant_uid );
     $app->helper( formatted            => \&formatted );
     $app->helper( date_calc            => \&date_calc );
+    $app->helper( payment_deadline     => \&payment_deadline );
 }
 
 =head1 HELPERS
@@ -893,6 +894,24 @@ sub date_calc {
     }
 
     return;
+}
+
+=head2 payment_deadline( $order )
+
+    my $deadline = $self->payment_deadline($order);    # DateTime obj
+
+=cut
+
+sub payment_deadline {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $wearon_date = $self->timezone( $order->wearon_date );
+    my $dates       = $self->date_calc( { wearon => $wearon_date } );
+    my $deadline    = $dates->{shipping}->clone;
+    $deadline->set_hour(10);
+
+    return $deadline;
 }
 
 1;

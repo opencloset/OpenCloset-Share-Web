@@ -20,7 +20,7 @@
 
 <hr>
 
-% if ($fine_wearon_date) {
+% if ($deadline->epoch > time) {
   <h5>
     결제방법
     <small>
@@ -31,6 +31,11 @@
       </select>
     </small>
   </h5>
+
+  <div class="alert alert-warning">
+    결제마감날짜까지 입금해주세요 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
+  </div>
+
   % my ($addr, $addr2);
   % if ($user_address) {
     % $addr  = $user_address->address2 . ' ' . $user_address->address4;
@@ -46,10 +51,10 @@
 % } else {
 
   <div class="alert alert-danger">
-    결제가 늦어져 의류착용일 전에 배송이 될 수 없습니다.
+    결제마감날짜가 지난 주문서 입니다 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
   </div>
 
-  <p>
+  <p class="help-block">
     <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
   </p>
 % }
