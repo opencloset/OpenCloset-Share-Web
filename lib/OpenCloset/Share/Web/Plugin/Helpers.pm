@@ -327,9 +327,20 @@ sub payment_done {
     return unless $order;
     return $order if $order->status_id == $PAYMENT_DONE;
 
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $msg       = $self->render_to_string(
+        'sms/payment/payment_done',
+        format => 'txt',
+        order  => $order,
+        user   => $user,
+    );
+
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
+
     $order->update( { status_id => $PAYMENT_DONE } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
-
     my $detail = $order->order_details( { name => 'jacket' } )->next;
 
     ## 선택한 의류가 있는지 확인

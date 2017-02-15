@@ -126,8 +126,9 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         $submit.addClass('disabled')
         # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
-        template = JST['coupon/info']
-        html     = template(data)
+        data.price = parseInt(data.price)
+        template   = JST['coupon/info']
+        html       = template(data)
         $('#coupon-modal .modal-footer').remove()
         $('#coupon-modal .modal-content').append(html)
       error: (jqXHR, textStatus, errorThrown) ->

@@ -70,7 +70,7 @@ sub update_payment {
 
     my $sid        = $v->param("imp_uid");
     my $cid        = $v->param("merchant_uid");
-    my $amount     = $v->param("amount");
+    my $amount     = $v->param("amount") || 0;
     my $vendor     = $v->param("pg_provider");
     my $pay_method = $v->param("pay_method");
     my $status     = $v->param("status");

@@ -1,0 +1,1 @@
+<%= $user->name %>님, 신청하신 주문이 정상적으로 접수 되었습니다. 결제금액을 <%= $payment_info->{response}{vbank_name} %> <%= $payment_info->{response}{vbank_num} %> 열린옷장으로 <%= sprintf("%s %02d:%02d", $due->ymd, $due->hour, $due->minute) %>까지 입금 바랍니다. 기한 내 미 입금시 주문이 자동 취소 됩니다.
