@@ -9,7 +9,6 @@ requires 'Encode';
 requires 'HTTP::CookieJar';
 requires 'HTTP::Tiny';
 requires 'Mojolicious';
-requires 'Mojolicious::Plugin::Number::Commify';
 requires 'Parcel::Track';
 requires 'Path::Tiny';
 requires 'String::Random';

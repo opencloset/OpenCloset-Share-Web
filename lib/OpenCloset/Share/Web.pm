@@ -42,7 +42,6 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
-    $self->plugin('Number::Commify');
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->plugin('OpenCloset::Share::Web::Plugin::Helpers');
 
