@@ -263,7 +263,8 @@ sub order_id {
     }
 
     my $deadline = $self->payment_deadline($order);
-    $self->stash( order => $order, deadline => $deadline );
+    my $dates = $self->date_calc( { wearon => $self->timezone( $order->wearon_date ) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    $self->stash( order => $order, deadline => $deadline, dates => $dates );
     return 1;
 }
 
