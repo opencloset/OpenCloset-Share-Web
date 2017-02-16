@@ -3,6 +3,10 @@
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 
+% if (my $message = flash('message')) {
+  <div class="alert alert-success" role="alert"><%= $message %></div>
+% }
+
 %= include 'partials/user-info', user => $order->user;
 
 <hr>

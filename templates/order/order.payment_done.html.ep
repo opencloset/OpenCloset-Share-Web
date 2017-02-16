@@ -1,6 +1,21 @@
 % layout 'default';
-% title $title;
+% title $title, jses => ['/assets/dist/js/order-id-payment-done.min.js'];
 
 %= include 'partials/order-summary', order => $order;
 
 <hr>
+
+<h4>
+  결제방법
+  <small>
+    % if ($cancel_payment) {
+      <button id="btn-cancel-payment" class="btn btn-xs btn-danger" type="button" data-url="<%= url_for('/orders/' . $order->id . '/cancel') %>">결제취소</button>
+    % } else {
+      이 주문서는 취소할 수 없습니다.
+    % }
+  </small>
+</h4>
+<p>
+  %= $order->price_pay_with
+</p>
+
