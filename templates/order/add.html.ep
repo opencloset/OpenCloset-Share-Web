@@ -189,6 +189,12 @@
 
   <h5>
     <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    도착(예정)일
+  </h5>
+  <p id="arrival-date"></p>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
     의류착용일
   </h5>
   <p id="wearon-date"></p>

@@ -13,6 +13,7 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         $('#shipping-date').text(data.shipping)
         $('#rental-target-date').text("#{data.rental} ~ #{data.target}")
+        $('#arrival-date').text(data.arrival)
         $('#parcel-date').text(data.parcel)
         $('#rental-date').text(data.rental)
         $('#target-date').text(data.target)
