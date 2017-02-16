@@ -869,14 +869,22 @@ Default C<$days> 는 3박 4일의 C<3>
 
     # 발송(예정)일 = 주말 + 공휴일 + 0일    # AM 10:00 이전
     # 발송(예정)일 = 주말 + 공휴일 + 1일    # AM 10:00 이후
-    # 대여일      = 발송(예정)일 + 공휴일 + 주말 + 2일
-    # 의류착용일   = 대여일 + 1일
+    # 도착(예정)일 = 발송(예정)일 + 공휴일 + 주말 + 2일
+    # 의류착용일   = 도착(예정)일 + 1일
+    # 대여일      = 의류착용일 - 1일
     # 반납일      = 대여일 + 대여기간(default 3일)
     # 택배일      = 반납일 - 1일
 
     my $shipping_date = $self->date_calc;    # 가장 가까운 발송(예정)일
     my $dates = $self->date_calc({ shipping => $shipping_date });
-    # { shipping => $dt1, rental => $dt2, wearon => $dt3, target => $dt4, parcel => $dt5 }
+    # {
+    #   shipping => $dt1, # 발송(예정)일
+    #   arrival  => $dt2, # 도착(예정)일
+    #   rental   => $dt3, # 대여일
+    #   wearon   => $dt4, # 의류착용일
+    #   target   => $dt5, # 반납일
+    #   parcel   => $dt6, # 반납택배발송일
+    # }
 
 =cut
 
@@ -914,6 +922,7 @@ sub date_calc {
 
     my $shipping_date = $dates->{shipping};
     my $wearon_date   = $dates->{wearon};
+
     if ($shipping_date) {
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
         my $year = $shipping_date->year;
@@ -932,9 +941,10 @@ sub date_calc {
             $n--;
         }
 
-        $dates{rental}   = $dt->clone;
+        $dates{arrival}  = $dt->clone;
         $dates{shipping} = $shipping_date->clone;
-        $dates{wearon}   = $dates{rental}->clone->add( days => 1 );
+        $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
+        $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
         $dates{target}   = $dates{rental}->clone->add( days => $days );
         $dates{parcel}   = $dates{target}->clone->subtract( days => 1 );
 
@@ -958,7 +968,7 @@ sub date_calc {
         }
 
         $shipping_date = $dt;
-        return $self->date_calc( { shipping => $shipping_date }, $days );
+        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date }, $days );
     }
 
     return;

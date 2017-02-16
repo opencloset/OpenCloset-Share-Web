@@ -120,6 +120,12 @@
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+  도착(예정)일
+</h5>
+<p><%= $dates->{arrival}->ymd %></p>
+
+<h5>
+  <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   의류착용일
 </h5>
 <p><%= $order->wearon_date ? $order->wearon_date->ymd : '지정되지않음' %></p>
