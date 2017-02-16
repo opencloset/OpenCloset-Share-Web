@@ -359,7 +359,7 @@ sub update_order {
     $v->optional('wearon_date');
     $v->optional('rental_date');
     $v->optional('target_date');
-    $v->optional('misc');
+    $v->optional('shipping_misc');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;

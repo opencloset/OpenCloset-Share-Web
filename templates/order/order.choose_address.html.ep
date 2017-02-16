@@ -80,7 +80,7 @@
   <p>
     배송과 관련된 요청 및 문의사항
   </p>
-  <textarea name="misc" class="form-control" rows="3"><%= $order->misc || '' %></textarea>
+  <textarea name="shipping_misc" class="form-control" rows="3"><%= $order->shipping_misc || '' %></textarea>
   <hr>
 
   % my @categories = categories($order);
