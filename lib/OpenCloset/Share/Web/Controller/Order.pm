@@ -672,9 +672,19 @@ sub cancel_payment {
     my $cancel_payment = $self->_cancel_payment_cond( $order, $dates->{shipping} );
     return $self->error( 400, 'This order payment can not be canceled.' ) unless $cancel_payment;
 
-    # $PAYBACK
-
+    my $v          = $self->validation;
     my $pay_method = $order->price_pay_with;
+    if ( $pay_method eq '가상계좌' ) {
+        $v->required('refund_holder');
+        $v->required('refund_bank')->in(qw/03 04 05 07 11 20 23 31 32 34 37 39 53 71 81 88 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA DB DC DD DE DF/);
+        $v->required('refund_account')->like(qr/\d+/);
+
+        if ( $v->has_error ) {
+            my $failed = $v->failed;
+            return $self->error( 400, '환불계좌정보가 올바르지 않습니다.' );
+        }
+    }
+
     if ( $pay_method eq '쿠폰' ) {
         my $coupon = $order->coupon;
         return $self->error( 404, "Not found coupon" ) unless $coupon;
@@ -691,7 +701,15 @@ sub cancel_payment {
 
         my $sid     = $payment->sid;
         my $iamport = $self->app->iamport;
-        my $json    = $iamport->cancel( { imp_uid => $sid } );
+        my $param   = { imp_uid => $sid };
+
+        if ( $pay_method eq '가상계좌' || $pay_method eq 'vbank' ) {
+            $param->{refund_holder}  = $v->param('refund_holder');
+            $param->{refund_bank}    = $v->param('refund_bank');
+            $param->{refund_account} = $v->param('refund_account');
+        }
+
+        my $json = $iamport->cancel($param);
         return $self->error( 500, "Failed to cancel from iamport: sid($sid)" ) unless $json;
 
         my $res = decode_json($json);
@@ -725,7 +743,6 @@ sub _cancel_payment_cond {
     my $today = DateTime->today( time_zone => $self->config->{timezone} );
     my $pay_method = $order->price_pay_with || '';
     my $cancel_payment = $today->epoch < $shipping_date->epoch && $pay_method;
-    $cancel_payment = 0 if $pay_method =~ m/가상계좌/; # '쿠폰+가상계좌' 일 수 있음
 
     return $cancel_payment;
 }
