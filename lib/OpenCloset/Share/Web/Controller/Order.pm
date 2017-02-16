@@ -332,6 +332,9 @@ sub order {
             payment_due  => $strp->format_datetime($dt),
         );
     }
+    elsif ( $status_id == $PAYMENT_DONE ) {
+        $self->render( template => 'order/order.payment_done' );
+    }
     else {
         ## 결제완료, 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
         $self->render( template => 'order/order.misc' );
