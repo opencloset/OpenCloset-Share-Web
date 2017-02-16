@@ -3,6 +3,8 @@
 
 <h1>치수측정</h1>
 
+% my $gender = $user_info->gender || '';
+
 % if (my $message = flash('message')) {
 %   if (flash('has_error')) {
 <div class="alert alert-danger" role="alert"><%= $message %></div>
@@ -14,89 +16,88 @@
 <hr>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-4">
     <form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
       <div class="form-group">
-        <label class="col-sm-2 control-label">키 <small>cm</small></label>
-        <div class="col-sm-10">
+        <label class="col-sm-5 control-label">키 <small>cm</small></label>
+        <div class="col-sm-7">
           <input name="height" type="text" class="form-control m-preview-none" placeholder="키 cm" value="<%= $user_info->height || '' %>">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">몸무게 <small>kg</small></label>
-        <div class="col-sm-10">
+        <label class="col-sm-5 control-label">몸무게 <small>kg</small></label>
+        <div class="col-sm-7">
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">가슴둘레 <small>cm</small></label>
-        <div class="col-sm-10">
-          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="가슴의 가장 굵은 부분을 둘러 잰 길이." data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
+        <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
+        <div class="col-sm-7">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올린 후 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내린다.' : '가슴의 가장 두꺼운 부분(BP점)의 둘레를 수평으로 측정한다. *BP점-BUST POINT' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">
+        <label class="col-sm-5 control-label">
           허리둘레 <small>cm</small>
         </label>
-        <div class="col-sm-10">
-          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="허리의 둘레를 잰 길이." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+        <div class="col-sm-7">
+          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">
+        <label class="col-sm-5 control-label">
           윗배둘레 <small>cm</small>
         </label>
-        <div class="col-sm-10">
-          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="가슴 아래 배꼽 위에 있는 부분의 배의 둘레를 잰 길이.">
+        <div class="col-sm-7">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)에서 수평으로 둘레를 측정한다.">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label">
+        <label class="col-sm-5 control-label">
           팔길이 <small>cm</small>
         </label>
-        <div class="col-sm-10">
-          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="어깨부터 손목까지의 길이." data-video="https://online.theopencloset.net/stream/mens/Man_arms_length_all.mp4">
+        <div class="col-sm-7">
+          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="팔을 가볍게 내린 상태에서 어깨뼈가 가장 톡 튀어나온 부분부터 손목 접히는 부분(손목뼈)까지 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_arms_length_all.mp4">
         </div>
       </div>
 
-      % my $gender = $user_info->gender || '';
       % if ($gender eq 'male') {
         <!-- male -->
         <div class="form-group">
-          <label class="col-sm-2 control-label">
+          <label class="col-sm-5 control-label">
             허벅지둘레 <small>cm</small>
           </label>
-          <div class="col-sm-10">
-            <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="허벅지의 가장 두꺼운 부분의 둘레." data-video="https://online.theopencloset.net/stream/mens/Man_thigh_circumference_all.mp4">
+          <div class="col-sm-7">
+            <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="가랑이 가장 위까지 줄자를 올린 후 수평으로 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_thigh_circumference_all.mp4">
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label">
+          <label class="col-sm-5 control-label">
             다리길이 <small>cm</small>
           </label>
-          <div class="col-sm-10">
-            <input name="leg" type="text" class="form-control m-preview" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>" title="허리부터 바닥까지의 길이.">
+          <div class="col-sm-7">
+            <input name="leg" type="text" class="form-control m-preview" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 발바닥이 지면에 닿는 길이까지 측정한다.">
           </div>
         </div>
       % } elsif ($gender eq 'female') {
         <!-- female -->
         <div class="form-group">
-          <label class="col-sm-2 control-label">엉덩이둘레 <small>cm</small></label>
-          <div class="col-sm-10">
-            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
+          <label class="col-sm-5 control-label">엉덩이둘레 <small>cm</small></label>
+          <div class="col-sm-7">
+            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" title="엉덩이의 가장 튀어나온 부분을 수평으로 측정한다." data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label">무릎길이 <small>cm</small></label>
-          <div class="col-sm-10">
-            <input name="knee" type="text" class="form-control m-preview" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>">
+          <label class="col-sm-5 control-label">무릎길이 <small>cm</small></label>
+          <div class="col-sm-7">
+            <input name="knee" type="text" class="form-control m-preview" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 무릎뼈 바로 위까지의 길이를 측정한다.">
           </div>
         </div>
       % }
 
       <div class="form-group">
-        <label class="col-sm-2 control-label">신발크기 <small>mm</small></label>
-        <div class="col-sm-10">
+        <label class="col-sm-5 control-label">신발크기 <small>mm</small></label>
+        <div class="col-sm-7">
           <input name="foot" type="text" class="form-control m-preview-none" placeholder="신발크기 mm" value="<%= $user_info->foot || '' %>">
         </div>
       </div>
@@ -104,8 +105,8 @@
       % if ($gender eq 'female') {
         % my $i = 0;
         <div class="form-group">
-          <label class="col-sm-2 control-label">자켓 크기</label>
-          <div class="col-sm-10">
+          <label class="col-sm-5 control-label">자켓 크기</label>
+          <div class="col-sm-7">
             % my $top_size = $user_info->top_size || 0;
             <input name="top_size" type="hidden" value="<%= $top_size %>">
             <p class="help-block text-right">
@@ -152,8 +153,8 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-2 control-label">스커트 크기</label>
-          <div class="col-sm-10">
+          <label class="col-sm-5 control-label">스커트 크기</label>
+          <div class="col-sm-7">
             % my $bottom_size = $user_info->bottom_size || 0;
             <input name="bottom_size" type="hidden" value="<%= $bottom_size %>">
             <p class="help-block text-right">
@@ -209,20 +210,24 @@
     </form>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-md-5">
     <div>
-      <video id="guide-video" width="520" controls src="">
+      <video id="guide-video" width="400" controls src="">
         동영상을 지원하지 않는 브라우저 입니다.
       </video>
+
+      <div id="preview-desc">
+        <h4 class="preview-desc-header"></h4>
+        <p class="preview-desc-body"></p>
+      </div>
     </div>
+  </div>
 
-    <hr>
-
+  <div class="col-md-3">
     <div id="measurement-preview">
       <div class="thumbnail preview-img">
         <img src="" alt="">
       </div>
-      <p class="preview-desc"></p>
     </div>
   </div>
 </div>

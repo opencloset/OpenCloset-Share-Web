@@ -1,15 +1,21 @@
 $ ->
   $('#measurement-preview').hide()
   $('#guide-video').hide()
+  $('#preview-desc').hide()
+
   $('.m-preview').focus (e) ->
     name   = $(@).prop('name')
     title  = $(@).prop('title')
     video  = $(@).data('video')
+    label  = $(@).parent().prev().text()
+
     $div = $('#measurement-preview')
     $img = $div.find('.preview-img img')
     $img.prop('src', "/assets/img/measurements/#{name}.jpg")
       .prop('alt', title)
-    $div.find('.preview-desc').text(title)
+    $('#preview-desc .preview-desc-header').text(label)
+    $('#preview-desc .preview-desc-body').text(title)
+    $('#preview-desc').show()
     $div.show()
     if video
       $('#guide-video').prop('src', video).show()
@@ -18,8 +24,12 @@ $ ->
 
   $('.m-preview-none').focus (e) ->
     $div = $('#measurement-preview')
-    $div.find('.preview-desc').text('')
     $div.hide()
+
+    $('#preview-desc .preview-desc-header').text('')
+    $('#preview-desc .preview-desc-body').text('')
+    $('#preview-desc').hide()
+
     $('#guide-video').prop('src', '').hide()
 
   $('.btn-size').click (e) ->
