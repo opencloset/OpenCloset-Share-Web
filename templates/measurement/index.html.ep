@@ -14,7 +14,7 @@
 <hr>
 
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-6">
     <form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
       <div class="form-group">
         <label class="col-sm-2 control-label">키 <small>cm</small></label>
@@ -31,19 +31,19 @@
       <div class="form-group">
         <label class="col-sm-2 control-label">가슴둘레 <small>cm</small></label>
         <div class="col-sm-10">
-          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="가슴의 가장 굵은 부분을 둘러 잰 길이.">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="가슴의 가장 굵은 부분을 둘러 잰 길이." data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" data-toggle="tooltip">
+        <label class="col-sm-2 control-label">
           허리둘레 <small>cm</small>
         </label>
         <div class="col-sm-10">
-          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="허리의 둘레를 잰 길이.">
+          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="허리의 둘레를 잰 길이." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" data-toggle="tooltip">
+        <label class="col-sm-2 control-label">
           윗배둘레 <small>cm</small>
         </label>
         <div class="col-sm-10">
@@ -51,11 +51,11 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" data-toggle="tooltip">
+        <label class="col-sm-2 control-label">
           팔길이 <small>cm</small>
         </label>
         <div class="col-sm-10">
-          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="어깨부터 손목까지의 길이.">
+          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="어깨부터 손목까지의 길이." data-video="https://online.theopencloset.net/stream/mens/Man_arms_length_all.mp4">
         </div>
       </div>
 
@@ -63,15 +63,15 @@
       % if ($gender eq 'male') {
         <!-- male -->
         <div class="form-group">
-          <label class="col-sm-2 control-label" data-toggle="tooltip">
+          <label class="col-sm-2 control-label">
             허벅지둘레 <small>cm</small>
           </label>
           <div class="col-sm-10">
-            <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="허벅지의 가장 두꺼운 부분의 둘레.">
+            <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="허벅지의 가장 두꺼운 부분의 둘레." data-video="https://online.theopencloset.net/stream/mens/Man_thigh_circumference_all.mp4">
           </div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label" data-toggle="tooltip">
+          <label class="col-sm-2 control-label">
             다리길이 <small>cm</small>
           </label>
           <div class="col-sm-10">
@@ -83,7 +83,7 @@
         <div class="form-group">
           <label class="col-sm-2 control-label">엉덩이둘레 <small>cm</small></label>
           <div class="col-sm-10">
-            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>">
+            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
           </div>
         </div>
         <div class="form-group">
@@ -209,7 +209,15 @@
     </form>
   </div>
 
-  <div class="col-md-5">
+  <div class="col-md-6">
+    <div>
+      <video id="guide-video" width="520" controls src="">
+        동영상을 지원하지 않는 브라우저 입니다.
+      </video>
+    </div>
+
+    <hr>
+
     <div id="measurement-preview">
       <div class="thumbnail preview-img">
         <img src="" alt="">
