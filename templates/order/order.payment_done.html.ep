@@ -1,0 +1,83 @@
+% layout 'default';
+% title $title, jses => [
+%   '/assets/dist/js/order-id-payment-done.min.js'
+% ];
+
+%= include 'partials/order-summary', order => $order;
+
+<hr>
+
+<h4>
+  결제방법
+  <small>
+    % if ($cancel_payment) {
+      <button id="btn-cancel-payment" class="btn btn-xs btn-danger" type="button" data-url="<%= url_for('/orders/' . $order->id . '/cancel') %>">결제취소</button>
+    % } else {
+      이 주문서는 취소할 수 없습니다.
+    % }
+  </small>
+</h4>
+
+% my $price_pay_with = $order->price_pay_with || '';
+<p>
+  %= $price_pay_with
+</p>
+% if ($cancel_payment and $price_pay_with eq '가상계좌') {
+  <p class="help-block">
+    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+    가상계좌로 결제한 주문은 환불계좌 정보를 입력하셔야 취소가 가능합니다.
+  </p>
+
+  <p class="help-block">
+    <i class="fa fa-fw fa-info-circle" aria-hidden="true"></i>
+    가상계좌의 경우는 환불받으실 계좌정보를 같이 전달해주시면 환불정보가 PG사에 등록되어 익영업일에 처리됩니다.
+  </p>
+
+  <form class="form-inline" id="refund-form">
+    <input type="hidden" name="refund_bank">
+    <div class="form-group">
+      <input type="text" name="refund_holder" class="form-control input-sm" placeholder="환불계좌 예금주">
+    </div>
+    <div class="form-group">
+      <input type="text" name="refund_account" class="form-control input-sm" placeholder="환불계좌 번호(숫자만입력)">
+    </div>
+  </form>
+
+  <hr>
+
+  <p class="help-block">환불계좌은행을 선택해주세요.</p>
+
+  <div class="btn-group btn-bank" role="group">
+    <button type="button" class="btn btn-default btn-sm" data-code="03">기업은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="04">국민은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="05">외환은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="07">수협중앙회</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="11">농협중앙회</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="20">우리은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="23">SC</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="31">대구은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="32">부산은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="34">광주은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="37">전북은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="39">경남은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="53">한국씨티은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="71">우체국</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="81">하나은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="88">통합신한은행</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D1">동양종합금융증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D2">현대증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D3">미래에셋증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D4">한국투자증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D5">우리투자증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D6">하이투자증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D7">HMC투자증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D8">SK증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="D9">대신증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DA">하나대투증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DB">굿모닝신한증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DC">동부증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DD">유진투자증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DE">메리츠증권</button>
+    <button type="button" class="btn btn-default btn-sm" data-code="DF">신영증권</button>
+  </div>
+% }

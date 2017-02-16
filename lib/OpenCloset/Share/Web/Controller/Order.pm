@@ -11,7 +11,7 @@ use Try::Tiny;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT/;
+    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT $PAYBACK/;
 
 has schema => sub { shift->app->schema };
 
@@ -263,7 +263,8 @@ sub order_id {
     }
 
     my $deadline = $self->payment_deadline($order);
-    $self->stash( order => $order, deadline => $deadline );
+    my $dates = $self->date_calc( { wearon => $self->timezone( $order->wearon_date ) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    $self->stash( order => $order, deadline => $deadline, dates => $dates );
     return 1;
 }
 
@@ -331,8 +332,15 @@ sub order {
             payment_due  => $strp->format_datetime($dt),
         );
     }
+    elsif ( $status_id == $PAYMENT_DONE ) {
+        my $dates = $self->stash('dates');
+        $self->render(
+            template       => 'order/order.payment_done',
+            cancel_payment => $self->_cancel_payment_cond( $order, $dates->{shipping} ),
+        );
+    }
     else {
-        ## 결제완료, 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
+        ## 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
         $self->render( template => 'order/order.misc' );
     }
 }
@@ -355,7 +363,7 @@ sub update_order {
     $v->optional('wearon_date');
     $v->optional('rental_date');
     $v->optional('target_date');
-    $v->optional('misc');
+    $v->optional('shipping_misc');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -600,9 +608,9 @@ sub insert_coupon {
         my $guard = $self->schema->txn_scope_guard;
         my ( $success, $error ) = try {
             $order->update( { price_pay_with => $price_pay_with } );
-            $coupon->update( { status => 'used' } );
             $self->transfer_order( $coupon, $order );
             $self->payment_done($order);
+            $coupon->update( { status => 'used' } );
             $guard->commit;
             return 1;
         }
@@ -648,6 +656,95 @@ sub insert_coupon {
 
     my %columns = $order->get_columns;
     $self->render( json => \%columns );
+}
+
+=head2 cancel_payment
+
+    POST /orders/:order_id/cancel
+
+=cut
+
+sub cancel_payment {
+    my $self  = shift;
+    my $order = $self->stash('order');
+    my $dates = $self->stash('dates');
+
+    my $cancel_payment = $self->_cancel_payment_cond( $order, $dates->{shipping} );
+    return $self->error( 400, 'This order payment can not be canceled.' ) unless $cancel_payment;
+
+    my $v          = $self->validation;
+    my $pay_method = $order->price_pay_with;
+    if ( $pay_method eq '가상계좌' ) {
+        $v->required('refund_holder');
+        $v->required('refund_bank')->in(qw/03 04 05 07 11 20 23 31 32 34 37 39 53 71 81 88 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA DB DC DD DE DF/);
+        $v->required('refund_account')->like(qr/\d+/);
+
+        if ( $v->has_error ) {
+            my $failed = $v->failed;
+            return $self->error( 400, '환불계좌정보가 올바르지 않습니다.' );
+        }
+    }
+
+    if ( $pay_method eq '쿠폰' ) {
+        my $coupon = $order->coupon;
+        return $self->error( 404, "Not found coupon" ) unless $coupon;
+
+        $coupon->update( { status => 'provided' } ); # TODO: cancelled 가 필요하지 않을까?
+        $order->update( { coupon_id => undef, status_id => $PAYBACK } );
+    }
+    else {
+        my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'paid' }, { rows => 1 } )->single;
+        my $payment = $payment_log->payment;
+
+        return $self->error( 404, "Not found payment" ) unless $payment;
+        return $self->error( 404, "Not found payment from iamport" ) unless $payment->sid;
+
+        my $sid     = $payment->sid;
+        my $iamport = $self->app->iamport;
+        my $param   = { imp_uid => $sid };
+
+        if ( $pay_method eq '가상계좌' || $pay_method eq 'vbank' ) {
+            $param->{refund_holder}  = $v->param('refund_holder');
+            $param->{refund_bank}    = $v->param('refund_bank');
+            $param->{refund_account} = $v->param('refund_account');
+        }
+
+        my $json = $iamport->cancel($param);
+        return $self->error( 500, "Failed to cancel from iamport: sid($sid)" ) unless $json;
+
+        my $res = decode_json($json);
+        my $log = $payment->create_related(
+            "payment_logs",
+            {
+                status => $res->{response}{status},
+                detail => $json,
+            },
+        );
+
+        $order->update( { status_id => $PAYBACK } );
+    }
+
+    ## TODO: 문자메세지?
+    $self->flash( message => '결제가 취소되었습니다.' );
+    $self->render( json => { pay_method => $pay_method, status => 'cancelled' } );
+}
+
+=head2 _cancel_payment_cond
+
+    my $boolean = $self->_cancel_payment_cond($order, $shipping_date);
+
+=cut
+
+sub _cancel_payment_cond {
+    my ( $self, $order, $shipping_date ) = @_;
+    return unless $order;
+    return unless $shipping_date;
+
+    my $today = DateTime->today( time_zone => $self->config->{timezone} );
+    my $pay_method = $order->price_pay_with || '';
+    my $cancel_payment = $today->epoch < $shipping_date->epoch && $pay_method;
+
+    return $cancel_payment;
 }
 
 1;

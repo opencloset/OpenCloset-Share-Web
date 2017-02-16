@@ -42,7 +42,6 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
-    $self->plugin('Number::Commify');
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->plugin('OpenCloset::Share::Web::Plugin::Helpers');
 
@@ -126,6 +125,7 @@ sub _private_routes {
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
     $order->post('/payments')->to('order#create_payment');
     $order->post('/coupon')->to('order#insert_coupon');
+    $order->post('/cancel')->to('order#cancel_payment');
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');
