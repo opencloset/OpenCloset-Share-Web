@@ -604,9 +604,9 @@ sub insert_coupon {
         my $guard = $self->schema->txn_scope_guard;
         my ( $success, $error ) = try {
             $order->update( { price_pay_with => $price_pay_with } );
-            $coupon->update( { status => 'used' } );
             $self->transfer_order( $coupon, $order );
             $self->payment_done($order);
+            $coupon->update( { status => 'used' } );
             $guard->commit;
             return 1;
         }
