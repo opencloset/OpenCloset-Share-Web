@@ -16,7 +16,7 @@ use OpenCloset::Schema;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT/;
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -641,7 +641,7 @@ sub categories {
 
     my @categories;
     my $status_id = $order->status_id;
-    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_DEPOSIT" =~ m/\b$status_id\b/ ) {
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_DEPOSIT $PAYBACK" =~ m/\b$status_id\b/ ) {
         my $details = $order->order_details;
         while ( my $detail = $details->next ) {
             my $name = $detail->name;
