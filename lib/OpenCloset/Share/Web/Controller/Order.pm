@@ -319,17 +319,13 @@ sub order {
             return $self->error( 500, "Couldn't find vbank due date." );
         }
 
-        my $tz   = $self->config->{timezone};
-        my $dt   = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
-        my $strp = DateTime::Format::Strptime->new(
-            pattern => '%B %d일 %A %H:%M분',
-            locale  => 'ko_KR',
-        );
+        my $tz = $self->config->{timezone};
+        my $payment_due = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
 
         $self->render(
             template     => 'order/order.waiting_deposit',
             payment_info => $payment_info,
-            payment_due  => $strp->format_datetime($dt),
+            payment_due  => $payment_due
         );
     }
     elsif ( $status_id == $PAYMENT_DONE ) {

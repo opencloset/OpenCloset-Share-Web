@@ -13,12 +13,22 @@
 
 <hr>
 
-<p>
-  <samp><%= $payment_due %></samp> 까지
-</p>
+% if ($payment_due->epoch > time) {
+  <p>
+    <span class="label label-success"><%= sprintf("%s %02d:%02d", $payment_due->ymd, $payment_due->hour, $payment_due->minute) %></span>
+    까지
+  </p>
 
-<p class="payment-info">
-  %= $payment_info->{response}{vbank_name}
-  <mark><samp><%= $payment_info->{response}{vbank_num} %></samp></mark> 으로
-  <code><%= commify($payment_info->{response}{amount}) %></code>원 입금해주세요.
-</p>
+  <p class="payment-info">
+    %= $payment_info->{response}{vbank_name}
+    <mark><samp><%= $payment_info->{response}{vbank_num} %></samp></mark> 으로
+    <code><%= commify($payment_info->{response}{amount}) %></code>원 입금해주세요.
+  </p>
+% } else {
+  <div class="alert alert-danger">
+    입금기한이 지난 주문서입니다. <strong><%= $payment_due->ymd %> <%= $payment_due->hour %>:00</strong>
+  </div>
+  <p class="help-block">
+    <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
+  </p>
+% }
