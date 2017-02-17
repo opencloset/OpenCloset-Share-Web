@@ -18,4 +18,4 @@ requires 'Try::Tiny;';
 requires 'OpenCloset::Common',          'v0.0.13';
 requires 'OpenCloset::Plugin::Helpers', 'v0.0.11';
 requires 'OpenCloset::Schema',          '0.046';
-requires 'Iamport::REST::Client',       'v0.0.3';
+requires 'Iamport::REST::Client',       'v0.0.4';
