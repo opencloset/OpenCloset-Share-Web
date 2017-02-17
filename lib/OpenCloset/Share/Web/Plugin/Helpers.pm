@@ -901,20 +901,11 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         my $dt = DateTime->today( time_zone => $tz );
-        if ( $holidays{ $now->ymd } || $hour > 10 ) {
-            $dt->add( days => 1 );
-            while (1) {
-                $dt->add( days => 1 ) if $dt->day_of_week > 5;
-                $dt->add( days => 1 ) if $holidays{ $dt->ymd };
-                last;
-            }
-        }
-        else {
-            while (1) {
-                $dt->add( days => 1 ) if $dt->day_of_week > 5;
-                $dt->add( days => 1 ) if $holidays{ $dt->ymd };
-                last;
-            }
+        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour > 10;
+        while (1) {
+            $dt->add( days => 1 ) and next if $dt->day_of_week > 5;
+            $dt->add( days => 1 ) and next if $holidays{ $dt->ymd };
+            last;
         }
 
         return $dt;
