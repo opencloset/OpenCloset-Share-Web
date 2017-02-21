@@ -106,6 +106,7 @@ sub create {
         return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
         my $sum = 0;
+        my @details;
         for my $category (@categories) {
             my $desc;
             $desc = $v->param('shirt-type')  if $category eq $SHIRT;
@@ -120,6 +121,12 @@ sub create {
                     desc        => $desc,
                 }
             );
+
+            push @details, {
+                clothes_category => $category,
+                price            => $detail->price,
+                final_price      => $detail->final_price,
+            };
         }
 
         $order->create_related(
@@ -140,6 +147,19 @@ sub create {
                     name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
                     price => $extension_fee,
                     final_price => $extension_fee,
+                    desc        => 'additional',
+                }
+            );
+        }
+
+        my $discount = $order->sale_multi_times_rental( \@details );
+        if ( my $price = $discount->{after} - $discount->{before} ) {
+            $order->create_related(
+                'order_details',
+                {
+                    name        => "3회 이상 대여 할인",
+                    price       => $price,
+                    final_price => $price,
                     desc        => 'additional',
                 }
             );

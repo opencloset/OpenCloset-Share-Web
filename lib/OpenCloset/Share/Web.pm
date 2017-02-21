@@ -8,6 +8,7 @@ use Path::Tiny;
 
 use Iamport::REST::Client;
 use OpenCloset::Schema;
+use OpenCloset::DB::Plugin::Order::Sale;
 
 use version; our $VERSION = qv("v0.0.1");
 
