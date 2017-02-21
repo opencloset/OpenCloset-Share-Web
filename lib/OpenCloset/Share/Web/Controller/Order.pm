@@ -88,64 +88,93 @@ sub create {
     my $additional_day = $v->param('additional_day');
     my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
-    my $guard = $self->schema->txn_scope_guard;
-    my $param = {
-        online         => 1,
-        user_id        => $user->id,
-        status_id      => $status_id,
-        wearon_date    => $wearon_date,
-        rental_date    => $dates->{rental}->datetime(),
-        target_date    => $dates->{target}->datetime(),
-        pre_color      => $v->param('pre_color'),
-        additional_day => $additional_day,
-    };
-    map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
-    my $order = $self->schema->resultset('Order')->create($param);
+    my ( $order, $error ) = try {
+        my $guard = $self->schema->txn_scope_guard;
+        my $param = {
+            online         => 1,
+            user_id        => $user->id,
+            status_id      => $status_id,
+            wearon_date    => $wearon_date,
+            rental_date    => $dates->{rental}->datetime(),
+            target_date    => $dates->{target}->datetime(),
+            pre_color      => $v->param('pre_color'),
+            additional_day => $additional_day,
+        };
+        map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
+        my $order = $self->schema->resultset('Order')->create($param);
 
-    return $self->error( 500, "Couldn't create a new order" ) unless $order;
+        return $self->error( 500, "Couldn't create a new order" ) unless $order;
 
-    my $sum = 0;
-    for my $category (@categories) {
-        my $desc;
-        $desc = $v->param('shirt-type')  if $category eq $SHIRT;
-        $desc = $v->param('blouse-type') if $category eq $BLOUSE;
-        $sum += $PRICE{$category};
-        $order->create_related(
-            'order_details',
-            {
-                name        => $category,
-                price       => $PRICE{$category},
-                final_price => $PRICE{$category},
-                desc        => $desc,
-            }
-        );
-    }
+        my $sum = 0;
+        my @details;
+        for my $category (@categories) {
+            my $desc;
+            $desc = $v->param('shirt-type')  if $category eq $SHIRT;
+            $desc = $v->param('blouse-type') if $category eq $BLOUSE;
+            $sum += $PRICE{$category};
+            my $detail = $order->create_related(
+                'order_details',
+                {
+                    name        => $category,
+                    price       => $PRICE{$category},
+                    final_price => $PRICE{$category},
+                    desc        => $desc,
+                }
+            );
 
-    $order->create_related(
-        'order_details',
-        {
-            name        => '배송비',
-            price       => $SHIPPING_FEE,
-            final_price => $SHIPPING_FEE,
-            desc        => 'additional',
+            push @details, {
+                clothes_category => $category,
+                price            => $detail->price,
+                final_price      => $detail->final_price,
+            };
         }
-    );
 
-    if ($additional_day) {
-        my $extension_fee = $sum * 0.2 * $additional_day;
         $order->create_related(
             'order_details',
             {
-                name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
-                price => $extension_fee,
-                final_price => $extension_fee,
+                name        => '배송비',
+                price       => $SHIPPING_FEE,
+                final_price => $SHIPPING_FEE,
                 desc        => 'additional',
             }
         );
+
+        if ($additional_day) {
+            my $extension_fee = $sum * 0.2 * $additional_day;
+            $order->create_related(
+                'order_details',
+                {
+                    name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
+                    price => $extension_fee,
+                    final_price => $extension_fee,
+                    desc        => 'additional',
+                }
+            );
+        }
+
+        my $discount = $order->sale_multi_times_rental( \@details );
+        if ( my $price = $discount->{after} - $discount->{before} ) {
+            $order->create_related(
+                'order_details',
+                {
+                    name        => "3회 이상 대여 할인",
+                    price       => $price,
+                    final_price => $price,
+                    desc        => 'additional',
+                }
+            );
+        }
+
+        $guard->commit;
+        return $order;
     }
+    catch {
+        chomp;
+        $self->log->error($_);
+        return ( undef, $_ );
+    };
 
-    $guard->commit;
-
+    return $self->error( 500, $error ) unless $order;
     $self->redirect_to( 'order.order', order_id => $order->id );
 }
 
