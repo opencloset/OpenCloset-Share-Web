@@ -7,16 +7,7 @@
 
 <hr>
 
-<h4>
-  결제방법
-  <small>
-    % if ($cancel_payment) {
-      <button id="btn-cancel-payment" class="btn btn-xs btn-danger" type="button" data-url="<%= url_for('/orders/' . $order->id . '/cancel') %>">결제취소</button>
-    % } else {
-      이 주문서는 취소할 수 없습니다.
-    % }
-  </small>
-</h4>
+<h4>결제방법</h4>
 
 % my $price_pay_with = $order->price_pay_with || '';
 <p>
@@ -81,3 +72,12 @@
     <button type="button" class="btn btn-default btn-sm" data-code="DF">신영증권</button>
   </div>
 % }
+
+% if ($cancel_payment) {
+  <hr>
+
+  <button id="btn-cancel-payment" class="btn btn-danger btn-sm" type="button" data-url="<%= url_for('/orders/' . $order->id . '/cancel') %>">결제취소</button>
+% } else {
+  이 주문서의 결제는 취소할 수 없습니다.
+% }
+
