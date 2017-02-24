@@ -3,7 +3,7 @@
 <%= sprintf("%02d월 %02d일 %02d시 %02d분", $create_date->month, $create_date->day, $create_date->hour, $create_date->minute) %>에 열린옷장에서 주문하신 <%= orderClothes2text($order) %> 주문에 관한 결제내역입니다.
 
 ---------------------
-결제금액: <%= $amount %>
+결제금액: <%= commify($amount) %>원
 결제방법: <%= $order->price_pay_with %>
 결제일시: <%= $payment_date->ymd %> <%= $payment_date->hms %> KST
 대여주문서: <%= url_for('/orders/' . $order->id)->to_abs %>
