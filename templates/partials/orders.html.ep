@@ -14,7 +14,7 @@
       % my $status_id = $order->status_id;
       % if ("$PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS" =~ m/\b$status_id\b/) {
       <li>
-        <button class="btn btn-danger btn-sm btn-cancel" data-url="<%= url_for('/orders/' . $order->id) %>" title="주문서를 취소하고, 삭제합니다">취소</button>
+        <button class="btn btn-danger btn-sm btn-cancel" data-url="<%= url_for('/orders/' . $order->id) %>" title="주문서를 취소하고, 삭제합니다">삭제</button>
       </li>
       % }
     </ul>
