@@ -1,4 +1,4 @@
-% my $create_date = $order->create_date;
+% my $create_date = timezone($order->create_date);
 안녕하세요 <%= $user->name %>님.
 <%= sprintf("%02d월 %02d일 %02d시 %02d분", $create_date->month, $create_date->day, $create_date->hour, $create_date->minute) %>에 열린옷장에서 주문하신 <%= orderClothes2text($order) %> 주문에 관한 입금안내입니다.
 
