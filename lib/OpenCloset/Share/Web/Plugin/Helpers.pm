@@ -5,6 +5,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use DateTime;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
+use Email::Simple ();
 use Encode qw/encode_utf8/;
 use HTTP::Tiny;
 use Mojo::ByteStream;
@@ -408,6 +409,29 @@ sub waiting_deposit {
 
     chomp $msg;
     $self->sms( $user_info->phone, $msg );
+
+    # TODO
+    my $subject  = sprintf( "[열린옷장] %s님의 가상계좌 입금안내", $user->name );
+    my $deadline = $self->payment_deadline($order);
+    my $body     = $self->render_to_string(
+        'email/waiting_deposit',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        deadline     => $deadline,
+        payment_info => $payment_info
+    );
+
+    my $email_msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $user->email,
+            Subject => $subject,
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $email_msg->as_string ) );
 
     return $order;
 }

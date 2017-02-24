@@ -1,0 +1,21 @@
+% my $create_date = $order->create_date;
+안녕하세요 <%= $user->name %>님.
+<%= sprintf("%02d월 %02d일 %02d시 %02d분", $create_date->month, $create_date->day, $create_date->hour, $create_date->minute) %>에 열린옷장에서 주문하신 <%= orderClothes2text($order) %> 주문에 관한 입금안내입니다.
+
+<%= sprintf("%02d월 %02d일 오전 %02d시", $deadline->month, $deadline->day, $deadline->hour) %>까지 입금해주세요.
+
+---------------------
+은행: <%= $payment_info->{response}{vbank_name} %>
+결제금액: <%= commify($payment_info->{response}{amount}) %>원
+계좌번호: <%= $payment_info->{response}{vbank_num} %>
+예금주: <%= $payment_info->{response}{vbank_holder} %>
+대여주문서: <%= url_for('/orders/' . $order->id)->to_abs %>
+
+
+열린옷장
+전자우편 info@theopencloset.net
+전화 02-6929-1020
+서울특별시 광진구 아차산로 213 웅진빌딩 4층, 5층
+---------------------
+
+감사합니다.
