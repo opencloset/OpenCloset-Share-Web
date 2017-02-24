@@ -5,6 +5,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 use DateTime;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
+use Email::Simple ();
 use Encode qw/encode_utf8/;
 use HTTP::Tiny;
 use Mojo::ByteStream;
@@ -344,6 +345,39 @@ sub payment_done {
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
     my $detail = $order->order_details( { name => 'jacket' } )->next;
 
+    my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'paid' }, { rows => 1 } )->single;
+    my $payment = $payment_log ? $payment_log->payment : undef;
+    my ( $amount, $payment_date );
+    if ($payment) {
+        $amount       = $payment->amount;
+        $payment_date = $self->timezone( $payment->update_date->clone );
+    }
+    else {
+        $amount       = $self->category_price($order) + 3_000;
+        $payment_date = $self->timezone( $order->update_date->clone );
+    }
+
+    my $subject = sprintf( "[열린옷장] %s님의 결제내역", $user->name );
+    my $body = $self->render_to_string(
+        'email/payment_done',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        amount       => $amount,
+        payment_date => $payment_date,
+    );
+
+    my $email_msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $user->email,
+            Subject => $subject,
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $email_msg->as_string ) );
+
     ## 선택한 의류가 있는지 확인
     return $order unless $detail;
     return $order unless $detail->clothes_code;
@@ -408,6 +442,28 @@ sub waiting_deposit {
 
     chomp $msg;
     $self->sms( $user_info->phone, $msg );
+
+    my $subject  = sprintf( "[열린옷장] %s님의 가상계좌 입금안내", $user->name );
+    my $deadline = $self->payment_deadline($order);
+    my $body     = $self->render_to_string(
+        'email/waiting_deposit',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        deadline     => $deadline,
+        payment_info => $payment_info
+    );
+
+    my $email_msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $user->email,
+            Subject => $subject,
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $email_msg->as_string ) );
 
     return $order;
 }
