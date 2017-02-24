@@ -96,21 +96,21 @@
       % }
 
       <div class="form-group">
-        <label class="col-sm-5 control-label">신발크기 <small>mm</small></label>
+        <label class="col-sm-5 control-label">신발사이즈 <small>mm</small></label>
         <div class="col-sm-7">
-          <input name="foot" type="text" class="form-control m-preview-none" placeholder="신발크기 mm" value="<%= $user_info->foot || '' %>">
+          <input name="foot" type="text" class="form-control m-preview-none" placeholder="신발사이즈 mm" value="<%= $user_info->foot || '' %>">
         </div>
       </div>
 
       % if ($gender eq 'female') {
         % my $i = 0;
         <div class="form-group">
-          <label class="col-sm-5 control-label">자켓 크기</label>
+          <label class="col-sm-5 control-label">자켓 사이즈</label>
           <div class="col-sm-7">
             % my $top_size = $user_info->top_size || 0;
             <input name="top_size" type="hidden" value="<%= $top_size %>">
             <p class="help-block text-right">
-              해당하는 크기를 선택해주세요.
+              해당하는 사이즈를 선택해주세요.
             </p>
             <table class="table table-bordered table-condensed text-center">
               <thead>
@@ -153,12 +153,12 @@
         </div>
 
         <div class="form-group">
-          <label class="col-sm-5 control-label">스커트 크기</label>
+          <label class="col-sm-5 control-label">스커트 사이즈</label>
           <div class="col-sm-7">
             % my $bottom_size = $user_info->bottom_size || 0;
             <input name="bottom_size" type="hidden" value="<%= $bottom_size %>">
             <p class="help-block text-right">
-              해당하는 크기를 선택해주세요.
+              해당하는 사이즈를 선택해주세요.
             </p>
             <table class="table table-bordered table-condensed text-center">
               <thead>
