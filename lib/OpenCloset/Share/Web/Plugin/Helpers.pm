@@ -65,6 +65,7 @@ sub register {
     $app->helper( formatted            => \&formatted );
     $app->helper( date_calc            => \&date_calc );
     $app->helper( payment_deadline     => \&payment_deadline );
+    $app->helper( orderClothes2text    => \&orderClothes2text );
 }
 
 =head1 HELPERS
@@ -981,6 +982,23 @@ sub payment_deadline {
     $deadline->set_hour(10);
 
     return $deadline;
+}
+
+=head2 orderClothes2text
+
+    %= orderClothes2text($order);
+    # 자켓, 팬츠, 타이
+
+=cut
+
+sub orderClothes2text {
+    my ( $self, $order ) = @_;
+    return '' unless $order;
+
+    my @categories = $self->categories($order);
+    my @texts = map { $OpenCloset::Constants::Category::LABEL_MAP{$_} } @categories;
+
+    return join( ', ', @texts );
 }
 
 1;
