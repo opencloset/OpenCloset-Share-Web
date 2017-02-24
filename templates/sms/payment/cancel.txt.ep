@@ -1,0 +1,2 @@
+% my $create_date = $order->create_date;
+[열린옷장] 안녕하세요. <%= $user->name %>님. <%= $create_date->ymd %>, <%= $create_date->hms %> 에 대여신청한 <%= orderClothes2text($order) %>의 대여주문이 정상적으로 결제취소 되었습니다. 대여를 원하시는 경우 대여절차에 따라 다시 결제해주시기 바랍니다.

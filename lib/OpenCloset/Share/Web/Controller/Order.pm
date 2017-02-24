@@ -749,7 +749,17 @@ sub cancel_payment {
         $order->update( { status_id => $PAYBACK } );
     }
 
-    ## TODO: 문자메세지?
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $msg       = $self->render_to_string(
+        'sms/payment/cancel',
+        format => 'txt',
+        order  => $order,
+        user   => $user,
+    );
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
+
     $self->flash( message => '결제가 취소되었습니다.' );
     $self->render( json => { pay_method => $pay_method, status => 'cancelled' } );
 }
