@@ -39,7 +39,7 @@ sub recommend {
     );
 
     my $url = Mojo::URL->new( $self->config->{opencloset}{root} );
-    $url->path("/api/user/$user_id/search/clothes");
+    $url->path("/api/order/$order_id/search/clothes");
 
     my $res = $http->get($url);
     return $self->error( 500, "Couldn't get recommended clothes from API server" )
