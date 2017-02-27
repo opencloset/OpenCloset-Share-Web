@@ -91,6 +91,11 @@
 
 <hr>
 
+<h4>대여목적</h4>
+<p><%= $order->purpose || '비어있음' %></p>
+
+<hr>
+
 <h4>선호하는 색상</h4>
 % my @colors  = split /,/, $order->pre_color;
 <ul class="list-inline">

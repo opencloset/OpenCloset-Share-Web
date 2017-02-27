@@ -59,6 +59,7 @@ sub create {
     $v->optional('shirt-type');
     $v->optional('blouse-type');
     $v->optional('pre_color')->in(qw/staff dark black navy charcoalgray gray brown/);
+    $v->optional('purpose');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -98,6 +99,7 @@ sub create {
             rental_date    => $dates->{rental}->datetime(),
             target_date    => $dates->{target}->datetime(),
             pre_color      => $v->param('pre_color'),
+            purpose        => $v->param('purpose'),
             additional_day => $additional_day,
         };
         map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
