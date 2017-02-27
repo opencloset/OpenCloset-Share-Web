@@ -70,11 +70,16 @@
       <i class="fa fa-female fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($SKIRT, $BLOUSE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
+
+  <p class="help-block">
+    <i class="fa fa-exclamation-circle fa-fw" aria-hidden="true"></i>
+    블라우스의 사이즈 재고가 없을 경우, 다른 품목으로 대체될 수 있습니다.
+  </p>
 
   <hr>
 
