@@ -59,9 +59,10 @@
       <i class="fa fa-male fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($PANTS, $SHIRT, $BELT, $TIE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      % next if $category eq $PANTS and $user_info->gender eq 'female';
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
   <ul class="list-inline">
@@ -69,11 +70,16 @@
       <i class="fa fa-female fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($SKIRT, $BLOUSE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
+
+  <p class="help-block">
+    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    블라우스의 사이즈 재고가 없을 경우, 다른 품목으로 대체될 수 있습니다.
+  </p>
 
   <hr>
 
@@ -127,18 +133,56 @@
 
   <hr>
 
+  <h3>대여목적</h3>
+  <div class="row">
+    <div class="col-sm-4">
+      <select name="purpose" class="form-control">
+        <option value=""> 대여 목적을 선택해주세요.</option>
+        <option value="입사면접">입사면접</option>
+        <option value="결혼식">결혼식</option>
+        <option value="상견례">상견례</option>
+        <option value="대학(원)면접">대학(원)면접</option>
+        <option value="모의면접">모의면접</option>
+        <option value="인턴면접">인턴면접</option>
+        <option value="장례식">장례식</option>
+        <option value="사진촬영(웨딩촬영)">사진촬영(웨딩촬영)</option>
+        <option value="세미나">세미나</option>
+        <option value="발표">발표</option>
+        <option value="공연(연주회)">공연(연주회)</option>
+        <option value="축제(행사)">축제(행사)</option>
+        <option value="OT">OT</option>
+        <option value="아르바이트">아르바이트</option>
+        <option value="졸업식">졸업식</option>
+        <option value="입학식">입학식</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+  </div>
+
+  <hr>
+
   <h3>선호하는 색상</h3>
   <div class="row">
     <div class="col-sm-4">
       <select name="pre_color" class="form-control">
-        <option value="staff">직원추천</option>
-        <option value="dark">어두운계열</option>
-        <option value="black">블랙</option>
-        <option value="navy">네이비</option>
-        <option value="charcoalgray">차콜그레이</option>
-        <option value="gray">그레이</option>
-        <option value="brown">브라운</option>
+        % if ($user_info->gender eq 'female') {
+          <option value="black">블랙</option>
+        % } else {
+          <option value="staff">직원추천</option>
+          <option value="dark">어두운계열</option>
+          <option value="black">블랙</option>
+          <option value="navy">네이비</option>
+          <option value="charcoalgray">차콜그레이</option>
+          <option value="gray">그레이</option>
+          <option value="brown">브라운</option>
+        % }
       </select>
+      % if ($user_info->gender eq 'female') {
+        <p class="help-block">
+          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+          여성정장은 <span class="label label-pre-color label-black">블랙</span> 색상만 있습니다.
+        </p>
+      % }
     </div>
   </div>
 
