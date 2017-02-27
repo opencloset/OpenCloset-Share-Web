@@ -59,9 +59,10 @@
       <i class="fa fa-male fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($PANTS, $SHIRT, $BELT, $TIE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      % next if $category eq $PANTS and $user_info->gender eq 'female';
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
   <ul class="list-inline">
