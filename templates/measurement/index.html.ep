@@ -131,9 +131,31 @@
         % my $i = 0;
         % my $top_size = $user_info->top_size || 0;
         <input name="top_size" type="hidden" value="<%= $top_size %>">
+
+        <p class="help-block">
+          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+          열린옷장 정장 선택 팁
+        </p>
+        <ul class="help-block">
+          <li>
+            자켓: 윗배 둘레에 5cm를 더해서 찾는다.
+          </li>
+          <li>
+            스커트: 엉덩이둘레에 맞는 사이즈를 찾는다.
+          </li>
+          <li>
+            위 가이드는 참고용이며 평소에 착용하는 사이즈 및 상세사이즈 확인 후 선택해주세요.
+          </li>
+          <li>
+            가장 잘 맞는 옷을 보내드릴게요!<br>
+            선택한 사이즈의 범위 내에서 측정 사이즈에 가까운 사이즈의 의류를 보내드리겠습니다.
+          </li>
+        </ul>
+
         <p class="help-block text-right">
           해당하는 사이즈를 선택해주세요.
         </p>
+
         <table class="table table-bordered table-condensed text-center">
           <thead>
             <tr>
