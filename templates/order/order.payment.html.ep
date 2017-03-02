@@ -32,9 +32,9 @@
     </small>
   </h5>
 
-  <div class="alert alert-warning">
-    결제마감날짜까지 입금해주세요 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
-  </div>
+  <p class="help-block">
+    주문한 품목을 <%= $dates->{arrival}->year %>년 <%= $dates->{arrival}->month %>월 <%= $dates->{arrival}->day %>일에 배송 받으려면, <strong><%= $deadline->year %>년 <%= $deadline->month %>월 <%= $deadline->day %>일 <%= $deadline->hour < 12 ? '오전' : '' %> <%= $deadline->hour %>시까지 결제가 완료되어야 합니다.</strong> 기한 내 결제가 되지 않으면 의류 발송이 불가능하며 해당시각 이후에는 결제를 진행할 수 없습니다.
+  </p>
 
   % my ($addr, $addr2);
   % if ($user_address) {
