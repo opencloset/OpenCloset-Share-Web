@@ -23,12 +23,15 @@ $ ->
       $('#guide-video').prop('src', '').hide()
 
   $('.m-preview-none').focus (e) ->
+    title  = $(@).prop('title') or ''
+    label  = $(@).parent().prev().text() or ''
+
     $div = $('#measurement-preview')
     $div.hide()
 
-    $('#preview-desc .preview-desc-header').text('')
-    $('#preview-desc .preview-desc-body').text('')
-    $('#preview-desc').hide()
+    $('#preview-desc .preview-desc-header').text(label)
+    $('#preview-desc .preview-desc-body').text(title)
+    $('#preview-desc').show()
 
     $('#guide-video').prop('src', '').hide()
 
