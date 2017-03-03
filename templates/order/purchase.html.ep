@@ -46,12 +46,9 @@
   <button id="btn-sms" class="btn btn-default btn-sm" type="button">SMS</button>
 </p>
 
-<p class="help-block">
-  % if (my $comment = $parcel->comment) {
-  <i class="fa fa-comment fa-fw"></i>
-  %= $comment
-  % }
-</p>
+% if (my $comment = $parcel->comment) {
+  <pre><%= $comment %></pre>
+% }
 
 <form id="form-parcel" class="form-inline hide" action="<%= url_for('order.update_parcel') %>" method="POST">
   <div class="form-group">

@@ -1,0 +1,63 @@
+% use OpenCloset::Constants::Category ();
+% my %SIZE_MAP = (
+%   black        => '검정색',
+%   navy         => '짙은감색',
+%   charcoalgray => '차콜그레이',
+%   male         => '남성용',
+%   female       => '여성용',
+% );
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>상태</th>
+      <th>종류</th>
+      % for my $part (@$parts) {
+        <th>
+          %= $part
+        </th>
+      % }
+    </tr>
+  </thead>
+  <tbody>
+    <td><%= clothes2status($clothes) %></td>
+    <td>
+      <span class="label label-primary">
+        %= $OpenCloset::Constants::Category::LABEL_MAP{$clothes->category}
+      </span>
+    </td>
+    % for my $size (@$sizes) {
+      <td>
+        %= $SIZE_MAP{$size} || $size
+      </td>
+    % }
+  </tbody>
+</table>
+
+<hr>
+
+% my $cnt = 0;
+% while (1) {
+  % my $last;
+  <div class="row">
+    % for my $i (0 .. 3) {
+      %   my $image = $images->[$cnt++];
+      %   unless ($image) {
+        %     $last = 1;
+        %     last;
+      %   }
+      <div class="col-xs-6 col-md-3">
+        <a class="thumbnail" href="<%= $image %>" target="_blank">
+          <img alt="<%= $clothes->code %>" src="<%= $image %>?s=200">
+        </a>
+      </div>
+    % }
+  </div>
+  % last if $last;
+% }
+
+% unless (@$images) {
+  <p>
+    No images
+  </p>
+% }

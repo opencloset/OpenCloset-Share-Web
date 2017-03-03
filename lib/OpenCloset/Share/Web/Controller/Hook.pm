@@ -5,7 +5,7 @@ use Mojo::JSON;
 
 use Try::Tiny;
 
-use Iamport::REST::Client;
+use OpenCloset::Constants qw/%PAY_METHOD_MAP/;
 
 has schema => sub { shift->app->schema };
 
@@ -30,10 +30,15 @@ sub iamport {
     my $status = $v->param("status");
 
     my $payment = $self->schema->resultset("Payment")->find( { sid => $sid } );
-    return $self->error( 404, "Not found payment: sid($sid)" ) unless $payment;
+    unless ($payment) {
+        $self->log->warn("Not found payment: sid($sid)");
+        $payment = $self->schema->resultset("Payment")->find( { cid => $cid } );
+        return $self->error( 404, "Not found payment: cid($cid)" ) unless $payment;
+    }
 
     my $payment_id = $payment->id;
-    return $self->error( 404, "Not found order: payment_id($payment_id)" ) unless $payment->order;
+    my $order      = $payment->order;
+    return $self->error( 404, "Not found order: payment_id($payment_id)" ) unless $order;
 
     my $payment_log = $payment->payment_logs( {}, { order_by => { -desc => "id" } } )->next;
     return $self->error( 404, "Not found payment log: payment_id($payment_id)" ) unless $payment_log;
@@ -46,12 +51,8 @@ sub iamport {
         #   직접 PG사에 REST API 호출 후 그 결과를 저장해야 함
         #
 
-        my $iamport = $self->config->{iamport};
-        my $key     = $iamport->{key};
-        my $secret  = $iamport->{secret};
-        my $client  = Iamport::REST::Client->new( key => $key, secret => $secret );
-
-        my $json = $iamport->payment($sid);
+        my $iamport = $self->app->iamport;
+        my $json    = $iamport->payment($sid);
         unless ($json) {
             $self->log->info("cannot fetch payment information");
             #
@@ -92,14 +93,14 @@ sub iamport {
         }
 
         my $str = sprintf(
-            "buyer_addr:   %s\n"
-            . "buyer_email:  %s\n"
-            . "buyer_name:   %s\n"
-            . "buyer_name:   %s\n"
-            . "buyer_tel:    %s\n"
-            . "imp_uid:      %s\n"
-            . "merchant_uid: %s\n"
-            . "status:       %s\n",
+                  "buyer_addr:   %s\n"
+                . "buyer_email:  %s\n"
+                . "buyer_name:   %s\n"
+                . "buyer_name:   %s\n"
+                . "buyer_tel:    %s\n"
+                . "imp_uid:      %s\n"
+                . "merchant_uid: %s\n"
+                . "status:       %s\n",
             $data->{response}{buyer_addr},
             $data->{response}{buyer_email},
             $data->{response}{buyer_name},
@@ -128,9 +129,14 @@ sub iamport {
             "payment_logs",
             {
                 status => $status,
+                detail => $json,
             },
         );
-        $self->payment_done( $payment->order );
+
+        my $pay_with = $order->price_pay_with || '';
+        $pay_with .= $PAY_METHOD_MAP{ $payment->pay_method };
+        $order->update( { price_pay_with => $pay_with } );
+        $self->payment_done($order);
     }
 
     $self->render( text => "OK" );

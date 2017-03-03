@@ -3,6 +3,7 @@
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
 %   '/assets/components/bootstrap-toggle/js/bootstrap-toggle.min.js',
+%   '/assets/components/moment/moment.js',
 %   '/assets/dist/js/order-new.min.js'
 % ], csses => [
 %   '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
@@ -58,9 +59,10 @@
       <i class="fa fa-male fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($PANTS, $SHIRT, $BELT, $TIE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      % next if $category eq $PANTS and $user_info->gender eq 'female';
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
   <ul class="list-inline">
@@ -68,11 +70,16 @@
       <i class="fa fa-female fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($SKIRT, $BLOUSE) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
+
+  <p class="help-block">
+    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    블라우스의 사이즈 재고가 없을 경우, 다른 품목으로 대체될 수 있습니다.
+  </p>
 
   <hr>
 
@@ -105,21 +112,52 @@
     <li>
       % $cnt = 0;
       % for my $type ("라운드 반팔", "라운드 민소매", "탑", "셔츠", "승무원", "라운드 긴소매") {
-      <label class="radio-inline">
-        <input
-            class="radio"
-            name="blouse-type"
-            type="radio"
-            value="<%= $type %>"
-            % unless ($cnt) {
-            checked
-            % }
-        > <%= $type %> 블라우스
-      </label>
-      % $cnt++;
+        <label class="radio-inline">
+          <div class="thumbnail">
+            <img src="/assets/img/<%= $type %>.jpg" alt="<%= $type %>" width="100">
+          </div>
+          <input
+              class="radio"
+              name="blouse-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 블라우스
+        </label>
+        % $cnt++;
       % }
     </li>
   </ul>
+
+  <hr>
+
+  <h3>대여목적</h3>
+  <div class="row">
+    <div class="col-sm-4">
+      <select name="purpose" class="form-control">
+        <option value=""> 대여 목적을 선택해주세요.</option>
+        <option value="입사면접">입사면접</option>
+        <option value="결혼식">결혼식</option>
+        <option value="상견례">상견례</option>
+        <option value="대학(원)면접">대학(원)면접</option>
+        <option value="모의면접">모의면접</option>
+        <option value="인턴면접">인턴면접</option>
+        <option value="장례식">장례식</option>
+        <option value="사진촬영(웨딩촬영)">사진촬영(웨딩촬영)</option>
+        <option value="세미나">세미나</option>
+        <option value="발표">발표</option>
+        <option value="공연(연주회)">공연(연주회)</option>
+        <option value="축제(행사)">축제(행사)</option>
+        <option value="OT">OT</option>
+        <option value="아르바이트">아르바이트</option>
+        <option value="졸업식">졸업식</option>
+        <option value="입학식">입학식</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+  </div>
 
   <hr>
 
@@ -127,14 +165,24 @@
   <div class="row">
     <div class="col-sm-4">
       <select name="pre_color" class="form-control">
-        <option value="staff">직원추천</option>
-        <option value="dark">어두운계열</option>
-        <option value="black">블랙</option>
-        <option value="navy">네이비</option>
-        <option value="charcoalgray">차콜그레이</option>
-        <option value="gray">그레이</option>
-        <option value="brown">브라운</option>
+        % if ($user_info->gender eq 'female') {
+          <option value="black">블랙</option>
+        % } else {
+          <option value="staff">직원추천</option>
+          <option value="dark">어두운계열</option>
+          <option value="black">블랙</option>
+          <option value="navy">네이비</option>
+          <option value="charcoalgray">차콜그레이</option>
+          <option value="gray">그레이</option>
+          <option value="brown">브라운</option>
+        % }
       </select>
+      % if ($user_info->gender eq 'female') {
+        <p class="help-block">
+          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+          여성정장은 <span class="label label-pre-color label-black">블랙</span> 색상만 있습니다.
+        </p>
+      % }
     </div>
   </div>
 
@@ -142,18 +190,71 @@
 
   <h3>의류착용일</h3>
   <p>
-    달력에서 의류착용일을 선택해주세요.<br>
+    <strong>달력에서 의류착용일을 선택해주세요.</strong><br>
     착용일 하루전에 옷을 받을 수 있도록 준비해드립니다.
   </p>
 
-  <p>
-    <div id="datepicker-wearon-date" data-date="+3d"></div>
-    <input type="hidden" name="wearon_date" id="wearon_date">
-  </p>
+  <hr>
 
+  <div id="datepicker-wearon-date" data-date-start-date="<%= $dates->{wearon}->ymd %>" data-date="<%= $dates->{wearon}->ymd %>"></div>
+  <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    의류준비부터 배송까지 최소 3일이 소요됩니다.
+    의류준비부터 배송까지 최소 5일이 소요됩니다.
+  </p>
+
+  <hr>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    대여기간
+    <small>
+      <select id="additional-day" name="additional_day">
+        <option value="0">3박4일</option>
+        <option value="1">4박5일 +1일 연장(+20%)</option>
+        <option value="2">5박6일 +2일 연장(+40%)</option>
+        <option value="3">6박7일 +3일 연장(+60%)</option>
+        <option value="4">7박8일 +4일 연장(+80%)</option>
+        <option value="5">8박9일 +5일 연장(+100%)</option>
+        <option value="6">9박10일 +6일 연장(+120%)</option>
+      </select>
+    </small>
+  </h5>
+  <p>
+    <span id="rental-date" class="label label-info"></span> ~ <span id="target-date" class="label label-info"></span>
+  </p>
+  <p class="help-block">기본 대여기간은 3박4일 입니다. 하루 연장비는 대여료의 20% 입니다.</p>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    발송(예정)일
+  </h5>
+  <p id="shipping-date"></p>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    도착(예정)일
+  </h5>
+  <p id="arrival-date"></p>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    의류착용일
+  </h5>
+  <p id="wearon-date"></p>
+
+  <h5>
+    <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
+    반납택배발송일
+  </h5>
+  <p id="parcel-date"></p>
+  <p class="help-block">
+    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    택배로 반납하실 경우 반납일 하루전에 보내주셔야 합니다.
+  </p>
+  <p class="help-block">
+    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    택배반납일이 주말이나 휴일인 경우 편의점 택배를 이용해주세요.
   </p>
 
   <button class="btn btn-primary" type="submit">선택완료</button>

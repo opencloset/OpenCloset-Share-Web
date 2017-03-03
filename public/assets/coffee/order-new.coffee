@@ -1,17 +1,32 @@
 $ ->
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
-    startDate: '+3d'
+    endDate: '+1m'
     todayHighlight: true
     format: 'yyyy-mm-dd'
 
-  $('#datepicker-wearon-date').on 'changeDate', ->
-    val = $('#datepicker-wearon-date').datepicker('getFormattedDate')
-    $('#wearon_date').val(val)
+  date_calc = (wearon_date, days) ->
+    days = '' unless days
+    $.ajax "/orders/dates?wearon_date=#{wearon_date}&days=#{days}",
+      type: 'GET'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $('#shipping-date').text(data.shipping)
+        $('#rental-target-date').text("#{data.rental} ~ #{data.target}")
+        $('#arrival-date').text(data.arrival)
+        $('#parcel-date').text(data.parcel)
+        $('#rental-date').text(data.rental)
+        $('#target-date').text(data.target)
+        $('#wearon-date').text(wearon_date)
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->
 
-  $('#wearon_date').val(
-    $('#datepicker-wearon-date').datepicker('getFormattedDate')
-  )
+  $('#datepicker-wearon-date').on 'changeDate', ->
+    val  = $('#datepicker-wearon-date').datepicker('getFormattedDate')
+    days = $('#additional-day option:selected').val()
+    $('#wearon_date').val(val)
+    date_calc(val, days)
+  .trigger('changeDate')
 
   $('input[data-toggle="toggle"]').change ->
     sum = 0
@@ -34,3 +49,7 @@ $ ->
   else if gender is 'female'
     for category in ['jacket', 'skirt', 'blouse']
       $("input[name=category-#{category}]").bootstrapToggle('on')
+
+  $('form').on 'change', '#additional-day', (e) ->
+    wearon_date = $('#datepicker-wearon-date').datepicker('getFormattedDate')
+    date_calc(wearon_date, $(e.target).val())

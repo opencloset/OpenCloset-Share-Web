@@ -19,12 +19,7 @@ $ ->
       params[params.name] = params.value
       params
 
-  from = moment().add(1, 'days').format('YYYY-MM-DD')
-  to   = moment().add(5, 'days').format('YYYY-MM-DD')
-  $('#from-date').val(from)
-  $('#rental_date').val(from)
-  $('#to-date').val(to)
-  $('#target_date').val(to)
+  $('.total-price').text($('#order-price').text())
   $('.datepicker').datepicker
     language: 'kr'
     startDate: '+1d'
@@ -54,7 +49,7 @@ $ ->
         data.status     = OpenCloset.status[data.status_id]
         data.labelColor = OpenCloset.status.color[data.status_id]
         data.disabled   = switch data.status_id
-          when "2", "3", "7", "8" then true
+          when "2", "3", "7", "8", "45", "46", "47" then true
           else false
         template = JST['clothes-item']
         html     = template(data)

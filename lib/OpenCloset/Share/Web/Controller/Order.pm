@@ -2,17 +2,20 @@ package OpenCloset::Share::Web::Controller::Order;
 use Mojo::Base 'Mojolicious::Controller';
 
 use Data::Pageset;
+use DateTime::Format::Strptime;
+use DateTime;
 use Encode qw/encode_utf8/;
-use Iamport::REST::Client;
 use JSON qw/decode_json/;
+use Try::Tiny;
 
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT/;
+    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT $PAYBACK/;
 
 has schema => sub { shift->app->schema };
 
-our $SHIPPING_FEE = 3000;
+our $SHIPPING_FEE = 3_000;
 
 =head1 METHODS
 
@@ -24,7 +27,17 @@ our $SHIPPING_FEE = 3000;
 =cut
 
 sub add {
-    my $self = shift;
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    my $shipping_date = $self->date_calc;
+    my $dates = $self->date_calc( { shipping => $shipping_date } );
+
+    my $failed = $self->check_measurement( $user, $user_info );
+    return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
+
+    $self->render( dates => $dates );
 }
 
 =head2 create
@@ -41,14 +54,26 @@ sub create {
 
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('additional_day')->like(qr/^\d+$/);
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
     $v->optional('pre_color')->in(qw/staff dark black navy charcoalgray gray brown/);
+    $v->optional('purpose');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
         return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $wearon_date   = $v->param('wearon_date');
+    my $tz            = $self->config->{timezone};
+    my $strp          = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
+    my $dt_wearon     = $strp->parse_datetime($wearon_date);
+    my $dt_max_wearon = DateTime->today( time_zone => $self->config->{timezone} )->add( months => 1 );
+
+    if ( $dt_wearon->epoch > $dt_max_wearon->epoch ) {
+        return $self->error( 400, "wearon_date is valid up to +1m: $wearon_date" );
     }
 
     my @categories;
@@ -57,74 +82,141 @@ sub create {
         push @categories, $c if $p eq 'on';
     }
 
-    my $wearon_date = $v->param('wearon_date');
-    my $status_id   = $CHOOSE_CLOTHES;
-    my $pair        = grep { /^($JACKET|$PANTS)$/ } @categories;
+    my $status_id = $CHOOSE_CLOTHES;
+    my $pair = grep { /^($JACKET|$PANTS)$/ } @categories;
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
-    my $guard = $self->schema->txn_scope_guard;
-    my $param = {
-        user_id     => $user->id,
-        status_id   => $status_id,
-        wearon_date => $wearon_date,
-        pre_color   => $v->param('pre_color'),
-    };
-    map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
-    my $order = $self->schema->resultset('Order')->create($param);
+    my $additional_day = $v->param('additional_day');
+    my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
-    return $self->error( 500, "Couldn't create a new order" ) unless $order;
+    my ( $order, $error ) = try {
+        my $guard = $self->schema->txn_scope_guard;
+        my $param = {
+            online         => 1,
+            user_id        => $user->id,
+            status_id      => $status_id,
+            wearon_date    => $wearon_date,
+            rental_date    => $dates->{rental}->datetime(),
+            target_date    => $dates->{target}->datetime(),
+            pre_color      => $v->param('pre_color'),
+            purpose        => $v->param('purpose'),
+            additional_day => $additional_day,
+        };
+        map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
+        my $order = $self->schema->resultset('Order')->create($param);
 
-    for my $category (@categories) {
-        my $desc;
-        $desc = $v->param('shirt-type')  if $category eq $SHIRT;
-        $desc = $v->param('blouse-type') if $category eq $BLOUSE;
+        return $self->error( 500, "Couldn't create a new order" ) unless $order;
+
+        my $sum = 0;
+        my @details;
+        for my $category (@categories) {
+            my $desc;
+            $desc = $v->param('shirt-type')  if $category eq $SHIRT;
+            $desc = $v->param('blouse-type') if $category eq $BLOUSE;
+            $sum += $PRICE{$category};
+            my $detail = $order->create_related(
+                'order_details',
+                {
+                    name        => $category,
+                    price       => $PRICE{$category},
+                    final_price => $PRICE{$category},
+                    desc        => $desc,
+                }
+            );
+
+            push @details, {
+                clothes_category => $category,
+                price            => $detail->price,
+                final_price      => $detail->final_price,
+            };
+        }
+
         $order->create_related(
             'order_details',
             {
-                name        => $category,
-                price       => $PRICE{$category},
-                final_price => $PRICE{$category},
-                desc        => $desc,
+                name        => '배송비',
+                price       => $SHIPPING_FEE,
+                final_price => $SHIPPING_FEE,
+                desc        => 'additional',
             }
         );
-    }
 
-    $order->create_related(
-        'order_details',
-        {
-            name        => '배송비',
-            price       => $SHIPPING_FEE,
-            final_price => $SHIPPING_FEE,
+        if ($additional_day) {
+            my $extension_fee = $sum * 0.2 * $additional_day;
+            $order->create_related(
+                'order_details',
+                {
+                    name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
+                    price => $extension_fee,
+                    final_price => $extension_fee,
+                    desc        => 'additional',
+                }
+            );
         }
-    );
 
-    $guard->commit;
+        my $discount = $order->sale_multi_times_rental( \@details );
+        if ( my $price = $discount->{after} - $discount->{before} ) {
+            $order->create_related(
+                'order_details',
+                {
+                    name        => "3회 이상 대여 할인",
+                    price       => $price,
+                    final_price => $price,
+                    desc        => 'additional',
+                }
+            );
+        }
 
+        $guard->commit;
+        return $order;
+    }
+    catch {
+        chomp;
+        $self->log->error($_);
+        return ( undef, $_ );
+    };
+
+    return $self->error( 500, $error ) unless $order;
     $self->redirect_to( 'order.order', order_id => $order->id );
 }
 
 =head2 list
 
-    # order.list
-    GET /orders?s=19
+    GET /orders
 
 =cut
 
 sub list {
+    my $self      = shift;
+    my $user      = $self->stash('user');
+    my $user_info = $self->stash('user_info');
+
+    my $orders = $self->schema->resultset('Order')->search( { user_id => $user->id }, { order_by => { -desc => 'id' } } );
+    $self->render( orders => $orders );
+}
+
+=head2 shipping_list
+
+    GET /orders/shipping?s=19
+
+=cut
+
+sub shipping_list {
     my $self = shift;
 
     return unless $self->admin_auth;
 
     my $p = $self->param('p') || 1;
     my $s = $self->param('s') || $PAYMENT_DONE;
-    my $q = $self->param('q');
+    my $w = $self->param('wearon_date');
 
-    ## TODO: $q 처리
-    my $cond = { status_id => $s };
+    my $cond = { 'me.status_id' => $s };
+    $cond->{'order.wearon_date'} = $w if $w;
     my $attr = {
         page     => $p,
         rows     => 20,
-        order_by => { -desc => 'update_date' },
+        join     => 'order',
+        order_by => { -asc => 'order.wearon_date' },
     };
 
     my $rs      = $self->schema->resultset('OrderParcel')->search( $cond, $attr );
@@ -138,7 +230,44 @@ sub list {
         }
     );
 
-    $self->render( parcels => $rs, pageset => $pageset );
+    my $today = DateTime->today( time_zone => $self->config->{timezone} );
+    $self->render( parcels => $rs, pageset => $pageset, today => $today );
+}
+
+=head2 dates
+
+    GET /orders/dates?wearon_date=yyyy-mm-dd
+
+=cut
+
+sub dates {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->optional('days')->like(qr/^\d+$/);
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $wearon_date = $v->param('wearon_date');
+    my $days = $v->param('days') || 0;
+    $days += $DEFAULT_RENTAL_PERIOD;
+    if ($wearon_date) {
+        my $tz    = $self->config->{timezone};
+        my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
+        my $dt    = $strp->parse_datetime($wearon_date);
+        my $dates = $self->date_calc( { wearon => $dt }, $days );
+        map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
+        $self->render( json => $dates );
+    }
+    else {
+        my $shipping_date = $self->date_calc;
+        my $dates = $self->date_calc( { shipping => $shipping_date } );
+        $self->render( json => { wearon_date => $dates->{wearon}->ymd } );
+    }
 }
 
 =head2 order_id
@@ -164,7 +293,9 @@ sub order_id {
         return;
     }
 
-    $self->stash( order => $order );
+    my $deadline = $self->payment_deadline($order);
+    my $dates = $self->date_calc( { wearon => $self->timezone( $order->wearon_date ) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    $self->stash( order => $order, deadline => $deadline, dates => $dates );
     return 1;
 }
 
@@ -197,36 +328,46 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT ) {
-        ## 의류착용일이 +3d 의 조건을 만족하는지 확인
-        my $fine        = 1;
-        my $now         = $self->timezone( DateTime->now )->truncate( to => 'day' )->epoch;
-        my $wearon_date = $self->timezone( $order->wearon_date )->truncate( to => 'day' )->epoch;
-        if ( $wearon_date - $now < 60 * 60 * 24 * 3 ) {
-            $self->log->info("Not enough wearon_date: +3d");
-            $fine = 0;
-        }
-
         $self->render(
-            template         => 'order/order.payment',
-            user_address     => $order->user_address,
-            fine_wearon_date => $fine,
+            template     => 'order/order.payment',
+            user_address => $order->user_address,
         );
     }
     elsif ( $status_id == $WAITING_DEPOSIT ) {
         my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+        return $self->error( 404, "Not found ready status payment log" ) unless $payment_log;
+
         my $payment = $payment_log->payment;
 
         my $detail = $payment_log->detail;
         return $self->error( 404, "Not found payment info" ) unless $detail;
 
         my $payment_info = decode_json( encode_utf8($detail) );
+        my $epoch        = $payment_info->{response}{vbank_date};
+
+        unless ($epoch) {
+            $self->log->error("Wrong payment info: $detail");
+            return $self->error( 500, "Couldn't find vbank due date." );
+        }
+
+        my $tz = $self->config->{timezone};
+        my $payment_due = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
+
         $self->render(
             template     => 'order/order.waiting_deposit',
-            payment_info => $payment_info
+            payment_info => $payment_info,
+            payment_due  => $payment_due
+        );
+    }
+    elsif ( $status_id == $PAYMENT_DONE ) {
+        my $dates = $self->stash('dates');
+        $self->render(
+            template       => 'order/order.payment_done',
+            cancel_payment => $self->_cancel_payment_cond( $order, $dates->{shipping} ),
         );
     }
     else {
-        ## 결제완료, 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
+        ## 입금확인, 발송대기, 배송중, 배송완료, 반송신청, 반납 등등
         $self->render( template => 'order/order.misc' );
     }
 }
@@ -249,6 +390,7 @@ sub update_order {
     $v->optional('wearon_date');
     $v->optional('rental_date');
     $v->optional('target_date');
+    $v->optional('shipping_misc');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -287,18 +429,46 @@ sub update_order {
                 $self->partial_returned( $order, $clothes_code );
             }
         }
+        elsif ( $status_id == $WAITING_DEPOSIT ) {
+            $self->waiting_deposit($order);
+        }
         else {
             $input->{status_id} = $status_id;
         }
     }
 
-    if ( my $code = delete $input->{clothes_code} ) {
-        my $detail = $order->order_details( { name => $JACKET } )->next;
-        if ($detail) {
-            $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+    if ( defined $input->{clothes_code} ) {
+        if ( my $code = delete $input->{clothes_code} ) {
+            my $clothes = $self->schema->resultset('Clothes')->find( { code => $code } );
+            unless ($clothes) {
+                $self->log->warn("Not found clothes code: $code");
+            }
+            else {
+                my $detail = $order->order_details( { name => $JACKET } )->next;
+                if ($detail) {
+                    $detail->update( { clothes_code => sprintf( '%05s', $code ) } );
+                }
+                else {
+                    $self->log->info("Not found clothes_code: $code");
+                }
+
+                if ( my $bottom = $clothes->bottom ) {
+                    my $category = $bottom->category;
+                    my $detail = $order->order_details( { name => $category } )->next;
+                    if ($detail) {
+                        $detail->update( { clothes_code => sprintf( '%05s', $bottom->code ) } );
+                    }
+                    else {
+                        $self->log->info( "Not found clothes_code: " . $bottom->code );
+                    }
+                }
+                else {
+                    $self->log->warn("Not found bottom: $code");
+                }
+            }
         }
         else {
-            $self->log->info("Not found clothes_code: $code");
+            $order->order_details->update_all( { clothes_code => undef } );
         }
     }
 
@@ -323,6 +493,7 @@ sub delete_order {
     return $self->error( 400, "Couldn't delete status($status_id) order" ) unless "@status_can_be_delete" =~ m/\b$status_id\b/;
 
     $order->delete;
+    $self->flash( message => '주문서가 삭제되었습니다.' );
     $self->render( json => { message => 'Deleted order successfully' } );
 }
 
@@ -394,7 +565,7 @@ sub update_parcel {
 
 =head2 create_payment
 
-    POST /order/:id/payments
+    POST /order/:order_id/payments
 
 =cut
 
@@ -413,7 +584,13 @@ sub create_payment {
     }
     my $pay_method = $v->param("pay_method");
 
-    my $amount  = $self->category_price($order);
+    my $amount = $self->category_price($order);
+    my $additional = $order->order_details( { desc => 'additional' } );
+    while ( my $detail = $additional->next ) {
+        my $fee = $detail->price;
+        $amount += $fee;
+    }
+
     my $iamport = $self->config->{iamport};
     my $key     = $iamport->{key};
     my $secret  = $iamport->{secret};
@@ -434,6 +611,177 @@ sub create_payment {
 
     return $self->error( 500, "Failed to create a new payment" ) unless $payment;
     $self->render( json => { $payment->get_columns } );
+}
+
+=head2 insert_coupon
+
+    POST /orders/:order_id/coupon
+
+=cut
+
+sub insert_coupon {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    my $v = $self->validation;
+    $v->required('coupon_id');
+    return $self->error( 400, "coupon_id is required" ) if $v->has_error;
+
+    my $coupon_id      = $self->param('coupon_id');
+    my $coupon         = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    my $type           = $coupon->type;
+    my $price_pay_with = '쿠폰';
+    if ( $type eq 'suit' ) {
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $self->transfer_order( $coupon, $order );
+            $self->payment_done($order);
+            $coupon->update( { status => 'used' } );
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+    }
+    elsif ( $type eq 'default' ) {
+        my $price = $coupon->price;
+        $price_pay_with .= '+';
+
+        my $guard = $self->schema->txn_scope_guard;
+        my ( $success, $error ) = try {
+            $order->update( { price_pay_with => $price_pay_with } );
+            $coupon->update( { status => 'used' } );
+            $order->create_related(
+                'order_details',
+                {
+                    name        => $self->commify($price) . " 쿠폰($coupon_id)",
+                    price       => $price * -1,
+                    final_price => $price * -1,
+                    desc        => 'additional',
+                }
+            );
+
+            $guard->commit;
+            return 1;
+        }
+        catch {
+            chomp;
+            return ( undef, $_ );
+        };
+
+        return $self->error( 500, $error ) unless $success;
+
+    }
+    else {
+        return $self->error( 500, "Unknown coupon type: $type" );
+    }
+
+    my %columns = $order->get_columns;
+    $self->render( json => \%columns );
+}
+
+=head2 cancel_payment
+
+    POST /orders/:order_id/cancel
+
+=cut
+
+sub cancel_payment {
+    my $self  = shift;
+    my $order = $self->stash('order');
+    my $dates = $self->stash('dates');
+
+    my $cancel_payment = $self->_cancel_payment_cond( $order, $dates->{shipping} );
+    return $self->error( 400, 'This order payment can not be canceled.' ) unless $cancel_payment;
+
+    my $v          = $self->validation;
+    my $pay_method = $order->price_pay_with;
+    if ( $pay_method eq '가상계좌' ) {
+        $v->required('refund_holder');
+        $v->required('refund_bank')->in(qw/03 04 05 07 11 20 23 31 32 34 37 39 53 71 81 88 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA DB DC DD DE DF/);
+        $v->required('refund_account')->like(qr/\d+/);
+
+        if ( $v->has_error ) {
+            my $failed = $v->failed;
+            return $self->error( 400, '환불계좌정보가 올바르지 않습니다.' );
+        }
+    }
+
+    if ( $pay_method eq '쿠폰' ) {
+        my $coupon = $order->coupon;
+        return $self->error( 404, "Not found coupon" ) unless $coupon;
+
+        $coupon->update( { status => 'provided' } ); # TODO: cancelled 가 필요하지 않을까?
+        $order->update( { coupon_id => undef, status_id => $PAYBACK } );
+    }
+    else {
+        my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'paid' }, { rows => 1 } )->single;
+        my $payment = $payment_log->payment;
+
+        return $self->error( 404, "Not found payment" ) unless $payment;
+        return $self->error( 404, "Not found payment from iamport" ) unless $payment->sid;
+
+        my $sid     = $payment->sid;
+        my $iamport = $self->app->iamport;
+        my $param   = { imp_uid => $sid };
+
+        if ( $pay_method eq '가상계좌' || $pay_method eq 'vbank' ) {
+            $param->{refund_holder}  = $v->param('refund_holder');
+            $param->{refund_bank}    = $v->param('refund_bank');
+            $param->{refund_account} = $v->param('refund_account');
+        }
+
+        my $json = $iamport->cancel($param);
+        return $self->error( 500, "Failed to cancel from iamport: sid($sid)" ) unless $json;
+
+        my $res = decode_json($json);
+        my $log = $payment->create_related(
+            "payment_logs",
+            {
+                status => $res->{response}{status},
+                detail => $json,
+            },
+        );
+
+        $order->update( { status_id => $PAYBACK } );
+    }
+
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $msg       = $self->render_to_string(
+        'sms/payment/cancel',
+        format => 'txt',
+        order  => $order,
+        user   => $user,
+    );
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
+
+    $self->flash( message => '결제가 취소되었습니다.' );
+    $self->render( json => { pay_method => $pay_method, status => 'cancelled' } );
+}
+
+=head2 _cancel_payment_cond
+
+    my $boolean = $self->_cancel_payment_cond($order, $shipping_date);
+
+=cut
+
+sub _cancel_payment_cond {
+    my ( $self, $order, $shipping_date ) = @_;
+    return unless $order;
+    return unless $shipping_date;
+
+    my $today = DateTime->today( time_zone => $self->config->{timezone} );
+    my $pay_method = $order->price_pay_with || '';
+    my $cancel_payment = $today->epoch < $shipping_date->epoch && $pay_method;
+
+    return $cancel_payment;
 }
 
 1;

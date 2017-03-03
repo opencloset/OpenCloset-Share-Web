@@ -44,10 +44,10 @@
         blouse    => 'https://avatar.theopencloset.net/avatar/2bbbc09c29efa9bebd8718aa6f9d7bae',
     },
     iamport => {
-        id         => "imp12345678",
+        id         => $ENV{OPENCLOSET_IAMPORT_ID},
         key        => $ENV{OPENCLOSET_IAMPORT_API_KEY},
         secret     => $ENV{OPENCLOSET_IAMPORT_API_SECRET},
-        notice_url => q{}, # Override if you want to iamport server configuration
+        notice_url => q{},                                # Override if you want to iamport server configuration
     },
     postcodify_url => "https://postcodify.theopencloset.net/api/postcode/search.json",
 };

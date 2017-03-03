@@ -13,12 +13,44 @@
 
 <hr>
 
-<p>
-  <samp><%= $payment_info->{vbank_date} %></samp> 까지
-</p>
+% if ($payment_due->epoch > time) {
+  <p>
+    주문한 품목을 <%= $dates->{arrival}->year %>년 <%= $dates->{arrival}->month %>월 <%= $dates->{arrival}->day %>일에 배송 받으려면, <strong><%= $deadline->year %>년 <%= $deadline->month %>월 <%= $deadline->day %>일 <%= $deadline->hour < 12 ? '오전' : '' %> <%= $deadline->hour %>시까지 결제가 완료되어야 합니다.</strong> 기한 내 결제가 되지 않으면 의류 발송이 불가능하며 해당시각 이후에는 결제를 진행할 수 없습니다.
+  </p>
 
-<p class="payment-info">
-  %= $payment_info->{vbank_name}
-  <mark><samp><%= $payment_info->{vbank_num} %></samp></mark> 으로
-  <code><%= commify($payment_info->{paid_amount}) %></code>원 입금해주세요.
-</p>
+  <hr>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>은행</th>
+        <th>예금주</th>
+        <th>계좌</th>
+        <th>금액</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          %= $payment_info->{response}{vbank_name}
+        </td>
+        <td>
+          열린옷장
+        </td>
+        <td>
+          <samp><%= $payment_info->{response}{vbank_num} %></samp>
+        </td>
+        <td>
+          <code><%= commify($payment_info->{response}{amount}) %></code> 원
+        </td>
+      </tr>
+    </tbody>
+  </table>
+% } else {
+  <div class="alert alert-danger">
+    입금기한이 지난 주문서입니다. <strong><%= $payment_due->ymd %> <%= $payment_due->hour %>:00</strong>
+  </div>
+  <p class="help-block">
+    <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
+  </p>
+% }

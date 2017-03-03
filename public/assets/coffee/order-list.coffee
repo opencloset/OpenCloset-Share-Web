@@ -3,6 +3,8 @@ $ ->
   $('.btn-cancel:not(.disabled)').click (e) ->
     e.preventDefault()
 
+    return unless confirm "삭제하시겠습니까?"
+
     $this = $(@)
     $this.addClass('disabled')
 

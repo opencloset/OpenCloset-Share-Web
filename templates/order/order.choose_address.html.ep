@@ -34,27 +34,54 @@
         <input id="user_profile_address" name="user_address" type="radio" value="0" checked>
         %= $user_info->address2
         %= $user_info->address4
+        <p class="text-muted">
+          <small>
+            %= $user_info->address3
+          </small>
+        </p>
+        <p>
+          %= $user->name
+        </p>
+        <p>
+          %= formatted('phone', $user_info->phone)
+        </p>
       </label>
-      <small class="text-muted">
-        %= $user_info->address3
-      </small>
     </li>
     % while (my $address = $addresses->next) {
     <li class="radio">
       <label>
         <input name="user_address" type="radio" value="<%= $address->id %>">
         %= $address->address2
+        <a href="#" class="address-editable user-address" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
+          %= $address->address4 || ''
+        </a>
+        <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
+        <p class="text-muted">
+          <small>
+            %= $address->address3
+          </small>
+        </p>
+        <p>
+          <a href="#" class="address-editable user-address" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="recipient" data-title="수령인" data-pk="1" data-emptytext="수령인">
+            %= $address->name || ''
+          </a>
+        </p>
+        <p>
+          <a href="#" class="address-editable user-address" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="phone" data-title="전화번호" data-pk="1" data-emptytext="전화번호">
+            %= formatted('phone', $address->phone)
+          </a>
+        </p>
       </label>
-      <a href="#" class="address-editable" data-type="text" data-url="<%= url_for('/address/' . $address->id) %>" data-name="address4" data-title="상세주소" data-pk="1">
-        %= $address->address4 || ''
-      </a>
-      <small class="text-muted">
-        %= $address->address3
-      </small>
-      <a class="btn btn-danger btn-xs btn-delete-address" href="<%= url_for('/address/' . $address->id) %>">삭제</a>
     </li>
     % }
   </ul>
+
+  <hr>
+  <p>
+    배송과 관련된 요청 및 문의사항
+  </p>
+  <textarea name="shipping_misc" class="form-control" rows="3"><%= $order->shipping_misc || '' %></textarea>
+  <hr>
 
   % my @categories = categories($order);
   % if (grep { /jacket/ } @categories and grep { /pants/ } @categories) {

@@ -6,9 +6,11 @@ use HTTP::CookieJar;
 use HTTP::Tiny;
 use Path::Tiny;
 
+use Iamport::REST::Client;
 use OpenCloset::Schema;
+use OpenCloset::DB::Plugin::Order::Sale;
 
-use version; our $VERSION = qv("v0.0.1");
+use version; our $VERSION = qv("v0.0.2");
 
 has schema => sub {
     my $self   = shift;
@@ -23,6 +25,12 @@ has schema => sub {
     return $schema;
 };
 
+has iamport => sub {
+    my $self = shift;
+    my $conf = $self->config->{iamport};
+    return Iamport::REST::Client->new( key => $conf->{key}, secret => $conf->{secret} );
+};
+
 =head1 METHODS
 
 =head2 startup
@@ -35,7 +43,6 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
-    $self->plugin('Number::Commify');
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->plugin('OpenCloset::Share::Web::Plugin::Helpers');
 
@@ -98,6 +105,7 @@ sub _private_routes {
     $r->get('/search')->to('root#search')->name('search');
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
+    $r->post('/coupon/validate')->to('coupon#validate');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');
@@ -106,7 +114,9 @@ sub _private_routes {
 
     $orders->get('/new')->to('order#add')->name('order.add');
     $orders->post('/')->to('order#create')->name('order.create');
-    $orders->get('/')->to('order#list')->name('order.list');
+    $orders->get('/shipping')->to('order#shipping_list');
+    $orders->get('/')->to('order#list');
+    $orders->get('/dates')->to('order#dates');
 
     my $order = $orders->under('/:order_id')->to('order#order_id');
     $order->get('/')->to('order#order')->name('order.order');
@@ -115,9 +125,12 @@ sub _private_routes {
     $order->get('/purchase')->to('order#purchase')->name('order.purchase');
     $order->any( [ 'POST', 'PUT' ] => '/parcel' )->to('order#update_parcel')->name('order.update_parcel');
     $order->post('/payments')->to('order#create_payment');
+    $order->post('/coupon')->to('order#insert_coupon');
+    $order->post('/cancel')->to('order#cancel_payment');
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');
+    $payment->get('/callback')->to('payment#callback'); # IMP.request_pay m_redirect_url
 
     my $clothes_code = $clothes->under('/:code')->to('clothes#code');
     $clothes_code->get('/')->to('clothes#detail');

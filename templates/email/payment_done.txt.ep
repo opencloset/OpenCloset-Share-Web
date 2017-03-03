@@ -1,0 +1,18 @@
+% my $create_date = timezone($order->create_date);
+안녕하세요 <%= $user->name %>님.
+<%= sprintf("%02d월 %02d일 %02d시 %02d분", $create_date->month, $create_date->day, $create_date->hour, $create_date->minute) %>에 열린옷장에서 주문하신 <%= orderClothes2text($order) %> 주문에 관한 결제내역입니다.
+
+---------------------
+결제금액: <%= commify($amount) %>원
+결제방법: <%= $order->price_pay_with %>
+결제일시: <%= $payment_date->ymd %> <%= $payment_date->hms %> KST
+대여주문서: <%= url_for('/orders/' . $order->id)->to_abs %>
+
+
+열린옷장
+전자우편 info@theopencloset.net
+전화 02-6929-1020
+서울특별시 광진구 아차산로 213 웅진빌딩 4층, 5층
+---------------------
+
+감사합니다.

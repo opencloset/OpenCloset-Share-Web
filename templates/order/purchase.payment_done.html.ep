@@ -64,20 +64,28 @@
       </td>
     </tr>
     <tr>
+      <th>결제방법</th>
+      <td><%= $order->price_pay_with || '' %></td>
+    </tr>
+    <tr>
       <th>대여기간</th>
-      <td>4박5일</td>
+      <td>
+        <span class="label label-info"><%= $order->rental_date ? $order->rental_date->ymd : '지정되지않음' %></span>
+        ~
+        <span class="label label-info"><%= $order->target_date ? $order->target_date->ymd : '지정되지않음' %></span>
+      </td>
     </tr>
     <tr>
       <th>착용일</th>
       <td>
-        %= $order->wearon_date->ymd
+        %= $order->wearon_date ? $order->wearon_date->ymd : '지정되지않음'
       </td>
     </tr>
     <tr>
       <th>대여일</th>
       <td>
         <div class="input-group">
-          <input type="text" id="from-date" class="form-control datepicker">
+          <input type="text" id="from-date" class="form-control datepicker" value="<%= $order->rental_date ? $order->rental_date->ymd : '' %>">
         </div>
       </td>
     </tr>
@@ -85,16 +93,14 @@
       <th>반납예정일</th>
       <td>
         <div class="input-group">
-          <input type="text" id="to-date" class="form-control datepicker">
+          <input type="text" id="to-date" class="form-control datepicker" value="<%= $order->target_date ? $order->target_date->ymd : '' %>">
         </div>
       </td>
     </tr>
     <tr>
       <th>대여비</th>
       <td>
-        % my $price = 3000;
-        % $price += $PRICE{$_} for categories($order);
-        <code title="<%= $price %>"><%= commify $price %></code>
+        <code class="total-price"></code>
       </td>
     </tr>
     <tr>
@@ -123,8 +129,8 @@
 
 <form id="form-update-order" action="<%= url_for('/orders/' . $order->id) %>">
   <input name="status_id" type="hidden" value="<%= $WAITING_SHIPPED %>">
-  <input id="rental_date" name="rental_date" type="hidden">
-  <input id="target_date" name="target_date" type="hidden">
+  <input id="rental_date" name="rental_date" type="hidden" value="<%= $order->rental_date ? $order->rental_date->ymd : '' %>">
+  <input id="target_date" name="target_date" type="hidden" value="<%= $order->target_date ? $order->target_date->ymd : '' %>">
   <table id="table-clothes" class="table">
     <thead>
       <tr>

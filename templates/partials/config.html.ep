@@ -3,8 +3,8 @@
     postcodify_url: "<%= $self->config->{postcodify_url} %>",
     iamport: {
       % if ( $self->config->{iamport}{notice_url} ) {
-      %   my $notice_url = $self->config->{iamport}{notice_url};
-      %   $notice_url = url_for($notice_url)->to_abs if $notice_url =~ m{^/};
+        % my $notice_url = $self->config->{iamport}{notice_url};
+        % $notice_url = url_for($notice_url)->to_abs if $notice_url =~ m{^/};
         id: "<%= $self->config->{iamport}{id} %>",
         notice_url: "<%= $notice_url %>"
       % }

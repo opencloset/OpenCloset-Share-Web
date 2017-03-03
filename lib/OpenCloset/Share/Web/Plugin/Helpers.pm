@@ -2,8 +2,11 @@ package OpenCloset::Share::Web::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use DateTime;
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
+use Email::Simple ();
+use Encode qw/encode_utf8/;
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
@@ -11,9 +14,10 @@ use String::Random;
 use Time::HiRes;
 
 use OpenCloset::Schema;
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED/;
+    qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 use OpenCloset::Constants::Measurement;
 
 =encoding utf8
@@ -45,6 +49,7 @@ sub register {
     $app->helper( order2link           => \&order2link );
     $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
+    $app->helper( waiting_deposit      => \&waiting_deposit );
     $app->helper( waiting_shipped      => \&waiting_shipped );
     $app->helper( returned             => \&returned );
     $app->helper( partial_returned     => \&partial_returned );
@@ -58,6 +63,10 @@ sub register {
     $app->helper( check_measurement    => \&check_measurement );
     $app->helper( category_price       => \&category_price );
     $app->helper( merchant_uid         => \&merchant_uid );
+    $app->helper( formatted            => \&formatted );
+    $app->helper( date_calc            => \&date_calc );
+    $app->helper( payment_deadline     => \&payment_deadline );
+    $app->helper( orderClothes2text    => \&orderClothes2text );
 }
 
 =head1 HELPERS
@@ -243,7 +252,7 @@ sub clothes_measurements {
 
     my @sizes;
     for my $part (@parts) {
-        my $size = $clothes->get_column($part);
+        my $size = $part eq $CUFF ? $clothes->cuff : $clothes->get_column($part);
         next unless $size;
         my $label = $OpenCloset::Constants::Measurement::LABEL_MAP{$part} || $part;
         push @sizes, $label, $size;
@@ -320,10 +329,54 @@ sub payment_done {
     return unless $order;
     return $order if $order->status_id == $PAYMENT_DONE;
 
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $msg       = $self->render_to_string(
+        'sms/payment/payment_done',
+        format => 'txt',
+        order  => $order,
+        user   => $user,
+    );
+
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
+
     $order->update( { status_id => $PAYMENT_DONE } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
-
     my $detail = $order->order_details( { name => 'jacket' } )->next;
+
+    my $payment_log = $order->payments->search_related( 'payment_logs', { status => 'paid' }, { rows => 1 } )->single;
+    my $payment = $payment_log ? $payment_log->payment : undef;
+    my ( $amount, $payment_date );
+    if ($payment) {
+        $amount       = $payment->amount;
+        $payment_date = $self->timezone( $payment->update_date->clone );
+    }
+    else {
+        $amount       = $self->category_price($order) + 3_000;
+        $payment_date = $self->timezone( $order->update_date->clone );
+    }
+
+    my $subject = sprintf( "[열린옷장] %s님의 결제내역", $user->name );
+    my $body = $self->render_to_string(
+        'email/payment_done',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        amount       => $amount,
+        payment_date => $payment_date,
+    );
+
+    my $email_msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $user->email,
+            Subject => $subject,
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $email_msg->as_string ) );
 
     ## 선택한 의류가 있는지 확인
     return $order unless $detail;
@@ -335,6 +388,82 @@ sub payment_done {
         $self->log->error( "Couldn't find a clothes: " . $detail->clothes_code );
         return $order;
     }
+
+    return $order;
+}
+
+=head2 waiting_deposit($order)
+
+    # 결제대기 -> 입금대기
+    $self->waiting_deposit($order, $payment_log?);
+
+=cut
+
+sub waiting_deposit {
+    my ( $self, $order, $payment_log ) = @_;
+    return unless $order;
+    return $order if $order->status_id == $WAITING_DEPOSIT;
+
+    $order->update( { status_id => $WAITING_DEPOSIT } );
+
+    $payment_log ||= $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+
+    unless ($payment_log) {
+        $self->log->error("Not found ready status payment log");
+        return $order;
+    }
+
+    my $detail = $payment_log->detail;
+    unless ($detail) {
+        $self->log->error("Not found payment info");
+        return $order;
+    }
+
+    my $payment_info = decode_json( encode_utf8($detail) );
+    my $epoch        = $payment_info->{response}{vbank_date};
+    unless ($epoch) {
+        $self->log->error("Wrong payment info: $detail");
+        $self->log->error("Couldn't find vbank due date.");
+        return $order;
+    }
+
+    my $user      = $order->user;
+    my $user_info = $user->user_info;
+    my $tz        = $self->config->{timezone};
+    my $due       = DateTime->from_epoch( epoch => $epoch, time_zone => $tz );
+    my $msg       = $self->render_to_string(
+        'sms/payment/waiting_deposit',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        due          => $due,
+        payment_info => $payment_info
+    );
+
+    chomp $msg;
+    $self->sms( $user_info->phone, $msg );
+
+    my $subject  = sprintf( "[열린옷장] %s님의 가상계좌 입금안내", $user->name );
+    my $deadline = $self->payment_deadline($order);
+    my $body     = $self->render_to_string(
+        'email/waiting_deposit',
+        format       => 'txt',
+        order        => $order,
+        user         => $user,
+        deadline     => $deadline,
+        payment_info => $payment_info
+    );
+
+    my $email_msg = Email::Simple->create(
+        header => [
+            From    => $self->config->{notify}{from},
+            To      => $user->email,
+            Subject => $subject,
+        ],
+        body => $body
+    );
+
+    $self->send_mail( encode_utf8( $email_msg->as_string ) );
 
     return $order;
 }
@@ -569,7 +698,7 @@ sub categories {
 
     my @categories;
     my $status_id = $order->status_id;
-    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE" =~ m/\b$status_id\b/ ) {
+    if ( "$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_DEPOSIT $PAYBACK" =~ m/\b$status_id\b/ ) {
         my $details = $order->order_details;
         while ( my $detail = $details->next ) {
             my $name = $detail->name;
@@ -632,7 +761,7 @@ sub blouse_type {
     }
     else {
         my $details = $order->order_details;
-        my $detail = $details->search_like( { clothes_code => '0B%' }, { rows => 1 } )->single;
+        my $detail = $details->search( { clothes_code => { -like => '0B%' } }, { rows => 1 } )->single;
         $type = $detail->desc || '' if $detail;
     }
 
@@ -701,8 +830,8 @@ sub check_measurement {
 
 =head2 category_price($order, $category?)
 
-    # 배송비포함
-    my $price = $self->category_price($order);     # 33000
+    # 배송비미포함
+    my $price = $self->category_price($order);     # 30000
 
     my $tie_price = $self->category_price($order, $TIE);     # 2000 or 0
 
@@ -714,7 +843,7 @@ sub category_price {
 
     return $PRICE{$category} if $category && $category ne $TIE;
 
-    my $price = 3_000; # 배송비
+    my $price = 0;
     my %seen;
     my @categories = $self->categories($order);
 
@@ -753,6 +882,179 @@ sub merchant_uid {
     my $random = String::Random->new->randregex(q{-\w\w\w});
 
     return $prefix . $seconds . $microseconds . $random;
+}
+
+=head2 formatted( $type, $string )
+
+    %= formatted('phone', '01012345678')
+    # 010-1234-5678
+
+=cut
+
+sub formatted {
+    my ( $self, $type, $str ) = @_;
+    return '' unless $type;
+    return '' unless $str;
+
+    my $formatted = $str;
+    if ( $type eq 'phone' ) {
+        my $len = length $formatted;
+        my $head = substr( $formatted, 0, 3 );
+        my @rest;
+        if ( $len == 10 ) {
+            push @rest, substr( $formatted, 3, 3 );
+            push @rest, substr( $formatted, 6 );
+        }
+        elsif ( $len == 11 ) {
+            push @rest, substr( $formatted, 3, 4 );
+            push @rest, substr( $formatted, 7 );
+        }
+        else {
+            return $formatted;
+        }
+
+        $formatted = join( '-', $head, @rest );
+    }
+
+    return $formatted;
+}
+
+=head2 date_calc( $wearon_date, $days )
+
+Default C<$days> 는 3박 4일의 C<3>
+발송(예정)일 또는 의류착용일과 대여기간을 기준으로 발송(예정)일, 대여일, 의류착용일, 반납일, 택배발송일을 계산합니다.
+
+    # 발송(예정)일 = 주말 + 공휴일 + 0일    # AM 10:00 이전
+    # 발송(예정)일 = 주말 + 공휴일 + 1일    # AM 10:00 이후
+    # 도착(예정)일 = 발송(예정)일 + 공휴일 + 주말 + 2일
+    # 의류착용일   = 도착(예정)일 + 1일
+    # 대여일      = 의류착용일 - 1일
+    # 반납일      = 대여일 + 대여기간(default 3일)
+    # 택배일      = 반납일 - 1일
+
+    my $shipping_date = $self->date_calc;    # 가장 가까운 발송(예정)일
+    my $dates = $self->date_calc({ shipping => $shipping_date });
+    # {
+    #   shipping => $dt1, # 발송(예정)일
+    #   arrival  => $dt2, # 도착(예정)일
+    #   rental   => $dt3, # 대여일
+    #   wearon   => $dt4, # 의류착용일
+    #   target   => $dt5, # 반납일
+    #   parcel   => $dt6, # 반납택배발송일
+    # }
+
+=cut
+
+sub date_calc {
+    my ( $self, $dates, $days ) = @_;
+    my $tz = $self->config->{timezone};
+
+    unless ($dates) {
+        my $now      = DateTime->now( time_zone => $tz );
+        my $hour     = $now->hour;
+        my $year     = $now->year;
+        my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
+        my %holidays;
+        map { $holidays{$_}++ } @holidays;
+
+        my $dt = DateTime->today( time_zone => $tz );
+        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour > 10;
+        while (1) {
+            $dt->add( days => 1 ) and next if $dt->day_of_week > 5;
+            $dt->add( days => 1 ) and next if $holidays{ $dt->ymd };
+            last;
+        }
+
+        return $dt;
+    }
+
+    my $shipping_date = $dates->{shipping};
+    my $wearon_date   = $dates->{wearon};
+
+    if ($shipping_date) {
+        $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
+        my $year = $shipping_date->year;
+        my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
+
+        my ( $n,        $dt );
+        my ( %holidays, %dates );
+        map { $holidays{$_}++ } @holidays;
+
+        $n  = $SHIPPING_BUFFER;
+        $dt = $shipping_date->clone;
+        while ($n) {
+            $dt->add( days => 1 );
+            next if $dt->day_of_week > 5;
+            next if $holidays{ $dt->ymd };
+            $n--;
+        }
+
+        $dates{arrival}  = $dt->clone;
+        $dates{shipping} = $shipping_date->clone;
+        $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
+        $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
+        $dates{target}   = $dates{rental}->clone->add( days => $days );
+        $dates{parcel}   = $dates{target}->clone->subtract( days => 1 );
+
+        return \%dates;
+    }
+    elsif ($wearon_date) {
+        my $year = $wearon_date->year;
+        my @holidays = $self->holidays( $year, $year + 1 );
+
+        my ( $n,        $dt );
+        my ( %holidays, %dates );
+        map { $holidays{$_}++ } @holidays;
+
+        $n  = $SHIPPING_BUFFER + 1;
+        $dt = $wearon_date->clone;
+        while ($n) {
+            $dt->subtract( days => 1 );
+            next if $dt->day_of_week > 5;
+            next if $holidays{ $dt->ymd };
+            $n--;
+        }
+
+        $shipping_date = $dt;
+        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date }, $days );
+    }
+
+    return;
+}
+
+=head2 payment_deadline( $order )
+
+    my $deadline = $self->payment_deadline($order);    # DateTime obj
+
+=cut
+
+sub payment_deadline {
+    my ( $self, $order ) = @_;
+    return unless $order;
+
+    my $wearon_date = $self->timezone( $order->wearon_date );
+    my $dates       = $self->date_calc( { wearon => $wearon_date } );
+    my $deadline    = $dates->{shipping}->clone;
+    $deadline->set_hour(10);
+
+    return $deadline;
+}
+
+=head2 orderClothes2text
+
+    %= orderClothes2text($order);
+    # 자켓, 팬츠, 타이
+
+=cut
+
+sub orderClothes2text {
+    my ( $self, $order ) = @_;
+    return '' unless $order;
+
+    my @categories = $self->categories($order);
+    my @texts = map { $OpenCloset::Constants::Category::LABEL_MAP{$_} } @categories;
+
+    return join( ', ', @texts );
 }
 
 1;
