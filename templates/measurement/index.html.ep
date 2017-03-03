@@ -197,7 +197,7 @@
               <td class="text-muted">55 ~ 62</td>
               <td class="text-muted">55 ~ 62</td>
             </tr>
-            <tr>
+            <tr class="active">
               <td>윗배둘레</td>
               <td>67 ~ 70</td>
               <td>71 ~ 74</td>
@@ -247,7 +247,7 @@
               <td class="text-muted">101 ~ 108</td>
               <td class="text-muted">108 ~ 110</td>
             </tr>
-            <tr>
+            <tr class="active">
               <td>엉덩이둘레</td>
               <td>81 ~ 85</td>
               <td>86 ~ 89</td>
