@@ -26,7 +26,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="<%= url_for('/') %>">
+          <a class="navbar-brand" href="<%= url_for('/welcome') %>">
             <img alt="열린옷장" src="/resource/project/opencloset_CI.png">
           </a>
         </div>
