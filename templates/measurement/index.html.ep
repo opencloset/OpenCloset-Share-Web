@@ -49,7 +49,7 @@
           윗배둘레 <small>cm</small>
         </label>
         <div class="col-sm-7">
-          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)에서 수평으로 둘레를 측정한다.">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.">
         </div>
       </div>
       <div class="form-group">
@@ -96,9 +96,9 @@
       % }
 
       <div class="form-group">
-        <label class="col-sm-5 control-label">신발사이즈 <small>mm</small></label>
+        <label class="col-sm-5 control-label">구두사이즈 <small>mm</small></label>
         <div class="col-sm-7">
-          <input name="foot" type="text" class="form-control m-preview-none" placeholder="신발사이즈 mm" value="<%= $user_info->foot || '' %>">
+          <input name="foot" type="text" class="form-control m-preview-none" placeholder="구두사이즈 mm" value="<%= $user_info->foot || '' %>" title="본인의 구두사이즈를 알고 있지 않을 경우, 평소 신는 운동화 사이즈보다 5mm 작게 기입한다">
         </div>
       </div>
     </div>
