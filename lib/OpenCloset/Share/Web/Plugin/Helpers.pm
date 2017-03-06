@@ -972,6 +972,7 @@ sub date_calc {
     my $wearon_date   = $dates->{wearon};
 
     if ($shipping_date) {
+        $shipping_date->set_time_zone($tz);
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
         my $year = $shipping_date->year;
         my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
@@ -999,6 +1000,7 @@ sub date_calc {
         return \%dates;
     }
     elsif ($wearon_date) {
+        $wearon_date->set_time_zone($tz);
         my $year = $wearon_date->year;
         my @holidays = $self->holidays( $year, $year + 1 );
 
