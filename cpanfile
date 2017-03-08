@@ -10,6 +10,7 @@ requires 'HTTP::CookieJar';
 requires 'HTTP::Tiny';
 requires 'Mojolicious';
 requires 'Parcel::Track';
+requires 'Parcel::Track::KR::CJKorea', '0.005';
 requires 'Path::Tiny';
 requires 'String::Random';
 requires 'Try::Tiny;';

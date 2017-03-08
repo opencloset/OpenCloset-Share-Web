@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Command';
 use Parcel::Track;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants::Status qw/$SHIPPED $DELIVERED/;
+use OpenCloset::Constants::Status qw/$RENTAL $SHIPPED $DELIVERED/;
 
 binmode STDOUT, ':utf8';
 STDOUT->autoflush(1);
@@ -35,13 +35,14 @@ sub run {
     my $schema = $self->app->schema;
 
     while (1) {
-        my $rs = $schema->resultset('Order')->search( { status_id => $SHIPPED } );
-        while ( my $order = $rs->next ) {
-            my $parcel = $order->order_parcel;
-            next unless $parcel;
-
+        my $rs = $schema->resultset('OrderParcel')->search( { 'me.status_id' => $SHIPPED, 'order.status_id' => $RENTAL }, { join => 'order' } );
+        while ( my $parcel = $rs->next ) {
             my $waybill = $parcel->waybill;
             next unless $waybill;
+
+            my $order = $parcel->order;
+
+            $self->app->log->debug( sprintf( "Tracking order(%d): %s", $order->id, $waybill ) );
 
             my $tracker = Parcel::Track->new( $self->driver, $waybill );
             my $result = $tracker->track;
