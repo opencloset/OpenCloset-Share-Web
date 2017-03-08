@@ -33,9 +33,15 @@
         % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
         % if ($clothes) {
           % my $code = substr $clothes->code, 1;
-          <a href="<%= url_for('/clothes/' . $code) %>">
-            <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
-          </a>
+          % if ($user_info->staff) {
+            <a href="<%= $self->config->{opencloset}{root} %>/clothes/<%= $code %>" target="_blank">
+              <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+            </a>
+          % } else {
+            <a href="<%= url_for('/clothes/' . $code) %>">
+              <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+            </a>
+          % }
         % } else {
           <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
         % }
