@@ -7,7 +7,7 @@
   <div class="alert alert-success" role="alert"><%= $message %></div>
 % }
 
-%= include 'partials/user-info', user => $order->user;
+%= include 'partials/user-info', user => $order->user, staff => $user_info->staff;
 
 <hr>
 

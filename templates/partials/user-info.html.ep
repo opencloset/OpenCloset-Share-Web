@@ -1,6 +1,12 @@
 % my $user_info = $user->user_info;
 <h2>
   <i class="fa fa-<%= $user_info->gender %>" aria-hidden="true"></i>
-  <%= $user->name %>님
+  % if ($staff) {
+    <a href="<%= $self->config->{opencloset}{root} %>/user/<%= $user->id %>" target="_blank">
+      <%= $user->name %>님
+    </a>
+  % } else {
+    <%= $user->name %>님
+  % }
   <small><%= age($user_info->birth) %></small>
 </h2>
