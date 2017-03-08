@@ -18,5 +18,5 @@ requires 'Try::Tiny;';
 requires 'Iamport::REST::Client',               'v0.0.4';
 requires 'OpenCloset::Common',                  'v0.0.13';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
-requires 'OpenCloset::Plugin::Helpers',         'v0.0.11';
+requires 'OpenCloset::Plugin::Helpers',         'v0.0.14';
 requires 'OpenCloset::Schema',                  '0.046';
