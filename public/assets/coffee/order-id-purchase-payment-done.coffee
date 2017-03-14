@@ -59,9 +59,12 @@ $ ->
       complete: (jqXHR, textStatus) ->
         $input.val('')
 
-  $('#btn-update-order:not(.disabled)').click (e) ->
+  $('#btn-update-order').click (e) ->
     $this = $(@)
+
+    return if $this.hasClass('disabled')
     $this.addClass('disabled')
+
     url = $('#form-update-order').prop('action')
     $.ajax url,
       type: 'PUT'
