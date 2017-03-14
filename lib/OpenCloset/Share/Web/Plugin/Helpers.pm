@@ -47,7 +47,6 @@ sub register {
     $app->helper( clothes2status       => \&clothes2status );
     $app->helper( clothes_measurements => \&clothes_measurements );
     $app->helper( order2link           => \&order2link );
-    $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
     $app->helper( waiting_deposit      => \&waiting_deposit );
     $app->helper( waiting_shipped      => \&waiting_shipped );
@@ -292,29 +291,6 @@ sub order2link {
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
 }
 
-=head2 timezone
-
-    % $order->create_date->hms    # 06:56:43
-    % timezone($order->create_date);
-    % $order->create_date->hms    # 15:56:43
-
-=cut
-
-sub timezone {
-    my ( $self, $dt ) = @_;
-    my $tz = $self->config->{timezone};
-
-    return $tz unless $dt;
-    return $dt unless $tz;
-
-    ## when you create DateTime object without time zone specified, "floating" time zone is set
-    ## first call of set_time_zone change time zone to UTC without conversion
-    ## second call of set_time_zone change UTC to $timezone
-    $dt->set_time_zone('UTC');
-    $dt->set_time_zone($tz);
-    return $dt;
-}
-
 =head2 payment_done($order)
 
     # 결제대기 -> 결제완료
@@ -350,11 +326,11 @@ sub payment_done {
     my ( $amount, $payment_date );
     if ($payment) {
         $amount       = $payment->amount;
-        $payment_date = $self->timezone( $payment->update_date->clone );
+        $payment_date = $payment->update_date->clone;
     }
     else {
         $amount       = $self->category_price($order) + 3_000;
-        $payment_date = $self->timezone( $order->update_date->clone );
+        $payment_date = $order->update_date->clone;
     }
 
     my $subject = sprintf( "[열린옷장] %s님의 결제내역", $user->name );
@@ -1045,7 +1021,7 @@ sub payment_deadline {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    my $wearon_date = $self->timezone( $order->wearon_date );
+    my $wearon_date = $order->wearon_date;
     my $dates       = $self->date_calc( { wearon => $wearon_date } );
     my $deadline    = $dates->{shipping}->clone;
     $deadline->set_hour(10);

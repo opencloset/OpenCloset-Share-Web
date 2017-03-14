@@ -5,7 +5,7 @@
 <ul class="list-group">
   % my $timezone = $self->config->{timezone};
   % while (my $order = $orders->next) {
-  % my $create_date = timezone($order->create_date);
+  % my $create_date = $order->create_date;
   <li class="list-group-item">
     <ul class="list-inline pull-right">
       <li>

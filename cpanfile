@@ -21,3 +21,4 @@ requires 'OpenCloset::Common',                  'v0.0.13';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
 requires 'OpenCloset::Plugin::Helpers',         'v0.0.14';
 requires 'OpenCloset::Schema',                  '0.047';
+requires 'OpenCloset::Size::Guest::DB',         '0.006';
