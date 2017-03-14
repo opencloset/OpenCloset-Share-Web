@@ -295,7 +295,7 @@ sub order_id {
     }
 
     my $deadline = $self->payment_deadline($order);
-    my $dates = $self->date_calc( { wearon => $self->timezone( $order->wearon_date ) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $dates = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
     $self->stash( order => $order, deadline => $deadline, dates => $dates );
     return 1;
 }
@@ -313,7 +313,6 @@ sub order {
     my $user  = $self->stash('user');
 
     my $create_date = $order->create_date;
-    $self->timezone($create_date);
 
     my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
     $self->stash( title => $title );
