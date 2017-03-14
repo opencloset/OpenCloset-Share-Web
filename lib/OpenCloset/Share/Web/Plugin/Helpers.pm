@@ -525,13 +525,10 @@ sub waiting_shipped {
     my @target = sort keys %target;
 
     if ( "@source" ne "@target" ) {
-        ## 일치하지 않으면 진행하면 아니됨
         my $msg = "주문서 품목과 대여품목이 일치하지 않습니다.";
-        $self->log->error($msg);
-        $self->log->error("주문서품목: @source");
-        $self->log->error("대여품목: @target");
-        $self->flash( alert => $msg );
-        return;
+        $self->log->warn($msg);
+        $self->log->warn("주문서품목: @source");
+        $self->log->warn("대여품목: @target");
     }
 
     my $guard = $self->schema->txn_scope_guard;
@@ -539,15 +536,21 @@ sub waiting_shipped {
         my $detail  = $source{$category};
         my $clothes = $target{$category};
 
-        my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
-        $detail->update(
-            {
-                name         => $name,
-                status_id    => $RENTAL,
-                clothes_code => $clothes->code,
-            }
-        );
-        $clothes->update( { status_id => $RENTAL } );
+        if ($clothes) {
+            my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
+            $detail->update(
+                {
+                    name         => $name,
+                    status_id    => $RENTAL,
+                    clothes_code => $clothes->code,
+                }
+            );
+
+            $clothes->update( { status_id => $RENTAL } );
+        }
+        else {
+            $detail->update( { name => "$category - 대여안함" } );
+        }
     }
 
     $order->update( { status_id => $RENTAL } );
@@ -710,6 +713,14 @@ sub categories {
         my $details = $order->order_details( { clothes_code => { '!=' => undef } } );
         while ( my $detail = $details->next ) {
             push @categories, $detail->clothes->category;
+        }
+
+        $details = $order->order_details( { desc => { '!=' => 'additional' }, clothes_code => undef } );
+        while ( my $detail = $details->next ) {
+            my $name = $detail->name;
+            ($name) = split / - /, $name;
+            next unless $name =~ m/^[a-z]/;
+            push @categories, $name;
         }
     }
 

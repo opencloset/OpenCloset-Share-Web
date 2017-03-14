@@ -45,6 +45,7 @@ $ ->
       type: 'GET'
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
+        data._category  = data.category
         data.category   = OpenCloset.category[data.category]
         data.status     = OpenCloset.status[data.status_id]
         data.labelColor = OpenCloset.status.color[data.status_id]
@@ -64,6 +65,19 @@ $ ->
 
     return if $this.hasClass('disabled')
     $this.addClass('disabled')
+
+    ## 주문품목과 대여품목을 비교
+    rental_categories = []
+    order_categories = $('#order-categories').data('categories').split(/ /)
+    $('#form-update-order input[name=clothes_code]:checked').each (i, el) ->
+      category = $(el).data('category')
+      rental_categories.push(category)
+    rental_categories = _.uniq(rental_categories)
+    diff = _.difference order_categories, rental_categories
+    if diff.length
+      unless confirm "주문품목과 대여품목이 다릅니다. 계속하시겠습니까?"
+        $this.removeClass('disabled')
+        return
 
     url = $('#form-update-order').prop('action')
     $.ajax url,
