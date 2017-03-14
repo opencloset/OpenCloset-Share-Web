@@ -1,9 +1,9 @@
 <tr>
   <td>
     {{#if disabled}}
-    <input name="clothes_code" class="checkbox disabled" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" disabled>
+    <input name="clothes_code" class="checkbox disabled" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" data-category="{{_category}}" disabled>
     {{else}}
-    <input name="clothes_code" class="checkbox" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" checked>
+    <input name="clothes_code" class="checkbox" type="checkbox" value="{{#clothesCode}}{{code}}{{/clothesCode}}" data-category="{{_category}}" checked>
     {{/if}}
   </td>
   <td>
