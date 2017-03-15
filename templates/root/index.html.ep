@@ -16,7 +16,7 @@
 
 % unless ($failed) {
 <p>
-  <a class="btn btn-primary" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
+  <a class="btn btn-opencloset" href="<%= url_for('order.add') %>">대여 주문서 작성</a>
 </p>
 % } else {
 <p>
