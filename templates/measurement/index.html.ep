@@ -4,6 +4,7 @@
 <h1>치수측정</h1>
 
 % my $gender = $user_info->gender || '';
+<div id="gender" data-gender="<%= $gender %>"></div>
 
 % if (my $message = flash('message')) {
 %   if (flash('has_error')) {
@@ -13,9 +14,14 @@
 %   }
 % }
 
+<h3>정확한 신체치수를 입력하는 것은 중요합니다.</h3>
+<p>
+  신체치수를 정확히 측정하여 입력해주세요.
+</p>
+
 <hr>
 
-<form method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
+<form id="form-body-dimensions" method="POST" action="<%= url_for('/measurements') %>" class="form-horizontal">
   <div class="row">
     <div class="col-md-4">
       <div class="form-group">
@@ -31,17 +37,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
-        <div class="col-sm-7">
-          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올린 후 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내린다.' : '가슴의 가장 두꺼운 부분(BP점)의 둘레를 수평으로 측정한다. *BP점-BUST POINT' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
-        </div>
-      </div>
-      <div class="form-group">
         <label class="col-sm-5 control-label">
           허리둘레 <small>cm</small>
         </label>
         <div class="col-sm-7">
           <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
+        <div class="col-sm-7">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올린 후 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내린다.' : '가슴의 가장 두꺼운 부분(BP점)의 둘레를 수평으로 측정한다. *BP점-BUST POINT' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
         </div>
       </div>
       <div class="form-group">
@@ -103,23 +109,58 @@
       </div>
     </div>
 
-    <div class="col-md-5">
-      <div>
-        <video id="guide-video" width="400" controls src="">
-          동영상을 지원하지 않는 브라우저 입니다.
-        </video>
+    <div class="col-md-8">
+      <div class="row">
+        <p class="help-block">
+          inch 를 cm 로 변환한 표 입니다.
+        </p>
+        <table class="table table-bordered table-condensed">
+          <tbody>
+            <tr>
+              <th>inch</th>
+              % for my $inch (27..40) {
+                <td><%= $inch %></td>
+              % }
+            </tr>
+            <tr>
+              <th>cm</th>
+              % for my $inch (27..40) {
+                % my $cm = $inch * 2.54;
+                <td><%= int($cm) %></td>
+              % }
+            </tr>
+          </tbody>
+        </table>
 
-        <div id="preview-desc">
-          <h4 class="preview-desc-header"></h4>
-          <p class="preview-desc-body"></p>
-        </div>
+        <div id="body-average"></div>
+        <ul class="help-block">
+          <li>cm = inch x 2.54</li>
+          <li>입력값이 많을 수록 더 정확한 평균 사이즈가 표시됩니다.</li>
+          <li>배가 나온 체형은 허리둘레보다 배둘레가 큽니다.</li>
+          <li>대부분의 경우 팔길이와 다리길이는 키에 비례합니다.</li>
+        </ul>
+        <hr>
       </div>
-    </div>
+      <div class="row">
+        <div class="col-md-7">
+          <div>
+            <video id="guide-video" width="400" controls src="">
+              동영상을 지원하지 않는 브라우저 입니다.
+            </video>
 
-    <div class="col-md-3">
-      <div id="measurement-preview">
-        <div class="thumbnail preview-img">
-          <img src="" alt="">
+            <div id="preview-desc">
+              <h4 class="preview-desc-header"></h4>
+              <p class="preview-desc-body"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div id="measurement-preview">
+            <div class="thumbnail preview-img">
+              <img src="" alt="">
+            </div>
+          </div>
         </div>
       </div>
     </div>

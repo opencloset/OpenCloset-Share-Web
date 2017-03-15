@@ -20,7 +20,7 @@ $ ->
     if video
       $('#guide-video').prop('src', video).show()
     else
-      $('#guide-video').prop('src', '').hide()
+      $('#guide-video').prop('src', '#').hide()
 
   $('.m-preview-none').focus (e) ->
     title  = $(@).prop('title') or ''
@@ -33,7 +33,7 @@ $ ->
     $('#preview-desc .preview-desc-body').text(title)
     $('#preview-desc').show()
 
-    $('#guide-video').prop('src', '').hide()
+    $('#guide-video').prop('src', '#').hide()
 
   $('.btn-size').click (e) ->
     $('.btn-size').removeClass('active')
@@ -50,3 +50,25 @@ $ ->
     $("input[name=#{which}_size]").val(size)
 
   $('.btn-size.active').trigger('click')
+
+  $('input[name=height],input[name=weight],input[name=waist],input[name=bust],input[name=topbelly]').focusout (e) ->
+    gender = $('#gender').data('gender')
+    query = "#{$('#form-body-dimensions').serialize()}&gender=#{gender}"
+
+    waist    = $('input[name=waist]').val()
+    bust     = $('input[name=bust]').val()
+    topbelly = $('input[name=topbelly]').val()
+    $.ajax '/body/dimensions',
+      type: 'GET'
+      dataType: 'json'
+      data: query
+      success: (data, textStatus, jqXHR) ->
+        data.origin =
+          waist:    waist
+          bust:     bust
+          topbelly: topbelly
+        template   = JST['body/dimensions']
+        html       = template(data)
+        $('#body-average').html(html)
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->

@@ -92,15 +92,16 @@ sub create {
     my ( $order, $error ) = try {
         my $guard = $self->schema->txn_scope_guard;
         my $param = {
-            online         => 1,
-            user_id        => $user->id,
-            status_id      => $status_id,
-            wearon_date    => $wearon_date,
-            rental_date    => $dates->{rental}->datetime(),
-            target_date    => $dates->{target}->datetime(),
-            pre_color      => $v->param('pre_color'),
-            purpose        => $v->param('purpose'),
-            additional_day => $additional_day,
+            online           => 1,
+            user_id          => $user->id,
+            status_id        => $status_id,
+            wearon_date      => $wearon_date,
+            rental_date      => $dates->{rental}->datetime(),
+            target_date      => $dates->{target}->datetime(),
+            user_target_date => $dates->{target}->datetime(),
+            pre_color        => $v->param('pre_color'),
+            purpose          => $v->param('purpose'),
+            additional_day   => $additional_day,
         };
         map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
         my $order = $self->schema->resultset('Order')->create($param);
@@ -294,7 +295,7 @@ sub order_id {
     }
 
     my $deadline = $self->payment_deadline($order);
-    my $dates = $self->date_calc( { wearon => $self->timezone( $order->wearon_date ) }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $dates = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
     $self->stash( order => $order, deadline => $deadline, dates => $dates );
     return 1;
 }
@@ -312,7 +313,6 @@ sub order {
     my $user  = $self->stash('user');
 
     my $create_date = $order->create_date;
-    $self->timezone($create_date);
 
     my $title = sprintf( '%s님 %s %s 주문서', $user->name, $create_date->ymd, $create_date->hms );
     $self->stash( title => $title );

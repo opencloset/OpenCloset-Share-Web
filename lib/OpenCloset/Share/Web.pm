@@ -10,7 +10,7 @@ use Iamport::REST::Client;
 use OpenCloset::Schema;
 use OpenCloset::DB::Plugin::Order::Sale;
 
-use version; our $VERSION = qv("v0.0.2");
+use version; our $VERSION = qv("v0.0.3");
 
 has schema => sub {
     my $self   = shift;
@@ -106,6 +106,7 @@ sub _private_routes {
     $r->get('/settings')->to('user#settings');
     $r->post('/settings')->to('user#update_settings');
     $r->post('/coupon/validate')->to('coupon#validate');
+    $r->get('/body/dimensions')->to('body#dimensions');
 
     $measurements->get('/')->to('measurement#index');
     $measurements->post('/')->to('measurement#update');

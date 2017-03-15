@@ -47,7 +47,6 @@ sub register {
     $app->helper( clothes2status       => \&clothes2status );
     $app->helper( clothes_measurements => \&clothes_measurements );
     $app->helper( order2link           => \&order2link );
-    $app->helper( timezone             => \&timezone );
     $app->helper( payment_done         => \&payment_done );
     $app->helper( waiting_deposit      => \&waiting_deposit );
     $app->helper( waiting_shipped      => \&waiting_shipped );
@@ -292,29 +291,6 @@ sub order2link {
     return Mojo::ByteStream->new( Mojo::DOM::HTML::_render($tree) );
 }
 
-=head2 timezone
-
-    % $order->create_date->hms    # 06:56:43
-    % timezone($order->create_date);
-    % $order->create_date->hms    # 15:56:43
-
-=cut
-
-sub timezone {
-    my ( $self, $dt ) = @_;
-    my $tz = $self->config->{timezone};
-
-    return $tz unless $dt;
-    return $dt unless $tz;
-
-    ## when you create DateTime object without time zone specified, "floating" time zone is set
-    ## first call of set_time_zone change time zone to UTC without conversion
-    ## second call of set_time_zone change UTC to $timezone
-    $dt->set_time_zone('UTC');
-    $dt->set_time_zone($tz);
-    return $dt;
-}
-
 =head2 payment_done($order)
 
     # 결제대기 -> 결제완료
@@ -350,11 +326,11 @@ sub payment_done {
     my ( $amount, $payment_date );
     if ($payment) {
         $amount       = $payment->amount;
-        $payment_date = $self->timezone( $payment->update_date->clone );
+        $payment_date = $payment->update_date->clone;
     }
     else {
         $amount       = $self->category_price($order) + 3_000;
-        $payment_date = $self->timezone( $order->update_date->clone );
+        $payment_date = $order->update_date->clone;
     }
 
     my $subject = sprintf( "[열린옷장] %s님의 결제내역", $user->name );
@@ -525,13 +501,10 @@ sub waiting_shipped {
     my @target = sort keys %target;
 
     if ( "@source" ne "@target" ) {
-        ## 일치하지 않으면 진행하면 아니됨
         my $msg = "주문서 품목과 대여품목이 일치하지 않습니다.";
-        $self->log->error($msg);
-        $self->log->error("주문서품목: @source");
-        $self->log->error("대여품목: @target");
-        $self->flash( alert => $msg );
-        return;
+        $self->log->warn($msg);
+        $self->log->warn("주문서품목: @source");
+        $self->log->warn("대여품목: @target");
     }
 
     my $guard = $self->schema->txn_scope_guard;
@@ -539,15 +512,21 @@ sub waiting_shipped {
         my $detail  = $source{$category};
         my $clothes = $target{$category};
 
-        my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
-        $detail->update(
-            {
-                name         => $name,
-                status_id    => $RENTAL,
-                clothes_code => $clothes->code,
-            }
-        );
-        $clothes->update( { status_id => $RENTAL } );
+        if ($clothes) {
+            my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
+            $detail->update(
+                {
+                    name         => $name,
+                    status_id    => $RENTAL,
+                    clothes_code => $clothes->code,
+                }
+            );
+
+            $clothes->update( { status_id => $RENTAL } );
+        }
+        else {
+            $detail->update( { name => "$category - 대여안함" } );
+        }
     }
 
     $order->update( { status_id => $RENTAL } );
@@ -710,6 +689,14 @@ sub categories {
         my $details = $order->order_details( { clothes_code => { '!=' => undef } } );
         while ( my $detail = $details->next ) {
             push @categories, $detail->clothes->category;
+        }
+
+        $details = $order->order_details( { desc => { '!=' => 'additional' }, clothes_code => undef } );
+        while ( my $detail = $details->next ) {
+            my $name = $detail->name;
+            ($name) = split / - /, $name;
+            next unless $name =~ m/^[a-z]/;
+            push @categories, $name;
         }
     }
 
@@ -972,6 +959,7 @@ sub date_calc {
     my $wearon_date   = $dates->{wearon};
 
     if ($shipping_date) {
+        $shipping_date->set_time_zone($tz);
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
         my $year = $shipping_date->year;
         my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
@@ -999,6 +987,7 @@ sub date_calc {
         return \%dates;
     }
     elsif ($wearon_date) {
+        $wearon_date->set_time_zone($tz);
         my $year = $wearon_date->year;
         my @holidays = $self->holidays( $year, $year + 1 );
 
@@ -1032,7 +1021,7 @@ sub payment_deadline {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    my $wearon_date = $self->timezone( $order->wearon_date );
+    my $wearon_date = $order->wearon_date;
     my $dates       = $self->date_calc( { wearon => $wearon_date } );
     my $deadline    = $dates->{shipping}->clone;
     $deadline->set_hour(10);

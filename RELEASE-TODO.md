@@ -1,7 +1,5 @@
 
-    $ mysql < OpenCloset-Schema/db/alter/111-user-address-name-phone.sql
-    $ mysql < OpenCloset-Schema/db/alter/110-order-shipping-misc.sql
-    $ mysql < OpenCloset-Schema/db/alter/114-user-info-jacket-skirt-size.sql
-    $ closetpan OpenCloset::Schema OpenCloset::Common OpenCloset::Plugin::Helpers
-    $ bower install
+    $ cpanm Parcel::Track::KR::CJKorea      # 0.005
+    $ closetpan OpenCloset::Plugin::Helpers # v0.0.14
+    $ closetpan OpenCloset::Size::Guess::DB # 0.006
     $ grunt

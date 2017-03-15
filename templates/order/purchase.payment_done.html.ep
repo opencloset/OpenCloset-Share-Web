@@ -127,6 +127,7 @@
   <button type="submit" class="btn btn-primary">검색</button>
 </form>
 
+<div id="order-categories" data-categories="<%= join(' ', categories($order)) %>"></div>
 <form id="form-update-order" action="<%= url_for('/orders/' . $order->id) %>">
   <input name="status_id" type="hidden" value="<%= $WAITING_SHIPPED %>">
   <input id="rental_date" name="rental_date" type="hidden" value="<%= $order->rental_date ? $order->rental_date->ymd : '' %>">

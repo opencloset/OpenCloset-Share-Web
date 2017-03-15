@@ -1,5 +1,6 @@
+@opencloset-base-color: #ffe109;
 .navbar-oc {
-    background-color: #ff5;
+    background-color: @opencloset-base-color;
 }
 .navbar-oc .navbar-brand {
   padding: 0;
@@ -63,7 +64,7 @@
 .list-order-guide {
     .active {
         font-weight: bold;
-        background-color: #ff5;
+        background-color: @opencloset-base-color;
     }
 }
 .payment-info {
@@ -99,4 +100,25 @@
 }
 .btn-submit {
   margin-top: 20px;
+}
+#body-average .table {
+    tr {
+        text-align: right;
+    }
+    th {
+        text-align: right;
+    }
+}
+footer {
+    background-color: #eee;
+}
+.btn-opencloset {
+    @bg-color: @opencloset-base-color;
+    @color: #000;
+    background-color: @bg-color;
+    color: @color;
+    &:hover {
+        background-color: darken(@bg-color, 10%);
+        color: lighten(@color, 10%);
+    }
 }
