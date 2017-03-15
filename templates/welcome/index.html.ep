@@ -1,75 +1,115 @@
 % layout 'welcome';
-% title "열린옷장 '온라인 정장대여 서비스' 란?";
+% title "열린옷장 '온라인 정장대여' 서비스";
 
-<h1>열린옷장 '온라인 정장대여 서비스' 란?</h1>
+<h1>
+  %= title
+  <small>beta</small>
+</h1>
 
-<ul>
-  <li>거리, 시간상 열린옷장 오프라인 공간을 방문할 수 없는 분들을 위한 온라인 택배 서비스입니다.</li>
-  <li>대여자가 직접 측정한 신체사이즈를 바탕으로 원하시는 스타일의 정장을 검색 제안합니다.</li>
-  <li>언제든 온라인으로 주문하고, 어디서든 택배로 받을 수 있습니다.</li>
-</ul>
-
-<h2>아직은 beta 서비스인 이유</h2>
 <p>
-  열린옷장은 그동안 축적된 약 5 만 명 이상의 대여 데이터를 기반으로, 대여자의 몸에 잘 맞는 옷을
-  컴퓨터 프로그램이 추천하는 혁신적인 의류검색 엔진을 개발 중입니다. 더 많은 대여 케이스 축적을
-  통해 정확도를 높여 나아가고 있습니다. 그래서 아직은 beta 서비스입니다.
+  거리, 시간상 열린옷장 오프라인 공간을 방문할 수 없는 분들을 위한 온라인 택배 서비스입니다.
+</p>
+<p>
+  대여자가 직접 측정한 신체사이즈를 바탕으로 원하시는 정장을 검색하여 제안합니다.
+</p>
+<p>
+  약 5만명 이상의 대여 데이터를 기반으로, 대여자의 몸에 잘 맞는 옷을 컴퓨터 프로그램이 추천하는 혁신적인 의류검색 엔진을 경험해보세요.
 </p>
 
-<h2>혁신적인 의류검색을 경험해보세요.</h2>
-<p>
-  직접 측정한 신체사이즈와 원하는 스타일을 입력하시면 적합한 의류를 찾은 후 사진과 함께 제안해
-  드립니다. 그 중 원하는 의류를 대여자가 직접 선택할 수 있습니다. 다만, 검색된 의류가 적합하지
-  않다고 판단되면 선택하신 의류와 유사한 다른 의류를 배송할 수도 있습니다.
-</p>
+<h2>[온라인 정장대여 방법]</h2>
+<div class="row">
+  <ul class="col-md-offset-3 col-md-6">
+    <li>
+      <div class="step-header">
+        00 회원가입 및 로그인
+      </div>
+      <div class="step-body">
+        정확한 배송을 위해 성명, 전화번호, 주소 등을 기입합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li>
+      <div class="step-header">
+        01 셀프 사이즈 측정
+      </div>
+      <div class="step-body">
+        사이즈 측정가이드를 참고하여 신체사이즈를 잰 후 기입합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li>
+      <div class="step-header">
+        02 주문서 작성
+      </div>
+      <div class="step-body">
+        원하는 품목과 스타일, 대여기간 등 주문서를 작성합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li>
+      <div class="step-header">
+        03 의류선택
+      </div>
+      <div class="step-body">
+        주문서에 맞는 의류가 검색되면 의류사진을 보며 선택합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li>
+      <div class="step-header">
+        04 주소입력
+      </div>
+      <div class="step-body">
+        배송받고자 하는 주소와 배송시 요구사항을 정확하게 기입합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li>
+      <div class="step-header">
+        05 결제완료
+      </div>
+      <div class="step-body">
+        배송비를 포함한 대여비용을 카드 결제 및 계좌이체로 결제합니다.
+      </div>
+    </li>
+    <li>
+      <i class="fa fa-angle-down" aria-hidden="true"></i>
+    </li>
+    <li class="step-list-footer">
+      <div class="step-header">
+        의류 배송 &amp; 반납
+      </div>
+      <div class="step-body">
+        <p>
+          주문해주신 의류가 착용일 1일전까지 택배로 도착합니다.
+        </p>
+        <p>
+          입은 후 대여기간 만료 1일 전에 열린옷장으로 발송합니다.
+        </p>
+      </div>
+    </li>
+  </ul>
+</div>
 
-<div class="well rental-how-to">
-  <h3>온라인 정장대여 방법</h3>
-
-  <ol>
-    <li>
-      회원 가입
-      <p>
-        정확한 배송을 위해 성명, 전화번호, 주소 등의 정보를 기입해주세요.
-      </p>
-    </li>
-    <li>
-      셀프 사이즈 측정
-      <p>
-        사이즈 측정가이드를 참고하여 신체사이즈를 잰 후 빠짐없이 기입해주세요.
-      </p>
-    </li>
-    <li>
-      주문서 작성
-      <p>
-        원하시는 품목과 스타일, 대여기간 등 주문서 항목을 기입해주세요.
-      </p>
-    </li>
-    <li>
-      의류 검색 및 선택
-      <p>
-        작성해주신 주문서를 바탕으로 사이즈, 컬러, 스타일 등 조건에 적합한 의류를 검색하여
-        사진과 함께 보여드립니다. 보여드린 의류 중 마음에 드는 의류를 선택할 수 있습니다.
-        <u>단, 아직 베타서비스이므로 검색 결과가 부적합하다고 판단될 경우 다른 의류가 배송될 수 있습니다.</u>
-      </p>
-    </li>
-    <li>
-      결제 완료
-      <p>
-        배송비를 포함한 대여금액을 결제합니다.
-      </p>
-    </li>
-    <li>
-      의류 배송
-      <p>
-        주문해주신 의류를 포장한 후 착용일 1 일전까지 도착하도록 택배 발송합니다.
-      </p>
-    </li>
-    <li>
-      의류 반납
-      <p>
-        대여기간 내에 도착하도록 대여기간 만료 1 일 전에 열린옷장으로 발송해주세요.
-      </p>
-    </li>
-  </ol>
+<div class="row">
+  <div class="col-md-offset-3 col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <a class="btn btn-lg btn-block btn-signup" href="<%= url_for('/signup') %>">회원가입</a>
+      </div>
+      <div class="col-md-6">
+        <a class="btn btn-lg btn-block btn-login" href="<%= url_for('index') %>">로그인</a>
+      </div>
+    </div>
+  </div>
 </div>
