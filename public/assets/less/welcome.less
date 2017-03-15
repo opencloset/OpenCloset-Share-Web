@@ -31,15 +31,24 @@ ul {
     }
 }
 .btn-signup {
+    @bg-color: #ffe109;
+    @color: #000;
     font-weight: bold;
-    background-color: #ffe109;
-    color: #000;
+    background-color: @bg-color;
+    color: @color;
+    &:hover {
+        background-color: darken(@bg-color, 10%);
+        color: lighten(@color, 10%);
+    }
 }
 .btn-login {
+    @bg-color: #000;
+    @color: #fff;
     font-weight: bold;
-    background-color: #000;
-    color: #fff;
+    background-color: @bg-color;
+    color: @color;
     &:hover {
-        color: #eee;
+        background-color: lighten(@bg-color, 10%);
+        color: darken(@color, 10%);
     }
 }

@@ -112,6 +112,12 @@ footer {
     background-color: #eee;
 }
 .btn-opencloset {
-    background-color: #ffe109;
-    color: #000;
+    @bg-color: #ffe109;
+    @color: #000;
+    background-color: @bg-color;
+    color: @color;
+    &:hover {
+        background-color: darken(@bg-color, 10%);
+        color: lighten(@color, 10%);
+    }
 }
