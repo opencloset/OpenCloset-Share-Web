@@ -77,23 +77,17 @@
       <td>
         % my $epoch = $dates->{shipping}->epoch;
         % if ($epoch < $today->epoch) {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
-            <span class="label label-danger">
-              %= $dates->{shipping}->ymd
-            </span>
-          </a>
+          <span class="label label-danger">
+            %= $dates->{shipping}->ymd
+          </span>
         % } elsif ($epoch == $today->epoch) {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
-            <span class="label label-success">
-              %= $dates->{shipping}->ymd
-            </span>
-          </a>
+          <span class="label label-success">
+            %= $dates->{shipping}->ymd
+          </span>
         % } else {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
-            <span class="label label-info">
-              %= $dates->{shipping}->ymd
-            </span>
-          </a>
+          <span class="label label-info">
+            %= $dates->{shipping}->ymd
+          </span>
         % }
       </td>
       <td>
