@@ -4,7 +4,7 @@ https://share.theopencloset.net
 
 ## VERSION ##
 
-v0.0.3
+v0.0.4
 
 ## Dependencies ##
 
