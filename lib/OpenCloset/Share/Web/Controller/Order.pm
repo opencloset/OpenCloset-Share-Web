@@ -11,7 +11,7 @@ use Try::Tiny;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
-    qw/$RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $WAITING_DEPOSIT $PAYBACK/;
+    qw/$RENTAL $RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 
 has schema => sub { shift->app->schema };
 
@@ -211,16 +211,32 @@ sub shipping_list {
     my $s = $self->param('s') || $PAYMENT_DONE;
     my $w = $self->param('wearon_date');
 
-    my $cond = { 'me.status_id' => $s };
-    $cond->{'order.wearon_date'} = $w if $w;
+    my $cond = {
+        online            => 1,
+        'me.wearon_date'  => { '!=' => undef },
+        'order_parcel.id' => { '!=' => undef },
+    };
+
+    $cond->{'me.wearon_date'} = $w if $w;
+
+    ## 배송상태(배송중 or 배송완료) -> 주문서상태(대여중)
+    if ( $s == $WAITING_SHIPPED or $s == $SHIPPED or $s == $DELIVERED ) {
+        $cond->{'order_parcel.status_id'} = $s;
+        $cond->{'me.status_id'}           = $RENTAL;
+    }
+    else {
+        $cond->{'me.status_id'} = $s;
+    }
+
+    my $order_by = $s == $RETURNED ? { -desc => 'me.wearon_date' } : { -asc => 'me.wearon_date' };
     my $attr = {
         page     => $p,
         rows     => 20,
-        join     => 'order',
-        order_by => { -asc => 'order.wearon_date' },
+        join     => 'order_parcel',
+        order_by => $order_by,
     };
 
-    my $rs      = $self->schema->resultset('OrderParcel')->search( $cond, $attr );
+    my $rs      = $self->schema->resultset('Order')->search( $cond, $attr );
     my $pager   = $rs->pager;
     my $pageset = Data::Pageset->new(
         {
@@ -232,7 +248,7 @@ sub shipping_list {
     );
 
     my $today = DateTime->today( time_zone => $self->config->{timezone} );
-    $self->render( parcels => $rs, pageset => $pageset, today => $today );
+    $self->render( orders => $rs, pageset => $pageset, today => $today );
 }
 
 =head2 dates
@@ -551,14 +567,6 @@ sub update_parcel {
     my $comment        = $v->param('comment');
     my $status_id      = $v->param('status_id');
 
-    if ( !$parcel->waybill && $waybill ) {
-        ## 운송장이 입력되면 배송중으로 변경한다
-        $self->update_parcel_status( $order, $SHIPPED );
-    }
-    elsif ($status_id) {
-        $self->update_parcel_status( $order, $status_id );
-    }
-
     if ( $parcel_service or $waybill or $comment ) {
         $parcel->update(
             {
@@ -567,6 +575,14 @@ sub update_parcel {
                 comment        => $comment,
             }
         );
+    }
+
+    if ( !$parcel->waybill && $waybill ) {
+        ## 운송장이 입력되면 배송중으로 변경한다
+        $self->update_parcel_status( $order, $SHIPPED );
+    }
+    elsif ($status_id) {
+        $self->update_parcel_status( $order, $status_id );
     }
 
     $self->respond_to(
