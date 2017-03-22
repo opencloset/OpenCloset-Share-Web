@@ -14,9 +14,15 @@
 
 <ul class="order-status list-inline">
   % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
-  <li>
-    %= status2label($sts, $parcel->status_id == $sts)
-  </li>
+    <li>
+      % if ($parcel->status_id != $sts) {
+        <a href="<%= url_for('/orders/' . $order->id . '/parcel') %>" class="btn-parcel-status" data-status="<%= $sts %>">
+          %= status2label($sts, $parcel->status_id == $sts)
+        </a>
+      % } else {
+        %= status2label($sts, $parcel->status_id == $sts)
+      % }
+    </li>
   % }
 </ul>
 
