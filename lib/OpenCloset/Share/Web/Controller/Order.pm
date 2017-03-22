@@ -539,24 +539,36 @@ sub update_parcel {
     $v->optional('parcel-service');
     $v->optional('waybill')->like(qr/^\d+$/);
     $v->optional('comment');
+    $v->optional('status_id');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
         return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
     }
 
-    my $input = $v->input;
-    if ( defined $input->{'parcel-service'} ) {
-        $input->{parcel_service} = delete $input->{'parcel-service'};
-    }
+    my $parcel_service = $v->param('parcel-service');
+    my $waybill        = $v->param('waybill');
+    my $comment        = $v->param('comment');
+    my $status_id      = $v->param('status_id');
 
-    my $waybill = $parcel->waybill;
-    if ( !$waybill && $input->{waybill} ) {
+    if ( !$parcel->waybill && $waybill ) {
         ## 운송장이 입력되면 배송중으로 변경한다
         $self->update_parcel_status( $order, $SHIPPED );
     }
+    elsif ($status_id) {
+        $self->update_parcel_status( $order, $status_id );
+    }
 
-    $parcel->update($input);
+    if ( $parcel_service or $waybill or $comment ) {
+        $parcel->update(
+            {
+                parcel_service => $parcel_service,
+                waybill        => $waybill,
+                comment        => $comment,
+            }
+        );
+    }
+
     $self->respond_to(
         html => sub    { shift->redirect_to('order.purchase') },
         json => { json => { $parcel->get_columns } }

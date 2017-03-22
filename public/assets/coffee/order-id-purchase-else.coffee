@@ -79,3 +79,20 @@ $ ->
         $.growl.error({ title:textStatus, message: jqXHR.responseJSON.error })
       complete: (jqXHR, textStatus) ->
         $this.removeClass('disabled')
+
+  $('.btn-parcel-status').click (e) ->
+    e.preventDefault()
+    $this = $(@)
+    return if $this.hasClass('disabled')
+    return unless confirm "배송상태를 변경하시겠습니까?"
+
+    $.ajax $this.prop('href'),
+      type: 'PUT'
+      dataType: 'json'
+      data: { status_id: $this.data('status') }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+        $.growl.error({ title:textStatus, message: jqXHR.responseJSON.error })
+      complete: (jqXHR, textStatus) ->
+        $this.removeClass('disabled')
