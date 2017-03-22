@@ -220,7 +220,7 @@ sub shipping_list {
     $cond->{'me.wearon_date'} = $w if $w;
 
     ## 배송상태(배송중 or 배송완료) -> 주문서상태(대여중)
-    if ( $s == $SHIPPED or $s == $DELIVERED ) {
+    if ( $s == $WAITING_SHIPPED or $s == $SHIPPED or $s == $DELIVERED ) {
         $cond->{'order_parcel.status_id'} = $s;
         $cond->{'me.status_id'}           = $RENTAL;
     }
