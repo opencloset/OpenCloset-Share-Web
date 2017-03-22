@@ -567,14 +567,6 @@ sub update_parcel {
     my $comment        = $v->param('comment');
     my $status_id      = $v->param('status_id');
 
-    if ( !$parcel->waybill && $waybill ) {
-        ## 운송장이 입력되면 배송중으로 변경한다
-        $self->update_parcel_status( $order, $SHIPPED );
-    }
-    elsif ($status_id) {
-        $self->update_parcel_status( $order, $status_id );
-    }
-
     if ( $parcel_service or $waybill or $comment ) {
         $parcel->update(
             {
@@ -583,6 +575,14 @@ sub update_parcel {
                 comment        => $comment,
             }
         );
+    }
+
+    if ( !$parcel->waybill && $waybill ) {
+        ## 운송장이 입력되면 배송중으로 변경한다
+        $self->update_parcel_status( $order, $SHIPPED );
+    }
+    elsif ($status_id) {
+        $self->update_parcel_status( $order, $status_id );
     }
 
     $self->respond_to(
