@@ -2,13 +2,13 @@
 % title '주문서 목록';
 
 % use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
-% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED $CHOOSE_CLOTHES $CHOOSE_ADDRESS $RETURNED/;
+% use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $CHOOSE_CLOTHES $CHOOSE_ADDRESS $RETURNED/;
 
 <h2>주문서 목록</h2>
 
 % my $status = param('s') || $PAYMENT_DONE;
 <ul class="order-status list-inline">
-  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
+  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURNED) {
   <li>
     <a href="<%= url_for->query(s => $sts) %>">
       %= status2label($sts, $status == $sts)
@@ -32,100 +32,95 @@
     </tr>
   </thead>
   <tbody>
-    % while (my $parcel = $parcels->next) {
-    % my $order = $parcel->order;
-    % my $user = $order->user;
-    % my $user_info = $user->user_info;
-    % my $detail = $order->order_details( { name => $JACKET } )->next;
-    <tr>
-      <td>
-        <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
-          %= $order->id
-        </a>
-      </td>
-      <td><%= $user->name %></td>
-      <td>
-        % if ($detail && $detail->clothes_code) {
-        % my $clothes = $detail->clothes;
-        %= clothes2link($clothes, { with_status => 1 })
-        % } else {
-        없음
-        % }
-      </td>
-      <td>
-        <ul class="list-inline">
-          % my @categories = categories($order);
-          % for my $c (@categories) {
-          <li>
-            <span class="label label-primary">
-              %= $LABEL_MAP{$c};
-            </span>
-          </li>
+    % while (my $order = $orders->next) {
+      % my $parcel = $order->order_parcel;
+      % next unless $parcel;
+      % my $user = $order->user;
+      % my $user_info = $user->user_info;
+      % my $detail = $order->order_details( { name => $JACKET } )->next;
+      <tr>
+        <td>
+          <a href="<%= url_for('/orders/' . $order->id . '/purchase') %>">
+            %= $order->id
+          </a>
+        </td>
+        <td><%= $user->name %></td>
+        <td>
+          % if ($detail && $detail->clothes_code) {
+            % my $clothes = $detail->clothes;
+            %= clothes2link($clothes, { with_status => 1 })
+          % } else {
+            없음
           % }
-        </ul>
-      </td>
-      <td>
-        % if (my $comment = $parcel->comment) {
-        <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
-        % } else {
-        <i class="fa fa-comment-o fa-fw"></i>
-        % }
-      </td>
-      % my $wearon_date = $order->wearon_date;
-      % my $ymd = $order->wearon_date->ymd;
-      % my $dates = date_calc({wearon => $wearon_date});
-      <td>
-        % my $epoch = $dates->{shipping}->epoch;
-        % if ($epoch < $today->epoch) {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
+        </td>
+        <td>
+          <ul class="list-inline">
+            % my @categories = categories($order);
+            % for my $c (@categories) {
+              <li>
+                <span class="label label-primary">
+                  %= $LABEL_MAP{$c};
+                </span>
+              </li>
+            % }
+          </ul>
+        </td>
+        <td>
+          % if (my $comment = $parcel->comment || '') {
+            <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
+          % } else {
+            <i class="fa fa-comment-o fa-fw"></i>
+          % }
+        </td>
+        % my $wearon_date = $order->wearon_date;
+        % my $ymd = $wearon_date->ymd;
+        % my $dates = date_calc({wearon => $wearon_date});
+        <td>
+          % my $epoch = $dates->{shipping}->epoch;
+          % if ($epoch < $today->epoch) {
             <span class="label label-danger">
               %= $dates->{shipping}->ymd
             </span>
-          </a>
-        % } elsif ($epoch == $today->epoch) {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
+          % } elsif ($epoch == $today->epoch) {
             <span class="label label-success">
               %= $dates->{shipping}->ymd
             </span>
-          </a>
-        % } else {
-          <a href="<%= url_with->query([wearon_date => $order->wearon_date->ymd]) %>">
+          % } else {
             <span class="label label-info">
               %= $dates->{shipping}->ymd
             </span>
-          </a>
-        % }
-      </td>
-      <td>
-        % if ($dates->{arrival}->epoch <= $today->epoch) {
-          <span class="label label-danger">
-            %= $dates->{arrival}->ymd
-          </span>
-        % } else {
-          <span class="label label-info">
-            %= $dates->{arrival}->ymd
-          </span>
-        % }
-      </td>
-      % if ($wearon_date->epoch <= $today->epoch) {
+          % }
+        </td>
         <td>
-          <a href="<%= url_with->query([wearon_date => $ymd]) %>">
+          % if ($dates->{arrival}->epoch <= $today->epoch) {
             <span class="label label-danger">
-              %= $ymd
+              %= $dates->{arrival}->ymd
             </span>
-          </a>
-        </td>
-      % } else {
-        <td>
-          <a href="<%= url_with->query([wearon_date => $ymd]) %>">
+          % } else {
             <span class="label label-info">
-              %= $ymd
+              %= $dates->{arrival}->ymd
             </span>
-          </a>
+          % }
         </td>
-      % }
-      <td><%= status2label($order->status) %></td>
-    </tr>
+        % if ($wearon_date->epoch <= $today->epoch) {
+          <td>
+            <a href="<%= url_with->query([wearon_date => $ymd]) %>">
+              <span class="label label-danger">
+                %= $ymd
+              </span>
+            </a>
+          </td>
+        % } else {
+          <td>
+            <a href="<%= url_with->query([wearon_date => $ymd]) %>">
+              <span class="label label-info">
+                %= $ymd
+              </span>
+            </a>
+          </td>
+        % }
+        <td><%= status2label($order->status) %></td>
+      </tr>
     % }
   </tbody>
 </table>
