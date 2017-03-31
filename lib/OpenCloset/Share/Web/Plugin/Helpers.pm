@@ -61,7 +61,6 @@ sub register {
     $app->helper( send_mail            => \&send_mail );
     $app->helper( check_measurement    => \&check_measurement );
     $app->helper( category_price       => \&category_price );
-    $app->helper( merchant_uid         => \&merchant_uid );
     $app->helper( formatted            => \&formatted );
     $app->helper( date_calc            => \&date_calc );
     $app->helper( payment_deadline     => \&payment_deadline );
@@ -848,27 +847,6 @@ sub category_price {
 
     return $tie_price if $category;
     return $price;
-}
-
-=head2 merchant_uid
-
-    # merchant-1484777630841-Wfg
-    # same as javascript: merchant-' + new Date().getTime() + "-<random_3_chars>"
-    my $merchant_uid = $self->merchant_uid;
-
-    # opencloset-share-3-1484777630841-D8d
-    my $merchant_uid = $self->merchant_uid( "opencloset-share-%d-", $order->id );
-
-=cut
-
-sub merchant_uid {
-    my ( $self, $prefix_fmt, @prefix_params ) = @_;
-
-    my $prefix = $prefix_fmt ? sprintf( $prefix_fmt, @prefix_params ) : "merchant_";
-    my ( $seconds, $microseconds ) = Time::HiRes::gettimeofday;
-    my $random = String::Random->new->randregex(q{-\w\w\w});
-
-    return $prefix . $seconds . $microseconds . $random;
 }
 
 =head2 formatted( $type, $string )
