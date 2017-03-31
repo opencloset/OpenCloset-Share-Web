@@ -2,7 +2,9 @@
   <small>
     {{height}}cm(키)
     {{weight}}kg(몸무게)
+    {{#if male}}
     {{origin.waist}}cm(허리)
+    {{/if}}
     {{#if origin.bust}}{{origin.bust}}cm(가슴){{/if}}
     {{#if origin.topbelly}}{{origin.topbelly}}cm(윗배){{/if}}
     의 <strong>평균 신체 치수</strong>입니다.
@@ -13,22 +15,34 @@
     <tr>
       <th>키 <small>cm</small></th>
       <th>몸무게 <small>kg</small></th>
+      {{#if male}}
       <th>허리둘레 <small>cm</small></th>
+      {{/if}}
       <th>가슴둘레 <small>cm</small></th>
       <th>윗배둘레 <small>cm</small></th>
       <th>팔길이 <small>cm</small></th>
+      {{#if male}}
       <th>허벅지둘레 <small>cm</small></th>
+      {{else}}
+      <th>엉덩이둘레 <small>cm</small></th>
+      {{/if}}
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>{{height}}</td>
       <td>{{weight}}</td>
+      {{#if male}}
       <td>{{waist}}</td>
+      {{/if}}
       <td>{{bust}}</td>
       <td>{{topbelly}}</td>
       <td>{{arm}}</td>
+      {{#if male}}
       <td>{{thigh}}</td>
+      {{else}}
+      <td>{{hip}}</td>
+      {{/if}}
     </tr>
   </tbody>
 </table>

@@ -67,6 +67,7 @@ $ ->
           waist:    waist
           bust:     bust
           topbelly: topbelly
+        data.male = data.gender is 'male'
         template   = JST['body/dimensions']
         html       = template(data)
         $('#body-average').html(html)
