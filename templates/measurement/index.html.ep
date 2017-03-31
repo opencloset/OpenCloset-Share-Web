@@ -202,30 +202,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>가슴둘레</td>
-              <td class="text-muted">73 ~ 76</td>
-              <td class="text-muted">77 ~ 82</td>
-              <td class="text-muted">83 ~ 87</td>
-              <td class="text-muted">88 ~ 90</td>
-              <td class="text-muted">91 ~ 95</td>
-              <td class="text-muted">96 ~ 99</td>
-              <td class="text-muted">100 ~ 104</td>
-              <td class="text-muted">105 ~ 109</td>
-              <td class="text-muted">110 ~ 113</td>
-            </tr>
-            <tr>
-              <td>팔길이</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">57 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">55 ~ 62</td>
-              <td class="text-muted">55 ~ 62</td>
-            </tr>
             <tr class="active">
               <td>윗배둘레</td>
               <td>67 ~ 70</td>
@@ -264,18 +240,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>허리둘레</td>
-              <td class="text-muted">59 ~ 68</td>
-              <td class="text-muted">64 ~ 73</td>
-              <td class="text-muted">68 ~ 76</td>
-              <td class="text-muted">74 ~ 80</td>
-              <td class="text-muted">81 ~ 88</td>
-              <td class="text-muted">89 ~ 94</td>
-              <td class="text-muted">94 ~ 100</td>
-              <td class="text-muted">101 ~ 108</td>
-              <td class="text-muted">108 ~ 110</td>
-            </tr>
             <tr class="active">
               <td>엉덩이둘레</td>
               <td>81 ~ 85</td>
@@ -287,18 +251,6 @@
               <td>111 ~ 116</td>
               <td>117 ~ 119</td>
               <td>120 ~ 123</td>
-            </tr>
-            <tr>
-              <td>치마길이</td>
-              <td class="text-muted">47 ~ 51</td>
-              <td class="text-muted">48 ~ 51</td>
-              <td class="text-muted">51</td>
-              <td class="text-muted">51</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">53</td>
-              <td class="text-muted">53</td>
             </tr>
           </tbody>
         </table>
