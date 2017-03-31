@@ -77,14 +77,6 @@
             <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="가랑이 가장 위까지 줄자를 올린 후 수평으로 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_thigh_circumference_all.mp4">
           </div>
         </div>
-        <div class="form-group">
-          <label class="col-sm-5 control-label">
-            다리길이 <small>cm</small>
-          </label>
-          <div class="col-sm-7">
-            <input name="leg" type="text" class="form-control m-preview" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 발바닥이 지면에 닿는 길이까지 측정한다.">
-          </div>
-        </div>
       % } elsif ($gender eq 'female') {
         <!-- female -->
         <div class="form-group">
