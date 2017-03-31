@@ -36,14 +36,16 @@
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
-      <div class="form-group">
-        <label class="col-sm-5 control-label">
-          허리둘레 <small>cm</small>
-        </label>
-        <div class="col-sm-7">
-          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+      % if ($gender eq 'male') {
+        <div class="form-group">
+          <label class="col-sm-5 control-label">
+            허리둘레 <small>cm</small>
+          </label>
+          <div class="col-sm-7">
+            <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+          </div>
         </div>
-      </div>
+      % }
       <div class="form-group">
         <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
         <div class="col-sm-7">
@@ -83,12 +85,6 @@
           <label class="col-sm-5 control-label">엉덩이둘레 <small>cm</small></label>
           <div class="col-sm-7">
             <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" title="엉덩이의 가장 튀어나온 부분을 수평으로 측정한다." data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-5 control-label">무릎길이 <small>cm</small></label>
-          <div class="col-sm-7">
-            <input name="knee" type="text" class="form-control m-preview" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 무릎뼈 바로 위까지의 길이를 측정한다.">
           </div>
         </div>
       % }
