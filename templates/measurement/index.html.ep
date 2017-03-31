@@ -36,14 +36,16 @@
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
-      <div class="form-group">
-        <label class="col-sm-5 control-label">
-          허리둘레 <small>cm</small>
-        </label>
-        <div class="col-sm-7">
-          <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+      % if ($gender eq 'male') {
+        <div class="form-group">
+          <label class="col-sm-5 control-label">
+            허리둘레 <small>cm</small>
+          </label>
+          <div class="col-sm-7">
+            <input name="waist" type="text" class="form-control m-preview" placeholder="허리둘레 cm" value="<%= $user_info->waist || '' %>" title="골반의 위치를 확인한 후 골반 바로 윗 부분의 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_waist_measurement_all.mp4">
+          </div>
         </div>
-      </div>
+      % }
       <div class="form-group">
         <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
         <div class="col-sm-7">
@@ -77,26 +79,12 @@
             <input name="thigh" type="text" class="form-control m-preview" placeholder="허벅지둘레 cm" value="<%= $user_info->thigh || '' %>" title="가랑이 가장 위까지 줄자를 올린 후 수평으로 둘레를 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_thigh_circumference_all.mp4">
           </div>
         </div>
-        <div class="form-group">
-          <label class="col-sm-5 control-label">
-            다리길이 <small>cm</small>
-          </label>
-          <div class="col-sm-7">
-            <input name="leg" type="text" class="form-control m-preview" placeholder="다리길이 cm" value="<%= $user_info->leg || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 발바닥이 지면에 닿는 길이까지 측정한다.">
-          </div>
-        </div>
       % } elsif ($gender eq 'female') {
         <!-- female -->
         <div class="form-group">
           <label class="col-sm-5 control-label">엉덩이둘레 <small>cm</small></label>
           <div class="col-sm-7">
             <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" title="엉덩이의 가장 튀어나온 부분을 수평으로 측정한다." data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-sm-5 control-label">무릎길이 <small>cm</small></label>
-          <div class="col-sm-7">
-            <input name="knee" type="text" class="form-control m-preview" placeholder="무릎길이 cm" value="<%= $user_info->knee || '' %>" title="허리 둘레를 측정한 위치(골반 바로 윗부분)부터 무릎뼈 바로 위까지의 길이를 측정한다.">
           </div>
         </div>
       % }
@@ -137,7 +125,7 @@
           <li>cm = inch x 2.54</li>
           <li>입력값이 많을 수록 더 정확한 평균 사이즈가 표시됩니다.</li>
           <li>배가 나온 체형은 허리둘레보다 배둘레가 큽니다.</li>
-          <li>대부분의 경우 팔길이와 다리길이는 키에 비례합니다.</li>
+          <li>대부분의 경우 팔길이는 키에 비례합니다.</li>
         </ul>
         <hr>
       </div>
@@ -214,30 +202,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>가슴둘레</td>
-              <td class="text-muted">73 ~ 76</td>
-              <td class="text-muted">77 ~ 82</td>
-              <td class="text-muted">83 ~ 87</td>
-              <td class="text-muted">88 ~ 90</td>
-              <td class="text-muted">91 ~ 95</td>
-              <td class="text-muted">96 ~ 99</td>
-              <td class="text-muted">100 ~ 104</td>
-              <td class="text-muted">105 ~ 109</td>
-              <td class="text-muted">110 ~ 113</td>
-            </tr>
-            <tr>
-              <td>팔길이</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">56 ~ 60</td>
-              <td class="text-muted">57 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">58 ~ 61</td>
-              <td class="text-muted">55 ~ 62</td>
-              <td class="text-muted">55 ~ 62</td>
-            </tr>
             <tr class="active">
               <td>윗배둘레</td>
               <td>67 ~ 70</td>
@@ -276,18 +240,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>허리둘레</td>
-              <td class="text-muted">59 ~ 68</td>
-              <td class="text-muted">64 ~ 73</td>
-              <td class="text-muted">68 ~ 76</td>
-              <td class="text-muted">74 ~ 80</td>
-              <td class="text-muted">81 ~ 88</td>
-              <td class="text-muted">89 ~ 94</td>
-              <td class="text-muted">94 ~ 100</td>
-              <td class="text-muted">101 ~ 108</td>
-              <td class="text-muted">108 ~ 110</td>
-            </tr>
             <tr class="active">
               <td>엉덩이둘레</td>
               <td>81 ~ 85</td>
@@ -299,18 +251,6 @@
               <td>111 ~ 116</td>
               <td>117 ~ 119</td>
               <td>120 ~ 123</td>
-            </tr>
-            <tr>
-              <td>치마길이</td>
-              <td class="text-muted">47 ~ 51</td>
-              <td class="text-muted">48 ~ 51</td>
-              <td class="text-muted">51</td>
-              <td class="text-muted">51</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">52</td>
-              <td class="text-muted">53</td>
-              <td class="text-muted">53</td>
             </tr>
           </tbody>
         </table>

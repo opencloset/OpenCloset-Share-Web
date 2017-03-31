@@ -72,7 +72,8 @@ sub update {
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
-        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+        $self->log->error( 'Parameter validation failed: ' . join( ', ', @$failed ) );
+        return $self->error( 400, '입력값이 잘못되었습니다.' );
     }
 
     my $user      = $self->stash('user');
@@ -122,7 +123,7 @@ sub update {
 
     my $failed = $self->check_measurement( $user, $user_info );
     if ($failed) {
-        $self->flash( message => 'Successfully update measurements' );
+        $self->flash( message => '신체치수가 수정되었습니다.' );
         $self->redirect_to('/measurements');
     }
     else {
