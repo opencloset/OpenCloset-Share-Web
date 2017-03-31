@@ -1,4 +1,5 @@
     $ grunt
+    $ closetpan OpenCloset::Size::Guest::DB    # 0.007
 
 v0.0.4
 
