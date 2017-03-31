@@ -20,7 +20,7 @@ sub dimensions {
     $v->required('height')->like(qr/^\d+$/);
     $v->required('weight')->like(qr/^\d+$/);
     $v->required('gender')->like(qr/^(fe)?male$/);
-    $v->required('waist')->like(qr/^\d+$/);
+    $v->optional('waist')->like(qr/^\d+$/);
     $v->optional('bust')->like(qr/^\d+$/);
     $v->optional('topbelly')->like(qr/^\d+$/);
     if ( $v->has_error ) {
