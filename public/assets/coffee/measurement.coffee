@@ -51,7 +51,7 @@ $ ->
 
   $('.btn-size.active').trigger('click')
 
-  $('input[name=height],input[name=weight],input[name=waist],input[name=bust],input[name=topbelly]').focusout (e) ->
+  $('input[name=height],input[name=weight],input[name=waist],input[name=bust],input[name=topbelly],input[name=hip]').focusout (e) ->
     gender = $('#gender').data('gender')
     query = "#{$('#form-body-dimensions').serialize()}&gender=#{gender}"
 
@@ -67,6 +67,7 @@ $ ->
           waist:    waist
           bust:     bust
           topbelly: topbelly
+        data.male = data.gender is 'male'
         template   = JST['body/dimensions']
         html       = template(data)
         $('#body-average').html(html)

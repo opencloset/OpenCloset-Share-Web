@@ -1,3 +1,6 @@
+    $ grunt
+    $ closetpan OpenCloset::Size::Guess::DB    # 0.007
+
 v0.0.4
 
     $ cpanm Parcel::Track::KR::CJKorea      # 0.005
