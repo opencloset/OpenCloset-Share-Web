@@ -785,7 +785,7 @@ sub check_measurement {
     my $gender = $user_info->gender || 'male'; # TODO: 원래 없으면 안됨
 
     my $input = {};
-    map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh leg hip knee/;
+    map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh hip knee/;
 
     my $v = $self->validation;
     $v->input($input);
@@ -798,7 +798,6 @@ sub check_measurement {
     if ( $gender eq 'male' ) {
         $v->required('waist')->size( 2, 3 );
         $v->required('thigh')->size( 2, 3 );
-        $v->required('leg')->size( 2, 3 );
     }
     elsif ( $gender eq 'female' ) {
         $v->required('hip')->size( 2, 3 );
