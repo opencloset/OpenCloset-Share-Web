@@ -96,7 +96,6 @@ sub create {
             user_id          => $user->id,
             status_id        => $status_id,
             wearon_date      => $wearon_date,
-            rental_date      => $dates->{rental}->datetime(),
             target_date      => $dates->{target}->datetime(),
             user_target_date => $dates->{target}->datetime(),
             pre_color        => $v->param('pre_color'),
@@ -404,7 +403,6 @@ sub update_order {
     $v->optional('user_address');
     $v->optional('clothes_code');
     $v->optional('wearon_date');
-    $v->optional('rental_date');
     $v->optional('target_date');
     $v->optional('shipping_misc');
 
