@@ -316,7 +316,9 @@ sub payment_done {
     chomp $msg;
     $self->sms( $user_info->phone, $msg );
 
-    $order->update( { status_id => $PAYMENT_DONE } );
+    my $dates = $self->date_calc( { wearon => $order->wearon_date } );
+
+    $order->update( { status_id => $PAYMENT_DONE, rental_date => $dates->{rental} } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
     my $detail = $order->order_details( { name => 'jacket' } )->next;
 
