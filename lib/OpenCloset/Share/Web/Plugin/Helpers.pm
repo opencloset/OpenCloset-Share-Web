@@ -803,7 +803,6 @@ sub check_measurement {
     }
     elsif ( $gender eq 'female' ) {
         $v->required('hip')->size( 2, 3 );
-        $v->required('knee')->size( 2, 3 );
     }
     else {
         my $msg = "Wrong user gender: $gender($user_id)";
