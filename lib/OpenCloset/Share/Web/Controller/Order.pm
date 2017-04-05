@@ -12,6 +12,7 @@ use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTAL $RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
+use OpenCloset::Size::Guess;
 
 has schema => sub { shift->app->schema };
 
@@ -528,8 +529,24 @@ sub purchase {
         my @staff;
         my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
         push @staff, { value => $_->id, text => $_->name } for @users;
-        $self->stash( staff => \@staff );
-        $self->render( template => 'order/purchase.payment_done' );
+
+        my $user      = $order->user;
+        my $user_info = $user->user_info;
+        my $guess     = OpenCloset::Size::Guess->new(
+            'DB',
+            height     => $user_info->height,
+            weight     => $user_info->weight,
+            gender     => $user_info->gender,
+            _time_zone => $self->config->{timezone},
+            _schema    => $self->schema,
+        );
+
+        my $info = $guess->guess;
+        $self->render(
+            staff    => \@staff,
+            guess    => $info,
+            template => 'order/purchase.payment_done'
+        );
     }
     else {
         $self->render( template => 'order/purchase', parcel => $parcel );

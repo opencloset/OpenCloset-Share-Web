@@ -19,7 +19,7 @@
 <hr>
 
 <div class="order-info">
-  %= include 'partials/order-info';
+  %= include 'partials/order-info', guess => $guess;
 </div>
 
 <hr>

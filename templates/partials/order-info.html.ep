@@ -49,20 +49,20 @@
     <li>
       <span class="label label-default" title="다리">
         다리
-        %= $user_info->leg || 0
+        %= $user_info->leg || int($guess->{leg}) || 0
       </span>
     </li>
     % } else {
     <li>
       <span class="label label-default" title="허리">
         허리
-        %= $user_info->waist || 0
+        %= $user_info->waist || int($guess->{waist}) || 0
       </span>
     </li>
     <li>
       <span class="label label-default" title="무릎">
         무릎
-        %= $user_info->knee || 0
+        %= $user_info->knee || int($guess->{knee}) || 0
       </span>
     </li>
     <li>
