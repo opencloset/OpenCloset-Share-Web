@@ -17,7 +17,7 @@ requires 'Try::Tiny;';
 
 # cpan.theopencloset.net
 requires 'Iamport::REST::Client',               'v0.0.4';
-requires 'OpenCloset::Common',                  'v0.0.13';
+requires 'OpenCloset::Common',                  'v0.0.16';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
 requires 'OpenCloset::Plugin::Helpers',         'v0.0.15';
 requires 'OpenCloset::Schema',                  '0.047';
