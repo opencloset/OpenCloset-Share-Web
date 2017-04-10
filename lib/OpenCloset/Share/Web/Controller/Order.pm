@@ -9,6 +9,7 @@ use JSON qw/decode_json/;
 use Try::Tiny;
 
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
+use OpenCloset::Constants::Measurement qw/%AVG_LEG_BY_HEIGHT %AVG_KNEE_BY_HEIGHT/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTAL $RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
@@ -530,21 +531,46 @@ sub purchase {
         my @users = $self->schema->resultset('User')->search( { 'user_info.staff' => 1 }, { join => 'user_info' } );
         push @staff, { value => $_->id, text => $_->name } for @users;
 
-        my $user      = $order->user;
-        my $user_info = $user->user_info;
-        my $guess     = OpenCloset::Size::Guess->new(
-            'DB',
-            height     => $user_info->height,
-            weight     => $user_info->weight,
-            gender     => $user_info->gender,
-            _time_zone => $self->config->{timezone},
-            _schema    => $self->schema,
-        );
+        my $user       = $order->user;
+        my $user_info  = $user->user_info;
+        my $gender     = $user_info->gender;
+        my $height     = $user_info->height;
+        my $guess_info = {};
 
-        my $info = $guess->guess;
+        if ( $gender eq 'male' ) {
+            my $leg = $AVG_LEG_BY_HEIGHT{$height};
+            unless ( $guess_info->{leg} = $leg ) {
+                my $guess = OpenCloset::Size::Guess->new(
+                    'DB',
+                    height     => $user_info->height,
+                    weight     => $user_info->weight,
+                    gender     => $user_info->gender,
+                    _time_zone => $self->config->{timezone},
+                    _schema    => $self->schema,
+                );
+
+                $guess_info = $guess->guess;
+            }
+        }
+        else {
+            my $knee = $AVG_LEG_BY_HEIGHT{$height};
+            unless ( $guess_info->{knee} = $knee ) {
+                my $guess = OpenCloset::Size::Guess->new(
+                    'DB',
+                    height     => $user_info->height,
+                    weight     => $user_info->weight,
+                    gender     => $user_info->gender,
+                    _time_zone => $self->config->{timezone},
+                    _schema    => $self->schema,
+                );
+
+                $guess_info = $guess->guess;
+            }
+        }
+
         $self->render(
             staff    => \@staff,
-            guess    => $info,
+            guess    => $guess_info,
             template => 'order/purchase.payment_done'
         );
     }
