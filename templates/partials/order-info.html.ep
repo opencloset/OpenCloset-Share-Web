@@ -53,7 +53,7 @@
           %= $user_info->leg
         % } else {
           <small class="size-guess" title="평균사이즈">
-            %= int($guess->{leg}) || 0
+            %= sprintf('%.1f', $guess->{leg} || 0)
           </small>
         % }
       </span>
@@ -66,7 +66,7 @@
           %= $user_info->waist
         % } else {
           <small class="size-guess" title="평균사이즈">
-            %= int($guess->{waist}) || 0
+            %= sprintf('%.1f', $guess->{waist} || 0)
           </small>
         % }
       </span>
@@ -78,7 +78,7 @@
           %= $user_info->knee
         % } else {
           <small class="size-guess" title="평균사이즈">
-            %= int($guess->{knee}) || 0
+            %= sprintf('%.1f', $guess->{knee} || 0)
           </small>
         % }
       </span>
