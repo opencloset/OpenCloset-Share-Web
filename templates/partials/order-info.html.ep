@@ -49,20 +49,38 @@
     <li>
       <span class="label label-default" title="다리">
         다리
-        %= $user_info->leg || 0
+        % if ($user_info->leg) {
+          %= $user_info->leg
+        % } else {
+          <small class="size-guess" title="평균사이즈">
+            %= sprintf('%.1f', $guess->{leg} || 0)
+          </small>
+        % }
       </span>
     </li>
     % } else {
     <li>
       <span class="label label-default" title="허리">
         허리
-        %= $user_info->waist || 0
+        % if ($user_info->waist) {
+          %= $user_info->waist
+        % } else {
+          <small class="size-guess" title="평균사이즈">
+            %= sprintf('%.1f', $guess->{waist} || 0)
+          </small>
+        % }
       </span>
     </li>
     <li>
       <span class="label label-default" title="무릎">
         무릎
-        %= $user_info->knee || 0
+        % if ($user_info->knee) {
+          %= $user_info->knee
+        % } else {
+          <small class="size-guess" title="평균사이즈">
+            %= sprintf('%.1f', $guess->{knee} || 0)
+          </small>
+        % }
       </span>
     </li>
     <li>
