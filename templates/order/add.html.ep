@@ -37,6 +37,31 @@
 <div id="gender" data-gender="<%= $user_info->gender || '' %>"></div>
 
 <form action="<%= url_for('order.create') %>" method="POST">
+  % if (@$recent_orders) {
+    <h3>지난주문내역</h3>
+
+    <p>
+      꼭 맞으셨거나 마음에 드셨던 의류를 지난 대여기록에서 선택해주시면 같은 의류 또는 비슷한 의류를 보내드립니다.
+    </p>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <select class="form-control" name="past-order">
+          <option value=""></option>
+          % for my $order (@$recent_orders) {
+            % next unless $order->rental_date;
+            % my @categories = categories($order);
+            % map { $_ = $OpenCloset::Constants::Category::LABEL_MAP{$_} } @categories;
+            <option value="<%= $order->id %>">
+              %= $order->rental_date->ymd
+              %= join(',', @categories)
+            </option>
+          % }
+        </select>
+      </div>
+    </div>
+
+  % }
   <h3>대여품목</h3>
   <p>대여하시고자 하는 의류를 선택해주세요</p>
   <p>

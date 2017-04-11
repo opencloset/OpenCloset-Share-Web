@@ -39,7 +39,8 @@ sub add {
     my $failed = $self->check_measurement( $user, $user_info );
     return $self->error( 400, "대여에 필요한 정보를 입력하지 않았습니다." ) if $failed;
 
-    $self->render( dates => $dates );
+    my $orders = $self->recent_orders($user);
+    $self->render( dates => $dates, recent_orders => $orders );
 }
 
 =head2 create
@@ -62,6 +63,7 @@ sub create {
     $v->optional('blouse-type');
     $v->optional('pre_color')->in(qw/staff dark black navy charcoalgray gray brown/);
     $v->optional('purpose');
+    $v->optional('past-order');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -91,6 +93,14 @@ sub create {
     my $additional_day = $v->param('additional_day');
     my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
+    my $misc;
+    if ( my $order_id = $v->param('past-order') ) {
+        my $past_order = $self->schema->resultset('Order')->find( { id => $order_id } );
+        if ( $past_order && $past_order->rental_date ) {
+            $misc = sprintf( "%s 대여했던 의류를 다시 대여하고 싶습니다.", $past_order->rental_date->ymd );
+        }
+    }
+
     my ( $order, $error ) = try {
         my $guard = $self->schema->txn_scope_guard;
         my $param = {
@@ -103,6 +113,7 @@ sub create {
             pre_color        => $v->param('pre_color'),
             purpose          => $v->param('purpose'),
             additional_day   => $additional_day,
+            misc             => $misc,
         };
         map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
         my $order = $self->schema->resultset('Order')->create($param);
