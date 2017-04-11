@@ -15,7 +15,7 @@ use Time::HiRes;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER/;
-use OpenCloset::Constants::Category qw/$JACKET $PANTS $TIE %PRICE/;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SKIRT $SHIRT $BLOUSE $SHOES $BELT $TIE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 use OpenCloset::Constants::Measurement;
@@ -701,8 +701,21 @@ sub categories {
         }
     }
 
-    return @categories;
+    return sort clothes_category @categories;
 }
+
+my %CATEGORY_PRIORITY = (
+    $JACKET => 6,
+    $PANTS  => 5,
+    $SKIRT  => 5,
+    $BLOUSE => 4,
+    $SHIRT  => 4,
+    $SHOES  => 3,
+    $BELT   => 2,
+    $TIE    => 1,
+);
+
+sub clothes_category { $CATEGORY_PRIORITY{$b} <=> $CATEGORY_PRIORITY{$a} }
 
 =head2 shirt_type($order)
 
