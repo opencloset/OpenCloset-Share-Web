@@ -9,4 +9,9 @@
   <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
   <button class="btn btn-lg btn-opencloset btn-block" type="submit">로그인</button>
   <a class="btn btn-lg btn-signup btn-block" href="<%= url_for('/signup') %>">회원가입</a>
+  <p class="help-text pull-right">
+    <small>
+      <a href="<%= url_for('/reset') %>">비밀번호가 기억나지 않습니다.</a>
+    </small>
+  </p>
 </form>
