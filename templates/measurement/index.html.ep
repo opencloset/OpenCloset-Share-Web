@@ -7,16 +7,17 @@
 <div id="gender" data-gender="<%= $gender %>"></div>
 
 % if (my $message = flash('message')) {
-%   if (flash('has_error')) {
-  <div class="alert alert-danger" role="alert"><%= $message %></div>
-%   } else {
-  <div class="alert alert-success" role="alert"><%= $message %></div>
-%   }
+  % if (flash('has_error')) {
+    <div class="alert alert-danger" role="alert"><%= $message %></div>
+  % } else {
+    <div class="alert alert-success" role="alert"><%= $message %></div>
+  % }
 % }
 
 <h3>정확한 신체치수를 입력하는 것은 중요합니다.</h3>
 <p>
-  신체치수를 정확히 측정하여 입력해주세요.
+  키와 몸무게는 1주일 이내에 측정된 기록 이어야 합니다. 정확하게 입력해주세요.<br>
+  사이즈를 직접 측정하여 정확하게 입력 할수록 더 잘 맞는 의류를 받아볼 수 있습니다.
 </p>
 
 <hr>
@@ -36,6 +37,14 @@
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
+      <div class="form-group">
+        <label class="col-sm-5 control-label">
+          윗배둘레 <small>cm</small>
+        </label>
+        <div class="col-sm-7">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="<%= $gender eq 'male' ? '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.' : '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다. 정장 치마는 골반이 아닌 배꼽 윗 부분에 맞춰 입습니다. 그래서, 허리가 아닌 윗배둘레로 의류를 찾기 때문에 윗배둘레가 중요합니다.' %>">
+        </div>
+      </div>
       % if ($gender eq 'male') {
         <div class="form-group">
           <label class="col-sm-5 control-label">
@@ -49,15 +58,7 @@
       <div class="form-group">
         <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
         <div class="col-sm-7">
-          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올린 후 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내린다.' : '가슴의 가장 두꺼운 부분(BP점)의 둘레를 수평으로 측정한다. *BP점-BUST POINT' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-5 control-label">
-          윗배둘레 <small>cm</small>
-        </label>
-        <div class="col-sm-7">
-          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올려 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내려 수평 둘레를 측정한다.' : '가슴의 가장 두꺼운 부분의 둘레를 수평으로 측정한다.' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
         </div>
       </div>
       <div class="form-group">
@@ -80,13 +81,13 @@
           </div>
         </div>
       % } elsif ($gender eq 'female') {
-        <!-- female -->
-        <div class="form-group">
-          <label class="col-sm-5 control-label">엉덩이둘레 <small>cm</small></label>
-          <div class="col-sm-7">
-            <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" title="엉덩이의 가장 튀어나온 부분을 수평으로 측정한다." data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
-          </div>
+      <!-- female -->
+      <div class="form-group">
+        <label class="col-sm-5 control-label">엉덩이둘레 <small>cm</small></label>
+        <div class="col-sm-7">
+          <input name="hip" type="text" class="form-control m-preview" placeholder="엉덩이둘레 cm" value="<%= $user_info->hip || '' %>" title="엉덩이의 가장 튀어나온 부분을 수평으로 측정한다." data-video="https://online.theopencloset.net/stream/women/Woman_hips_all.mp4">
         </div>
+      </div>
       % }
 
       <div class="form-group">
@@ -98,6 +99,31 @@
     </div>
 
     <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-7">
+          <div>
+            <video id="guide-video" width="400" controls src="">
+              동영상을 지원하지 않는 브라우저 입니다.
+            </video>
+
+            <div id="preview-desc">
+              <h4 class="preview-desc-header"></h4>
+              <p class="preview-desc-body"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div id="measurement-preview">
+            <div class="thumbnail preview-img">
+              <img src="" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
       <div class="row">
         <p class="help-block">
           inch 를 cm 로 변환한 표 입니다.
@@ -129,28 +155,6 @@
         </ul>
         <hr>
       </div>
-      <div class="row">
-        <div class="col-md-7">
-          <div>
-            <video id="guide-video" width="400" controls src="">
-              동영상을 지원하지 않는 브라우저 입니다.
-            </video>
-
-            <div id="preview-desc">
-              <h4 class="preview-desc-header"></h4>
-              <p class="preview-desc-body"></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-5">
-          <div id="measurement-preview">
-            <div class="thumbnail preview-img">
-              <img src="" alt="">
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -160,26 +164,6 @@
         % my $i = 0;
         % my $top_size = $user_info->top_size || 0;
         <input name="top_size" type="hidden" value="<%= $top_size %>">
-
-        <p class="help-block">
-          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-          열린옷장 정장 선택 팁
-        </p>
-        <ul class="help-block">
-          <li>
-            자켓: 윗배 둘레에 5cm를 더해서 찾는다.
-          </li>
-          <li>
-            스커트: 엉덩이둘레에 맞는 사이즈를 찾는다.
-          </li>
-          <li>
-            위 가이드는 참고용이며 평소에 착용하는 사이즈 및 상세사이즈 확인 후 선택해주세요.
-          </li>
-          <li>
-            가장 잘 맞는 옷을 보내드릴게요!<br>
-            선택한 사이즈의 범위 내에서 측정 사이즈에 가까운 사이즈의 의류를 보내드리겠습니다.
-          </li>
-        </ul>
 
         <p class="help-block text-right">
           해당하는 사이즈를 선택해주세요.
@@ -254,6 +238,33 @@
             </tr>
           </tbody>
         </table>
+
+        <p class="help-block">
+          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+          열린옷장의 의류는 기성복 사이즈(일반적인 S,M,L 등)가 아닌 실측 사이즈로 표시되어 있습니다. 평소에 M을 입는 분들도 실측 사이즈에 따라 M이 아닌 다른 사이즈를 받으실 수 있습니다. 절대 다른 사이즈가 아니므로 안심하고 선택해주세요.
+        </p>
+
+        <p class="help-block">
+          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+          열린옷장 정장 선택 팁
+        </p>
+
+        <ul class="help-block">
+          <li>
+            자켓: 윗배 둘레에 5cm를 더해서 찾는다.<br>
+            <u>왜 5cm를 더하나요?</u> 활동시에 필요한 최소한의 여유공간을 5cm로 잡고 있습니다. 측정한 사이즈는 신체 자체의 사이즈이므로, 의류는 조금 더 여유롭게 입어야 합니다.
+          </li>
+          <li>
+            스커트: 엉덩이둘레에 맞는 사이즈를 찾는다.
+          </li>
+          <li>
+            밑에 안내된 가이드는 참고용이며 평소에 착용하는 사이즈 및 상세사이즈 확인 후 선택해주세요.
+          </li>
+          <li>
+            가장 잘 맞는 옷을 보내드릴게요!<br>
+            선택한 사이즈의 범위 내에서 측정 사이즈에 가까운 사이즈의 의류를 보내드리겠습니다.
+          </li>
+        </ul>
       </div>
     </div>
   % }

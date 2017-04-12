@@ -109,6 +109,7 @@ sub _private_routes {
     $r->get('/body/dimensions')->to('body#dimensions');
 
     $measurements->get('/')->to('measurement#index');
+    $measurements->get('/intro')->to('measurement#intro');
     $measurements->post('/')->to('measurement#update');
 
     $clothes->get('/recommend')->to('clothes#recommend');
