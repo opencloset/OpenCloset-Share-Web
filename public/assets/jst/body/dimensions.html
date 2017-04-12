@@ -3,7 +3,9 @@
     {{height}}cm(키)
     {{weight}}kg(몸무게)
     {{#if male}}
-    {{origin.waist}}cm(허리)
+      {{#if origin.waist}}
+        {{origin.waist}}cm(허리)
+      {{/if}}
     {{/if}}
     {{#if origin.bust}}{{origin.bust}}cm(가슴){{/if}}
     {{#if origin.topbelly}}{{origin.topbelly}}cm(윗배){{/if}}

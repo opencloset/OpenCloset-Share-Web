@@ -1,7 +1,7 @@
 <h3>대여방법</h3>
 <ol class="list-order-guide">
   <li class="<%= $active == 1 ? 'active' : '' %>">
-    <a href="<%= url_for('/measurements') %>">신체치수</a>를 입력합니다.
+    <a href="<%= url_for('/measurements/intro') %>">신체치수</a>를 입력합니다.
   </li>
   <li class="<%= $active == 2 ? 'active' : '' %>">
     대여품목과 의류착용일을 선택합니다.

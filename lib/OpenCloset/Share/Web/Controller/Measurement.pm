@@ -45,6 +45,14 @@ sub index {
     $self->render( user => $user, user_info => $user_info );
 }
 
+=head2 intro
+
+    GET /measurements/intro
+
+=cut
+
+sub intro { }
+
 =head2 update
 
     POST /measurements

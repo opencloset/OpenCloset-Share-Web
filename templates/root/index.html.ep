@@ -21,7 +21,7 @@
 % } else {
 <p>
   대여에 필요한 정보를 입력하지 않았습니다.
-  <a class="btn btn-primary btn-sm" href="<%= url_for('/measurements') %>">치수입력</a>
+  <a class="btn btn-primary btn-sm" href="<%= url_for('/measurements/intro') %>">치수입력</a>
   <ul class="list-inline text-muted">
     % for my $fail (@$failed) {
     <li><%= $OpenCloset::Constants::Measurement::LABEL_MAP{$fail} %></li>
