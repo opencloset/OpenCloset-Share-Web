@@ -13,7 +13,8 @@ requires 'Parcel::Track';
 requires 'Parcel::Track::KR::CJKorea', '0.005';
 requires 'Path::Tiny';
 requires 'String::Random';
-requires 'Try::Tiny;';
+requires 'Try::Tiny';
+requires 'Text::CSV';
 
 # cpan.theopencloset.net
 requires 'Iamport::REST::Client',               'v0.0.4';

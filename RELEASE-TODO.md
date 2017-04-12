@@ -1,3 +1,5 @@
+    $ cpanm --installdeps .    # Text::CSV
+
 v0.0.13
 
     $ grunt

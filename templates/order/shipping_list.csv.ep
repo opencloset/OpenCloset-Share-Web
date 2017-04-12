@@ -1,0 +1,19 @@
+% use Text::CSV;
+% my $csv = Text::CSV->new;
+받는분 성명,받는분 전화번호,받는분 주소,배송메세지
+% while ( my $order = $orders->next ) {
+  % my $user = $order->user;
+  % my $user_info = $user->user_info;
+  % my $phone = $user_info->phone;
+  % 1 while $phone =~ s/((?:\A|[^.0-9])?\d+)(\d{4})/$1-$2/s;
+  % my $address;
+  % my $user_address = $order->user_address;
+  % if ($user_address) {
+    % $address = $user_address->address2 . ' ' . $user_address->address3;
+  % } else {
+    % $address = $user_info->address2 . ' ' . $user_info->address3;
+  % }
+  % my $shipping_misc = $order->shipping_misc || '';
+  % $csv->combine($shipping_misc);
+%== join(',', $user->name, $phone, $address, $csv->string());
+% }
