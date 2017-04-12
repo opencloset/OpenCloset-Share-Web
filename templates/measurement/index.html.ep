@@ -100,6 +100,31 @@
 
     <div class="col-md-8">
       <div class="row">
+        <div class="col-md-7">
+          <div>
+            <video id="guide-video" width="400" controls src="">
+              동영상을 지원하지 않는 브라우저 입니다.
+            </video>
+
+            <div id="preview-desc">
+              <h4 class="preview-desc-header"></h4>
+              <p class="preview-desc-body"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div id="measurement-preview">
+            <div class="thumbnail preview-img">
+              <img src="" alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row">
         <p class="help-block">
           inch 를 cm 로 변환한 표 입니다.
         </p>
@@ -129,28 +154,6 @@
           <li>대부분의 경우 팔길이는 키에 비례합니다.</li>
         </ul>
         <hr>
-      </div>
-      <div class="row">
-        <div class="col-md-7">
-          <div>
-            <video id="guide-video" width="400" controls src="">
-              동영상을 지원하지 않는 브라우저 입니다.
-            </video>
-
-            <div id="preview-desc">
-              <h4 class="preview-desc-header"></h4>
-              <p class="preview-desc-body"></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-5">
-          <div id="measurement-preview">
-            <div class="thumbnail preview-img">
-              <img src="" alt="">
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
