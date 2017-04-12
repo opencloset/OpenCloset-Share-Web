@@ -144,7 +144,10 @@ sub authentication {
 
 =cut
 
-sub login { }
+sub login {
+    my $self = shift;
+    $self->render( message => undef );
+}
 
 =haed2 signin
 
@@ -160,17 +163,29 @@ sub signin {
     $v->required('password');
 
     if ( $v->has_error ) {
-        my $failed = $v->failed;
-        $self->log->debug( 'Parameter validation failed: ' . join( ', ', @$failed ) );
-        return $self->error( 400, '잘못된 요청입니다' );
+        return $self->render(
+            template => 'user/login',
+            message  => "이메일과 비밀번호를 입력해주세요"
+        );
     }
 
     my $email    = $v->param('email');
     my $password = $v->param('password');
 
     my $user = $self->schema->resultset('User')->find( { email => $email } );
-    return $self->error( 404, "사용자를 찾을 수 없습니다: $email" ) unless $user;
-    return $self->error( 400, '비밀번호가 일치하지 않습니다.' )   unless $user->check_password($password);
+    unless ($user) {
+        return $self->render(
+            template => 'user/login',
+            message  => "사용자를 찾을 수 없습니다: $email"
+        );
+    }
+
+    unless ( $user->check_password($password) ) {
+        return $self->render(
+            template => 'user/login',
+            message  => "비밀번호가 일치하지 않습니다."
+        );
+    }
 
     $self->session( access_token => $user->id );
     my $referer = $self->flash('referer');

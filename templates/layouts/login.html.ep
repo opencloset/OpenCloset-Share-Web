@@ -11,6 +11,7 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/assets/components/opencloset.css/dist/css/opencloset.min.css">
     <link rel="stylesheet" href="/assets/dist/css/screen.min.css">
     <link rel="stylesheet" href="/assets/dist/css/login.min.css">
@@ -20,5 +21,6 @@
     <div class="container">
       <%= content %>
     </div>
+    %= footer
   </body>
 </html>
