@@ -109,13 +109,13 @@ sub reset_password {
     $self->redirect_to('/reset');
 }
 
-=head2 login
+=head2 authentication
 
-    GET /login?email=xxxx&password=xxxx
+    GET /authentication?email=xxxx&password=xxxx
 
 =cut
 
-sub login {
+sub authentication {
     my $self = shift;
 
     my $v = $self->validation;
