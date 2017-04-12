@@ -37,6 +37,14 @@
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
+      <div class="form-group">
+        <label class="col-sm-5 control-label">
+          윗배둘레 <small>cm</small>
+        </label>
+        <div class="col-sm-7">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="<%= $gender eq 'male' ? '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.' : '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다. 정장 치마는 골반이 아닌 배꼽 윗 부분에 맞춰 입습니다. 그래서, 허리가 아닌 윗배둘레로 의류를 찾기 때문에 윗배둘레가 중요합니다.' %>">
+        </div>
+      </div>
       % if ($gender eq 'male') {
         <div class="form-group">
           <label class="col-sm-5 control-label">
@@ -51,14 +59,6 @@
         <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
         <div class="col-sm-7">
           <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올려 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내려 수평 둘레를 측정한다.' : '가슴의 가장 두꺼운 부분의 둘레를 수평으로 측정한다.' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-5 control-label">
-          윗배둘레 <small>cm</small>
-        </label>
-        <div class="col-sm-7">
-          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="<%= $gender eq 'male' ? '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.' : '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다. 정장 치마는 골반이 아닌 배꼽 윗 부분에 맞춰 입습니다. 그래서, 허리가 아닌 윗배둘레로 의류를 찾기 때문에 윗배둘레가 중요합니다.' %>">
         </div>
       </div>
       <div class="form-group">
