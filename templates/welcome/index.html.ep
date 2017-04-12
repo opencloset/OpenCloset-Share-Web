@@ -108,7 +108,7 @@
         <a class="btn btn-lg btn-block btn-signup" href="<%= url_for('/signup') %>">회원가입</a>
       </div>
       <div class="col-md-6">
-        <a class="btn btn-lg btn-block btn-login" href="<%= url_for('index') %>">로그인</a>
+        <a class="btn btn-lg btn-block btn-login" href="<%= url_for('/login') %>">로그인</a>
       </div>
     </div>
   </div>

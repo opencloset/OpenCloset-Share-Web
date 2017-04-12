@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="열린옷장 로그인">
+
+    <title><%= title %> &middot; 열린옷장</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/assets/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/components/opencloset.css/dist/css/opencloset.min.css">
+    <link rel="stylesheet" href="/assets/dist/css/screen.min.css">
+    <link rel="stylesheet" href="/assets/dist/css/login.min.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <%= content %>
+    </div>
+  </body>
+</html>
