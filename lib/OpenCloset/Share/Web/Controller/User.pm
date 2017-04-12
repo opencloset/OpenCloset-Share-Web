@@ -23,9 +23,8 @@ sub auth {
 
     my $user_id = $self->session('access_token');
     unless ($user_id) {
-        my $login = Mojo::URL->new( $self->config->{opencloset}{login} );
-        $login->query( return => $self->req->url->to_abs );
-        $self->redirect_to($login);
+        $self->flash( referer => $self->req->url->path );
+        $self->redirect_to('/login');
         return;
     }
 
@@ -103,7 +102,7 @@ sub reset_password {
     );
 
     $self->send_mail( encode_utf8( $msg->as_string ) );
-    $self->log->info( "reset password url: " . $self->url_for('/login')->query(email => $email, password => $digest)->to_abs );
+    $self->log->info( "reset password url: " . $self->url_for('/login')->query( email => $email, password => $digest )->to_abs );
 
     $self->flash( done => 1 );
     $self->redirect_to('/reset');
@@ -137,6 +136,45 @@ sub authentication {
 
     $self->session( access_token => $user->id );
     $self->redirect_to("/settings");
+}
+
+=head2 login
+
+    GET /login
+
+=cut
+
+sub login { }
+
+=haed2 signin
+
+    POST /login
+
+=cut
+
+sub signin {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->required('email')->email;
+    $v->required('password');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        $self->log->debug( 'Parameter validation failed: ' . join( ', ', @$failed ) );
+        return $self->error( 400, '잘못된 요청입니다' );
+    }
+
+    my $email    = $v->param('email');
+    my $password = $v->param('password');
+
+    my $user = $self->schema->resultset('User')->find( { email => $email } );
+    return $self->error( 404, "사용자를 찾을 수 없습니다: $email" ) unless $user;
+    return $self->error( 400, '비밀번호가 일치하지 않습니다.' )   unless $user->check_password($password);
+
+    $self->session( access_token => $user->id );
+    my $referer = $self->flash('referer');
+    $self->redirect_to( $referer || '/' );
 }
 
 =head2 settings

@@ -1,0 +1,12 @@
+% layout 'login';
+% title '로그인';
+
+<form action="<%= url_for('/login') %>" method="POST" class="form-signin">
+  <h2 class="form-signin-heading">열린옷장 로그인</h2>
+  <label for="inputEmail" class="sr-only">Email address</label>
+  <input name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+  <button class="btn btn-lg btn-opencloset btn-block" type="submit">로그인</button>
+  <a class="btn btn-lg btn-signup btn-block" href="<%= url_for('/signup') %>">회원가입</a>
+</form>
