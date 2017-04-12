@@ -4,6 +4,14 @@
 % use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
 % use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $CHOOSE_CLOTHES $CHOOSE_ADDRESS $RETURNED/;
 
+<div class="pull-right">
+  % my $url = url_with()->path('/orders/shipping.csv');
+  <a href="<%= $url %>" class="btn btn-warning btn-sm" download="shipping-list-<%= $today->ymd('') %>.csv">
+    <i class="fa fa-table" aria-hidden="true"></i>
+    운송장 다운로드
+  </a>
+</div>
+
 <h2>주문서 목록</h2>
 
 % my $status = param('s') || $PAYMENT_DONE;
