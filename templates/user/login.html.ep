@@ -1,6 +1,8 @@
 % layout 'login';
 % title '로그인';
 
+
+
 <form action="<%= url_for('/login') %>" method="POST" class="form-signin">
   <h2 class="form-signin-heading">열린옷장 로그인</h2>
   <label for="inputEmail" class="sr-only">Email address</label>
@@ -15,3 +17,10 @@
     </small>
   </p>
 </form>
+
+% if ($message) {
+  <hr>
+  <div class="alert alert-danger">
+    %= $message
+  </div>
+% }
