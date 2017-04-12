@@ -110,7 +110,7 @@ sub create {
             wearon_date      => $wearon_date,
             target_date      => $dates->{target}->datetime(),
             user_target_date => $dates->{target}->datetime(),
-            pre_color        => $v->param('pre_color'),
+            pre_color        => join( ',', @{ $v->every_param('pre_color') } ),
             purpose          => $v->param('purpose'),
             additional_day   => $additional_day,
             misc             => $misc,
