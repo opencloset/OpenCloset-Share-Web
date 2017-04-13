@@ -564,7 +564,7 @@ sub purchase {
             }
         }
         else {
-            my $knee = $AVG_LEG_BY_HEIGHT{$height};
+            my $knee = $AVG_KNEE_BY_HEIGHT{$height};
             unless ( $guess_info->{knee} = $knee ) {
                 my $guess = OpenCloset::Size::Guess->new(
                     'DB',
