@@ -209,6 +209,20 @@
         </p>
       % }
     </div>
+
+    % if ($user_info->gender eq 'male') {
+      <div class="col-sm-4">
+        <select name="pre_color" class="form-control">
+          <option value="staff">직원추천</option>
+          <option value="dark">어두운계열</option>
+          <option value="black">블랙</option>
+          <option value="navy">네이비</option>
+          <option value="charcoalgray">차콜그레이</option>
+          <option value="gray">그레이</option>
+          <option value="brown">브라운</option>
+        </select>
+      </div>
+    % }
   </div>
 
   <hr>

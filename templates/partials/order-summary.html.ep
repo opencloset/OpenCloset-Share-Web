@@ -185,3 +185,9 @@
     <pre><%= $shipping_misc %></pre>
   % }
 % }
+
+% if (my $pay_with = $order->price_pay_with) {
+  <hr>
+  <h5>결제방법</h5>
+  <p><%= $pay_with %></p>
+% }
