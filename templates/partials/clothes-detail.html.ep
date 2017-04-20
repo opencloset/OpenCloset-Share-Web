@@ -20,7 +20,13 @@
     </tr>
   </thead>
   <tbody>
-    <td><%= clothes2status($clothes) %></td>
+    <td>
+      % if ($user_info->staff) {
+        %= clothes2status($clothes, { external => 1 })
+      % } else {
+        %= clothes2status($clothes)
+      % }
+    </td>
     <td>
       <span class="label label-primary">
         %= $OpenCloset::Constants::Category::LABEL_MAP{$clothes->category}
