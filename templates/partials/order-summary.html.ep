@@ -7,7 +7,8 @@
   <div class="alert alert-success" role="alert"><%= $message %></div>
 % }
 
-%= include 'partials/user-info', user => $order->user, staff => $user_info->staff;
+% my $user = $order->user;
+%= include 'partials/user-info', user => $user, staff => $user_info->staff;
 
 <hr>
 
@@ -115,6 +116,16 @@
 </ul>
 
 <hr>
+
+% my $ui = $user->user_info;
+% if ($ui->gender eq 'female') {
+  <h5>자켓과 스커트 사이즈</h5>
+  <p>
+    <span class="label label-default">상의 <%= $ui->top_size %></span>
+    <span class="label label-default">하의 <%= $ui->bottom_size %></span>
+  </p>
+  <hr>
+% }
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
