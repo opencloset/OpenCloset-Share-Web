@@ -19,6 +19,11 @@ $ ->
       params[params.name] = params.value
       params
 
+  $('#staff-list').editable 'submit',
+    ajaxOptions:
+      type: "PUT"
+      dataType: 'json'
+
   $('.total-price').text($('#order-price').text())
   $('.datepicker').datepicker
     language: 'kr'

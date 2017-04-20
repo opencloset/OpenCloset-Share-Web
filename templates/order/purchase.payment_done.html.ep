@@ -60,7 +60,7 @@
     <tr>
       <th>담당자</th>
       <td>
-        <a id="staff-list" href="#" data-type="select" data-pk="1" data-emptytext="비어있음" data-mode="inline" data-url="<%= url_for('/orders/' . $order->id) %>" data-name="staff_id" data-source="<%= to_json($staff) %>" data-value="<%= $order->staff_id || q{} %>"></a>
+        <a id="staff-list" href="#" data-type="select" data-pk="1" data-emptytext="비어있음" data-mode="inline" data-url="<%= url_for('/orders/' . $order->id) %>" data-name="staff_id" data-source="<%= to_json($staff) %>" data-value="<%= $order->staff_id || $user->id %>"></a>
       </td>
     </tr>
     <tr>
