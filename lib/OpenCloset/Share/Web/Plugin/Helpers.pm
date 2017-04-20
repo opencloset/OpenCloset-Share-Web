@@ -196,7 +196,7 @@ sub clothes2desc {
     return sprintf "가슴 %s / 허리 %s %s", $bust, $waist, $color;
 }
 
-=head2 clothes2status
+=head2 clothes2status( $clothes, $opts )
 
     % clothes2status($clothes)
     # <span class="label label-primary">
@@ -204,10 +204,19 @@ sub clothes2desc {
     #   <small>대여가능</small>
     # </span>
 
+    % clothes2status($clothes, { external => 1 )
+    # <a href="https://staff.theopencloset.net/clothes/J001" target="_blank">
+    #   <span class="label label-primary">
+    #     <i class="fa fa-external-link"></i>
+    #     J001
+    #     <small>대여가능</small>
+    #   </span>
+    # </a>
+
 =cut
 
 sub clothes2status {
-    my ( $self, $clothes ) = @_;
+    my ( $self, $clothes, $opts ) = @_;
     return '' unless $clothes;
 
     my $dom  = Mojo::DOM::HTML->new;
@@ -228,7 +237,18 @@ sub clothes2status {
         push @class, 'label-default';
     }
 
-    my $html = qq{<span class="@class">$code <small>$name</small></span>};
+    my $html;
+    if ( $opts->{external} ) {
+        my $target = $self->config->{opencloset}{root} . "/clothes/$code";
+        $html = qq{<a href="$target" target="_blank">
+  <span class="@class">
+    <i class="fa fa-external-link"></i> $code <small>$name</small>
+  </span>
+</a>};
+    }
+    else {
+        $html = qq{<span class="@class">$code <small>$name</small></span>};
+    }
 
     $dom->parse($html);
     my $tree = $dom->tree;
