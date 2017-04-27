@@ -740,11 +740,12 @@ sub insert_coupon {
         my $guard = $self->schema->txn_scope_guard;
         my ( $success, $error ) = try {
             $order->update( { price_pay_with => $price_pay_with } );
+            $self->transfer_order( $coupon, $order );
             $coupon->update( { status => 'used' } );
             $order->create_related(
                 'order_details',
                 {
-                    name        => $self->commify($price) . " 쿠폰($coupon_id)",
+                    name        => $self->commify($price) . "원 할인쿠폰",
                     price       => $price * -1,
                     final_price => $price * -1,
                     desc        => 'additional',
@@ -764,6 +765,21 @@ sub insert_coupon {
     }
     else {
         return $self->error( 500, "Unknown coupon type: $type" );
+    }
+
+    ## 쿠폰을 사용했다면 3회 이상 대여 할인을 없앤다.
+    my $detail = $order->search_related(
+        'order_details',
+        {
+            name => '3회 이상 대여 할인',
+            desc => 'additional',
+        },
+        { rows => 1 }
+    )->single;
+
+    if ($detail) {
+        $self->log->info("쿠폰을 사용했기 때문에 3회 이상 대여 할인품목을 제거");
+        $detail->delete;
     }
 
     my %columns = $order->get_columns;
