@@ -705,13 +705,17 @@ sub insert_coupon {
 
     my $v = $self->validation;
     $v->required('coupon_id');
+    $v->optional('extra');
     return $self->error( 400, "coupon_id is required" ) if $v->has_error;
 
     my $coupon_id = $self->param('coupon_id');
-    my $coupon = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    my $extra     = $self->param('extra');
+    my $coupon    = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
     return $self->error( 404, "Not found coupon: $coupon_id" ) unless $coupon;
 
-    my $coupon_status = $coupon->status;
+    $coupon->update( { extra => $extra } ) if $extra;
+
+    my $coupon_status = $coupon->status || '';
     return $self->error( 400, "Invalid coupon status: $coupon_status" ) if $coupon_status =~ m/(us|discard|expir)ed/;
 
     my $type           = $coupon->type;
@@ -733,25 +737,14 @@ sub insert_coupon {
 
         return $self->error( 500, $error ) unless $success;
     }
-    elsif ( $type eq 'default' ) {
-        my $price = $coupon->price;
+    elsif ( $type =~ /(default|rate)/ ) {
         $price_pay_with .= '+';
-
         my $guard = $self->schema->txn_scope_guard;
         my ( $success, $error ) = try {
             $order->update( { price_pay_with => $price_pay_with } );
             $self->transfer_order( $coupon, $order );
+            $self->discount_order($order);
             $coupon->update( { status => 'used' } );
-            $order->create_related(
-                'order_details',
-                {
-                    name        => $self->commify($price) . "원 할인쿠폰",
-                    price       => $price * -1,
-                    final_price => $price * -1,
-                    desc        => 'additional',
-                }
-            );
-
             $guard->commit;
             return 1;
         }
@@ -761,7 +754,6 @@ sub insert_coupon {
         };
 
         return $self->error( 500, $error ) unless $success;
-
     }
     else {
         return $self->error( 500, "Unknown coupon type: $type" );

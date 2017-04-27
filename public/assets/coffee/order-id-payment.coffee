@@ -126,7 +126,11 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         $submit.addClass('disabled')
         # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
-        data.price = parseInt(data.price)
+        data.price     = parseInt(data.price)
+        data.isRate    = data.type is 'rate'
+        data.isSuit    = data.type is 'suit'
+        data.isDefault = data.type is 'default'
+
         template   = JST['coupon/info']
         html       = template(data)
         $('#coupon-modal .modal-footer').remove()
@@ -141,9 +145,10 @@ $ ->
   $('#coupon-modal').on 'click', '#btn-coupon-use', (e) ->
     e.preventDefault()
     coupon_id = $(@).data('coupon-id')
+    extra = $(@).closest('.modal-footer').find('input[name=extra]').val()
     $.ajax "#{location.href}/coupon",
       type: 'POST'
-      data: { coupon_id: coupon_id }
+      data: { coupon_id: coupon_id, extra: extra }
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
         location.reload()

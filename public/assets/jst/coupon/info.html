@@ -1,8 +1,24 @@
 <div class="modal-footer">
-  {{#if price}}
+  {{#if isDefault}}
   <p>
-    <code>{{#commify}}{{price}}{{/commify}}</code>원 쿠폰입니다
+    <code>{{#commify}}{{price}}{{/commify}}</code>원 할인쿠폰입니다
   </p>
+  <p>
+    <button id="btn-coupon-use" class="btn btn-success" data-coupon-id="{{id}}">쿠폰을 사용합니다</button>
+    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+  </p>
+  {{else if isRate}}
+  <p>
+    <strong><samp>{{price}}%</samp></strong> 할인쿠폰입니다.
+  </p>
+    {{#if help}}
+    <p class="help-text">{{help}}</p>
+    {{/if}}
+    {{#if placeholder}}
+    <p>
+      <input name="extra" type="text" class="form-control" placeholder="{{placeholder}}">
+    </p>
+    {{/if}}
   <p>
     <button id="btn-coupon-use" class="btn btn-success" data-coupon-id="{{id}}">쿠폰을 사용합니다</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
