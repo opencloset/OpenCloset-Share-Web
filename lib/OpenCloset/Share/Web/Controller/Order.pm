@@ -707,8 +707,13 @@ sub insert_coupon {
     $v->required('coupon_id');
     return $self->error( 400, "coupon_id is required" ) if $v->has_error;
 
-    my $coupon_id      = $self->param('coupon_id');
-    my $coupon         = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    my $coupon_id = $self->param('coupon_id');
+    my $coupon = $self->schema->resultset('Coupon')->find( { id => $coupon_id } );
+    return $self->error( 404, "Not found coupon: $coupon_id" ) unless $coupon;
+
+    my $coupon_status = $coupon->status;
+    return $self->error( 400, "Invalid coupon status: $coupon_status" ) if $coupon_status =~ m/(us|discard|expir)ed/;
+
     my $type           = $coupon->type;
     my $price_pay_with = '쿠폰';
     if ( $type eq 'suit' ) {
