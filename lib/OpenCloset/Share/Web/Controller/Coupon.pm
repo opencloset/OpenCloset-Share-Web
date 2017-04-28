@@ -25,6 +25,11 @@ sub validate {
     return $self->error( 400, $err ) if $err;
 
     my %columns = $coupon->get_columns;
+    if ( $columns{desc} and $columns{desc} eq 'linkstart' ) {
+        $columns{help}        = 'LINKStart x 열린옷장 이벤트쿠폰입니다.';
+        $columns{placeholder} = '대학교명을 입력해주세요.';
+    }
+
     $self->render( json => \%columns );
 }
 
