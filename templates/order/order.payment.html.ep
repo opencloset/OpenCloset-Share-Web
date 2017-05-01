@@ -47,7 +47,16 @@
   <div id="payment-info" data-email="<%= $user->email %>" data-name="<%= $user->name %>" data-phone="<%= $user_info->phone %>" data-address1="<%= $addr %>" data-address2="<%= $addr2 %>" data-order-id="<%= $order->id %>"></div>
 
   <button id="btn-payment" class="btn btn-primary" type="button">결제를 진행합니다</button>
-  <button class="btn btn-default btn-sm" type="button" data-toggle="modal" data-target="#coupon-modal">쿠폰을 사용하겠습니다</button>
+  % if (my $coupon = $order->coupon) {
+    <hr>
+    <div class="alert alert-success" role="alert">
+      %= $coupon->price
+      %= $coupon->type eq 'default' ? '원' : '%'
+      할인쿠폰이 적용되었습니다.
+    </div>
+  % } else {
+    <button class="btn btn-default btn-sm" type="button" data-toggle="modal" data-target="#coupon-modal">쿠폰을 사용하겠습니다</button>
+  % }
 % } else {
 
   <div class="alert alert-danger">
