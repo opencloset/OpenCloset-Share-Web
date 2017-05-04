@@ -160,6 +160,15 @@
 
   % if ($gender eq 'female') {
     <div class="row">
+      <hr>
+      <div class="col-md-offset-3">
+        <div class="text-center">
+          <img class="img-responsive img-rounded" alt="자켓,스커트 측정 가이드" src="<%= url_for('/assets/img/size-guide.png') %>">
+        </div>
+      </div>
+      <hr>
+    </div>
+    <div class="row">
       <div class="col-md-offset-2">
         % my $i = 0;
         % my $top_size = $user_info->top_size || 0;
