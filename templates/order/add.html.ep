@@ -19,12 +19,12 @@
 <h3>대여가격 안내</h3>
 <ul class="list-inline">
   % for my $category ($JACKET, $PANTS, $SKIRT, $SHIRT, $BLOUSE, $SHOES, $BELT, $TIE) {
-  <li>
-    <span class="label label-primary">
-      %= $LABEL_MAP{$category}
-    </span>
-    <code><%= commify($PRICE{$category}) %></code>
-  </li>
+    <li>
+      <span class="label label-primary">
+        %= $LABEL_MAP{$category}
+      </span>
+      <code><%= commify($PRICE{$category}) %></code>
+    </li>
   % }
 </ul>
 
@@ -114,7 +114,7 @@
       <div class="modal" id="female-jacket-img" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
-            <img src="/assets/img/female-jacket.png" alt="여성자켓" class="img-rounded">
+            <img src="/assets/img/female-jacket.png" alt="여성자켓" class="img-responsive img-rounded">
           </div>
         </div>
       </div>
@@ -130,18 +130,18 @@
     <li>
       % $cnt = 0;
       % for my $type ("흰색", "하늘색") {
-      <label class="radio-inline">
-        <input
-            class="radio"
-            name="shirt-type"
-            type="radio"
-            value="<%= $type %>"
-            % unless ($cnt) {
-            checked
-            % }
-        > <%= $type %> 셔츠
-      </label>
-      % $cnt++;
+        <label class="radio-inline">
+          <input
+              class="radio"
+              name="shirt-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 셔츠
+        </label>
+        % $cnt++;
       % }
     </li>
   </ul>
