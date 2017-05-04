@@ -19,12 +19,12 @@
 <h3>대여가격 안내</h3>
 <ul class="list-inline">
   % for my $category ($JACKET, $PANTS, $SKIRT, $SHIRT, $BLOUSE, $SHOES, $BELT, $TIE) {
-  <li>
-    <span class="label label-primary">
-      %= $LABEL_MAP{$category}
-    </span>
-    <code><%= commify($PRICE{$category}) %></code>
-  </li>
+    <li>
+      <span class="label label-primary">
+        %= $LABEL_MAP{$category}
+      </span>
+      <code><%= commify($PRICE{$category}) %></code>
+    </li>
   % }
 </ul>
 
@@ -73,9 +73,9 @@
       <i class="fa fa-user fa-fw" aria-hidden="true"></i>
     </li>
     % for my $category ($JACKET, $SHOES) {
-    <li>
-      <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
-    </li>
+      <li>
+        <input name="category-<%= $category %>" data-toggle="toggle" data-on="<%= $LABEL_MAP{$category} %>" data-off="<%= $LABEL_MAP{$category} %>" data-onstyle="success" data-price="<%= $PRICE{$category} %>" type="checkbox">
+      </li>
     % }
   </ul>
 
@@ -106,6 +106,21 @@
     블라우스의 사이즈 재고가 없을 경우, 다른 품목으로 대체될 수 있습니다.
   </p>
 
+  % if ($user_info->gender eq 'female') {
+    <p class="help-block">
+      <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+      대부분의 여성자켓은 스타일이 동일합니다.
+      <a href="#" data-toggle="modal" data-target="#female-jacket-img">이미지</a>를 클릭해서 확인해보세요.
+      <div class="modal" id="female-jacket-img" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <img src="/assets/img/female-jacket.png" alt="여성자켓" class="img-responsive img-rounded">
+          </div>
+        </div>
+      </div>
+    </p>
+  % }
+
   <hr>
 
   <ul id="list-shirt-type" class="list-inline hide">
@@ -115,18 +130,18 @@
     <li>
       % $cnt = 0;
       % for my $type ("흰색", "하늘색") {
-      <label class="radio-inline">
-        <input
-            class="radio"
-            name="shirt-type"
-            type="radio"
-            value="<%= $type %>"
-            % unless ($cnt) {
-            checked
-            % }
-        > <%= $type %> 셔츠
-      </label>
-      % $cnt++;
+        <label class="radio-inline">
+          <input
+              class="radio"
+              name="shirt-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 셔츠
+        </label>
+        % $cnt++;
       % }
     </li>
   </ul>
