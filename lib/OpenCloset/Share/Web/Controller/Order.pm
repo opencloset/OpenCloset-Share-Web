@@ -620,13 +620,10 @@ sub update_parcel {
     my $status_id      = $v->param('status_id');
 
     if ( $parcel_service or $waybill or $comment ) {
-        $parcel->update(
-            {
-                parcel_service => $parcel_service,
-                waybill        => $waybill,
-                comment        => $comment,
-            }
-        );
+        $parcel->parcel_service($parcel_service) if $parcel_service;
+        $parcel->waybill($waybill)               if $waybill;
+        $parcel->comment($comment)               if $comment;
+        $parcel->update();
     }
 
     if ( $waybill && $parcel->status_id == $WAITING_SHIPPED ) {
