@@ -114,7 +114,7 @@
       <div class="modal" id="female-jacket-img" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
-            <img src="/assets/img/female-jacket.png" alt="여성자켓" class="img-rounded">
+            <img src="/assets/img/female-jacket.png" alt="여성자켓" class="img-responsive img-rounded">
           </div>
         </div>
       </div>
