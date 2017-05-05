@@ -4,6 +4,9 @@
 % use OpenCloset::Constants::Category ();
 % use OpenCloset::Constants::Status qw/$RETURNED $PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $SHIPPED $DELIVERED $RETURN_REQUESTED/;
 
+% my $order_user = $order->user;
+% my $ui = $order_user->user_info;
+
 <div class="pull-right text-muted">
   %= include 'partials/sms-help', parcel => $parcel;
 </div>
@@ -43,13 +46,17 @@
 
   <button id="btn-toggle-parcel" class="btn btn-info btn-sm" type="button">
     % if ($waybill) {
-    운송장변경
+      운송장변경
     % } else {
-    운송장입력
+      운송장입력
     % }
   </button>
+
   <button id="btn-comment" class="btn btn-default btn-sm" type="button">Comment</button>
-  <button id="btn-sms" class="btn btn-default btn-sm" type="button">SMS</button>
+  <a class="btn btn-default btn-sm" href="<%= $config->{opencloset}{root} %>/sms?to=<%= $ui->phone %>" target="_blank">
+    <i class="fa fa-external-link"></i>
+    SMS
+  </a>
 </p>
 
 % if (my $comment = $parcel->comment) {
@@ -81,16 +88,6 @@
     <textarea id="comment" name="comment" class="form-control" placeholder="Comment"><%= $parcel->comment || '' %></textarea>
   </div>
   <button class="btn btn-primary" type="submit">입력</button>
-  <button class="btn btn-danger btn-cancel" type="button">취소</button>
-</form>
-
-% my $ui = $order->user->user_info;
-<form id="form-sms" class="hide" action="<%= url_for('sms.create') %>" method="POST">
-  <input type="hidden" name="to" value="<%= $ui->phone %>">
-  <div class="form-group">
-    <textarea name="text" class="form-control" placeholder="SMS 내용"></textarea>
-  </div>
-  <button class="btn btn-primary" type="submit">전송</button>
   <button class="btn btn-danger btn-cancel" type="button">취소</button>
 </form>
 
