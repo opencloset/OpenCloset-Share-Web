@@ -75,6 +75,7 @@ sub _public_routes {
     $r->post('/verify')->to('user#verify');
     $r->get('/reset')->to('user#reset');
     $r->post('/reset')->to('user#reset_password');
+    $r->get('/emailAddress')->to('user#find_email');
     $r->get('/authentication')->to('user#authentication');
     $r->get('/login')->to('user#login');
     $r->post('/login')->to('user#signin');

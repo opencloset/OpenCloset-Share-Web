@@ -104,7 +104,47 @@ sub reset_password {
     $self->send_mail( encode_utf8( $msg->as_string ) );
     $self->log->info( "reset password url: " . $self->url_for('/login')->query( email => $email, password => $digest )->to_abs );
 
-    $self->flash( done => 1 );
+    $self->flash( success => '비밀번호를 재설정 하였습니다. 이메일을 확인해주세요.' );
+    $self->redirect_to('/reset');
+}
+
+=head2 find_email
+
+    GET /emailAddress?name=홍길동&phone=01012345678
+
+=cut
+
+sub find_email {
+    my $self = shift;
+
+    my $v = $self->validation;
+    $v->required('name');
+    $v->required('phone')->like(qr/^\d{3}[ -]?\d{3,4}[ -]?\d{4}$/);
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        $self->log->debug( 'Parameter validation failed: ' . join( ', ', @$failed ) );
+        $self->flash( error => '이름과 전화번호를 정확하게 입력해주세요.' );
+        return $self->redirect_to('/reset');
+    }
+
+    my $name  = $v->param('name');
+    my $phone = $v->param('phone');
+    $phone =~ s/[^\d]//g;
+
+    my $user_info = $self->schema->resultset('UserInfo')->find( { phone => $phone } );
+    unless ($user_info) {
+        $self->flash( error => '등록된 전화번호가 없습니다.' );
+        return $self->redirect_to('/reset');
+    }
+
+    my $user = $user_info->user;
+    if ( $user->name ne $name ) {
+        $self->flash( error => '이름과 전화번호가 일치하지 않습니다.' );
+        return $self->redirect_to('/reset');
+    }
+
+    $self->flash( success => sprintf( "%s님이 열린옷장에서 사용하신 이메일은 %s 입니다.", $name, $user->email ) );
     $self->redirect_to('/reset');
 }
 
