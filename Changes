@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.0.19] - Thu, 11 May 2017 18:36:04 +0900
 ### Added
 - 이메일찾기 기능 추가 (#32)
 
