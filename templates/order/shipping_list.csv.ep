@@ -9,11 +9,11 @@
   % my $address;
   % my $user_address = $order->user_address;
   % if ($user_address) {
-    % $address = $user_address->address2 . ' ' . $user_address->address3;
+    % $address = $user_address->address2 . ' ' . $user_address->address4;
   % } else {
-    % $address = $user_info->address2 . ' ' . $user_info->address3;
+    % $address = $user_info->address2 . ' ' . $user_info->address4;
   % }
   % my $shipping_misc = $order->shipping_misc || '';
-  % $csv->combine($shipping_misc);
-%== join(',', $user->name, $phone, $address, $csv->string());
+  % $csv->combine($user->name, $phone, $address, $shipping_misc);
+%== $csv->string()
 % }

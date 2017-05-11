@@ -1,3 +1,18 @@
+# Change Log
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [Unreleased]
+
+## [v0.0.19] - Thu, 11 May 2017 18:36:04 +0900
+### Added
+- 이메일찾기 기능 추가 (#32)
+
+### Changed
+- SMS 를 직접 작성하는 기능 대신 staff 문자 전송으로 링크 (#148)
+
+### Fixed
+- 주문서 목록을 csv 로 내보낼때 주소를 올바르게 표기 (#144)
+
 v0.0.18   Thu, 04 May 2017 18:35:08 +0900
   - 운송장과 코멘트가 양립할 수 없는 버그 해결 (#149)
   - 여성의 자켓 이미지와 설명을 추가 (#100)

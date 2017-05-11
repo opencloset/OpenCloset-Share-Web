@@ -10,7 +10,7 @@ use Iamport::REST::Client;
 use OpenCloset::Schema;
 use OpenCloset::DB::Plugin::Order::Sale;
 
-use version; our $VERSION = qv("v0.0.18");
+use version; our $VERSION = qv("v0.0.19");
 
 has schema => sub {
     my $self   = shift;
@@ -75,6 +75,7 @@ sub _public_routes {
     $r->post('/verify')->to('user#verify');
     $r->get('/reset')->to('user#reset');
     $r->post('/reset')->to('user#reset_password');
+    $r->get('/emailAddress')->to('user#find_email');
     $r->get('/authentication')->to('user#authentication');
     $r->get('/login')->to('user#login');
     $r->post('/login')->to('user#signin');
