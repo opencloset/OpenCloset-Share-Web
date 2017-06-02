@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- suit 타입쿠폰 사용 후에 배송비와 연장비를 결제하도록 변경 (#157)
 
 ## [v0.0.19] - Thu, 11 May 2017 18:36:04 +0900
 ### Added
