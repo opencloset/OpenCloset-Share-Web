@@ -50,8 +50,11 @@
   % if (my $coupon = $order->coupon) {
     <hr>
     <div class="alert alert-success" role="alert">
-      %= $coupon->price
-      %= $coupon->type eq 'default' ? '원' : '%'
+      % my $type = $coupon->type;
+      % if ($type ne 'suit') {
+        %= $coupon->price
+        %= $coupon->type eq 'default' ? '원' : '%'
+      % }
       할인쿠폰이 적용되었습니다.
     </div>
   % } else {
