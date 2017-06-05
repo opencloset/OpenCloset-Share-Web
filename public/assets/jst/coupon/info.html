@@ -38,7 +38,17 @@
   </p>
   {{else}}
   <p>
-    <button id="btn-coupon-use" class="btn btn-success" data-coupon-id="{{id}}">쿠폰을 사용해서 대여합니다</button>
+    <ul class="help-text fa-ul text-left">
+      <li>
+        <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
+        쿠폰을 사용하신 후에는 <strong>배송비</strong>를 결제해주세요.
+      </li>
+      <li>
+        <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
+        대여기간을 연장하셨을 경우 <strong>연장비</strong>와 <strong>배송비</strong>를 결제해주세요.
+      </li>
+    </ul>
+    <button id="btn-coupon-use" class="btn btn-success" data-coupon-id="{{id}}">쿠폰을 사용합니다</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
   </p>
   {{/if}}
