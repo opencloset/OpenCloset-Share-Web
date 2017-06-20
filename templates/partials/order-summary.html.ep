@@ -2,6 +2,7 @@
 % use OpenCloset::Constants::Category qw/$SHIRT $TIE $BLOUSE %PRICE/;
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
+% our %EVENT_MAP = (seoul => '취업날개', 'seoul-2017' => '취업날개', 'seoul-2017-2' => '취업날개', '10bob' => '십시일밥', gwanak => '관악고용센터', incheonjob => '인천광역시 일자리정책과', linkstart => '링크스타트');
 
 % if (my $message = flash('message')) {
   <div class="alert alert-success" role="alert"><%= $message %></div>
@@ -29,47 +30,47 @@
   <ul class="list-inline">
     % my $price = category_price($order);
     % for my $c (@categories) {
-    <li>
-      <div class="thumbnail">
-        % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
-        % if ($clothes) {
-          % my $code = substr $clothes->code, 1;
-          % if ($user_info->staff) {
-            <a href="<%= $self->config->{opencloset}{root} %>/clothes/<%= $code %>" target="_blank">
-              <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
-            </a>
+      <li>
+        <div class="thumbnail">
+          % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
+          % if ($clothes) {
+            % my $code = substr $clothes->code, 1;
+            % if ($user_info->staff) {
+              <a href="<%= $self->config->{opencloset}{root} %>/clothes/<%= $code %>" target="_blank">
+                <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+              </a>
+            % } else {
+              <a href="<%= url_for('/clothes/' . $code) %>">
+                <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
+              </a>
+            % }
           % } else {
-            <a href="<%= url_for('/clothes/' . $code) %>">
-              <img alt="<%= $code %>" src="<%= oavatar_url($code, size => 100, default => $config->{oavatar}{$clothes->category}) %>">
-            </a>
+            <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
           % }
-        % } else {
-          <img src="<%= $config->{oavatar}{$c} %>?s=100" alt="<%= $c %>">
-        % }
-        <div class="caption">
-          <p>
-            <span class="label label-primary">
-              % if ($c eq $SHIRT) {
-                %= shirt_type($order)
-                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
-              % } elsif ($c eq $BLOUSE) {
+          <div class="caption">
+            <p>
+              <span class="label label-primary">
+                % if ($c eq $SHIRT) {
+                  %= shirt_type($order)
+                  %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
+                % } elsif ($c eq $BLOUSE) {
                 %= blouse_type($order)
                 %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
-              % } else {
+    % } else {
                 %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
-              % }
-            </span>
-            <code>
-              % if ($c eq $TIE) {
-                <%= commify(category_price($order, $TIE)) %>
-              % } else {
-                <%= commify($PRICE{$c}) %>
-              % }
-            </code>
-          </p>
+    % }
+              </span>
+              <code>
+                % if ($c eq $TIE) {
+                  <%= commify(category_price($order, $TIE)) %>
+                % } else {
+                  <%= commify($PRICE{$c}) %>
+                % }
+              </code>
+            </p>
+          </div>
         </div>
-      </div>
-    </li>
+      </li>
     % }
   </ul>
 
@@ -200,5 +201,11 @@
 % if (my $pay_with = $order->price_pay_with) {
   <hr>
   <h5>결제방법</h5>
-  <p><%= $pay_with %></p>
+  <p>
+    %= $pay_with
+    % if (my $coupon = $order->coupon) {
+      % my ($name) = split /\|/, $coupon->desc;
+      <small><%= $EVENT_MAP{$name} || $name %></small>
+    % }
+  </p>
 % }
