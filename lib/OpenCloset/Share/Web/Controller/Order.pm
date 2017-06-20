@@ -154,19 +154,6 @@ sub create {
             }
         );
 
-        if ($additional_day) {
-            my $extension_fee = $sum * 0.2 * $additional_day;
-            $order->create_related(
-                'order_details',
-                {
-                    name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
-                    price => $extension_fee,
-                    final_price => $extension_fee,
-                    desc        => 'additional',
-                }
-            );
-        }
-
         my $discount = $order->sale_multi_times_rental( \@details );
         if ( my $price = $discount->{after} - $discount->{before} ) {
             $order->create_related(
@@ -175,6 +162,22 @@ sub create {
                     name        => "3회 이상 대여 할인",
                     price       => $price,
                     final_price => $price,
+                    desc        => 'additional',
+                }
+            );
+
+            ## 할인된 금액을 기준으로 연장비를 책정
+            $sum += $price;
+        }
+
+        if ($additional_day) {
+            my $extension_fee = $sum * 0.2 * $additional_day;
+            $order->create_related(
+                'order_details',
+                {
+                    name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
+                    price => $extension_fee,
+                    final_price => $extension_fee,
                     desc        => 'additional',
                 }
             );

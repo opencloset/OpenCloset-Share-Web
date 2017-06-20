@@ -3,6 +3,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 ### Changed
+- 할인된 금액을 기준으로 연장비를 책정
 - 결제방법이 쿠폰일때 발행처를 표시 (#158)
 
 ## [v0.0.20] - Mon, 05 Jun 2017 17:55:18 +0900
