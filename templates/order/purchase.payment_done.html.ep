@@ -114,6 +114,17 @@
 
 <hr>
 
+<form id="form-order-desc" action="<%= url_for('/orders/' . $order->id) %>">
+  <div class="form-group">
+    <textarea name="desc" class="form-control" rows="8" placeholder="주문서 메모"><%= $order->desc || '' %></textarea>
+  </div>
+  <div class="text-right">
+    <button class="btn btn-success" type="submit">주문서 메모 저장</button>
+  </div>
+</form>
+
+<hr>
+
 <h4>
   <i class="fa fa-barcode fa-fw" aria-hidden="true"></i>
   의류코드입력

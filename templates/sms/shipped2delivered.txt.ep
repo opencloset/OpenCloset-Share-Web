@@ -1,3 +1,17 @@
+% my $order_id = $order->id;
 % my $user   = $order->user;
 % my $target_date = $order->target_date;
-[열린옷장 배송확인] 안녕하세요. <%= $user->name %>님. 대여품목은 잘 받으셨나요? 반납예정일은 <%= $target_date->day %>일입니다. 기증자의 마음이 담긴 의류이오니 소중하게 착용 부탁드립니다.
+% my $parcel_date = $target_date->clone->subtract(days => 1);
+[열린옷장 배송확인] 안녕하세요. <%= $user->name %>님. 대여품목은 잘 받으셨나요? 반납예정일은 <%= $target_date->day %>일입니다. 택배는 하루 전인 <%= $parcel_date->day %>일에 발송해주세요. 기증자의 마음이 담긴 의류이오니 소중하게 착용 부탁드립니다.
+
+택배반납을 하시거나 연장신청이 필요한 경우, 본 문자를 보관하고 계시다가 반드시 아래 주소를 클릭하여 정보를 입력해주세요. 정보 미입력시 미반납, 연체 상황이 발생할 수 있으므로 반드시 본 정보 작성을 요청드립니다. 감사합니다.
+
+1. 반납안내
+택배로 반납하는 경우 <%= url_for("https://staff.theopencloset.net/order/$order_id/return")->to_abs %> 를 클릭하여 반납택배 발송알리미를 작성해주세요.
+
+2. 대여기간을 연장이 필요하세요?
+<%= url_for("https://staff.theopencloset.net/order/$order_id/extension")->to_abs %> 를 클릭하여 대여기간 연장신청서를 작성해주세요.
+
+3. 기증메세지를 알려드립니다.
+<%= $user->name %>님이 대여하신 의류의 기증자 이야기를 읽으시려면 URL을 클릭해 주세요.
+https://story.theopencloset.net/letters/o/<%= $order->id %>/d

@@ -98,3 +98,18 @@ $ ->
   if $('#alert').get(0)
     msg = $('#alert').prop('title')
     $.growl.error({ message: msg })
+
+  $('#form-order-desc').submit (e) ->
+    e.preventDefault()
+    $this = $(@)
+    $this.find('.btn-success').addClass('disabled')
+    $.ajax $this.prop('action'),
+      type: 'PUT'
+      data: $this.serialize()
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $.growl.notice({ title: '주문서 메모', message: '저장되었습니다.' })
+      error: (jqXHR, textStatus, errorThrown) ->
+        $.growl.error({ title:textStatus, message: jqXHR.responseJSON.error })
+      complete: (jqXHR, textStatus) ->
+        $this.find('.btn-success').removeClass('disabled')
