@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 배송 주문서에 메모를 추가하고 확인 할 수 있도록 함 (#136)
 
 ## [v0.0.21] - Tue, 20 Jun 2017 17:58:54 +0900
 ### Changed

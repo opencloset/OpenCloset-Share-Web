@@ -421,7 +421,7 @@ sub update_order {
     $v->optional('wearon_date');
     $v->optional('target_date');
     $v->optional('shipping_misc');
-    $v->optional('return_memo');
+    $v->optional('desc');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;

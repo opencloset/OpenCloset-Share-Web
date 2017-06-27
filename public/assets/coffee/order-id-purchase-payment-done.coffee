@@ -99,7 +99,7 @@ $ ->
     msg = $('#alert').prop('title')
     $.growl.error({ message: msg })
 
-  $('#form-return-memo').submit (e) ->
+  $('#form-order-desc').submit (e) ->
     e.preventDefault()
     $this = $(@)
     $this.find('.btn-success').addClass('disabled')
