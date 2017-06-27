@@ -13,6 +13,12 @@
 
 %= include 'partials/order-summary', order => $order;
 
+% if (my $desc = $order->desc) {
+  <hr>
+  <h5>주문서 메모</h5>
+  <pre><%= $desc %></pre>
+% }
+
 <hr>
 
 <ul class="order-status list-inline">
