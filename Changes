@@ -2,6 +2,10 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+### Changed
+- 배송중 -> 배송완료 메세지의 변경 (#150)
+
 ### Added
 - 배송 주문서에 메모를 추가하고 확인 할 수 있도록 함 (#136)
 
