@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.0.24] - Tue, 19 Sep 2017 19:09:51 +0900
+
+### Changed
+- 2017-09-25 ~ 2017-10-18 까지 주문을 받지 않음 (#163)
+
 ## [v0.0.23] - Wed, 13 Sep 2017 17:35:14 +0900
 
 ### Changed
