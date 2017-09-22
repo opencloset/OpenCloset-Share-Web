@@ -250,11 +250,16 @@
 
   <hr>
 
-  <div id="datepicker-wearon-date" data-date-start-date="<%= $dates->{wearon}->ymd %>" data-date="<%= $dates->{wearon}->ymd %>"></div>
+  <div id="datepicker-wearon-date" data-date-start-date="<%= $dates->{wearon}->ymd %>"></div>
   <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
     의류준비부터 배송까지 최소 5일이 소요됩니다.
+  </p>
+
+  <p class="help-block">
+    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+    추석연휴를 포함한 2017-09-25 ~ 2017-10-18 동안에는 택배 물류가 많은 관계로 도착날짜를 예측하기 어려워 주문을 할 수 없습니다.
   </p>
 
   <hr>
@@ -311,5 +316,5 @@
     택배반납일이 주말이나 휴일인 경우 편의점 택배를 이용해주세요.
   </p>
 
-  <button class="btn btn-primary" type="submit">선택완료</button>
+  <button class="btn btn-primary" disabled="disabled" type="submit">선택완료</button>
 </form>
