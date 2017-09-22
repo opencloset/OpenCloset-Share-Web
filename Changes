@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.0.25] - Fri, 22 Sep 2017 10:45:53 +0900
+
 ### Changed
 - default 의류착용일을 선택하지 않음 (#163)
 
