@@ -32,7 +32,8 @@ $ ->
     days = $('#additional-day option:selected').val()
     $('#wearon_date').val(val)
     date_calc(val, days)
-  .trigger('changeDate')
+    $('button.btn-primary[type=submit]').removeAttr('disabled')
+  # .trigger('changeDate')
 
   $('input[data-toggle="toggle"]').change ->
     sum = 0
