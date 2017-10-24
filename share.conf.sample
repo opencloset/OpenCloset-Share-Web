@@ -1,4 +1,8 @@
 #!/usr/bin/env perl
+
+my $PORT = $ENV{PORT} || 5000;
+my $STAFF_URI = $ENV{OPENCLOSET_STAFF_URI} || 'https://staff.theopencloset.net';
+
 {
     database => {
         dsn  => $ENV{OPENCLOSET_DATABASE_DSN}  || "dbi:mysql:opencloset:127.0.0.1",
@@ -14,16 +18,18 @@
         },
     },
 
+    hypnotoad => { listen => ["http://*:$PORT"] },
+
     ## must set secret of staff.theopencloset.net
     secrets       => [ $ENV{OPENCLOSET_SECRET} ],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
     opencloset    => {
-        login => 'http://localhost:5001/login',
-        root  => 'http://localhost:5001',
+        login => "$STAFF_URI/login",
+        root  => $STAFF_URI,
         api   => {
             email    => $ENV{OPENCLOSET_API_EMAIL},
             password => $ENV{OPENCLOSET_API_PASSWORD},
-            cookie   => '.cookie.txt'
+            cookie   => './.cookie.txt'
         },
     },
     timezone => 'Asia/Seoul',

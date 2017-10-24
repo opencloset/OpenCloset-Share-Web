@@ -3,6 +3,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.0.26] - Tue, 24 Oct 2017 16:46:36 +0900
+
+### Added
+- Dockerfiles
+
+### Fixed
+- 결제정보를 현재 로그인한 사용자가 아닌 주문서 사용자 정보로 수정 (#166)
+
 ## [v0.0.25] - Fri, 22 Sep 2017 10:45:53 +0900
 
 ### Changed
