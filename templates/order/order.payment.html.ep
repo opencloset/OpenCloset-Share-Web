@@ -17,6 +17,8 @@
 <hr>
 
 %= include 'partials/order-summary', order => $order;
+% my $user      = $order->user;
+% my $user_info = $user->user_info;
 
 <hr>
 
