@@ -4,7 +4,7 @@ https://share.theopencloset.net
 
 ## VERSION ##
 
-v0.0.26
+v0.1.0
 
 ## Dependencies ##
 
@@ -20,3 +20,9 @@ v0.0.26
 
     $ cp share.conf.sample share.conf    # copy config sample and customize it.
     $ MOJO_CONFIG=share.conf morbo ./script/share
+
+## Build docker file ##
+
+    $ docker build -f Dockerfile -t opencloset/share .
+    $ docker build -f Dockerfile.returning2returned -t opencloset/share/returning2returned .
+    $ docker build -f Dockerfile.shipped2delivered -t opencloset/share/shipped2delivered .
