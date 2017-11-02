@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.0] - Thu, 02 Nov 2017 16:23:10 +0900
+
+### Added
+- configurable avatar and postcodify URI
+
 ## [v0.0.26] - Tue, 24 Oct 2017 16:46:36 +0900
 
 ### Added
