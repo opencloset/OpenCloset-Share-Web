@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.1] - Wed, 15 Nov 2017 17:33:47 +0900
+
 ### Fixed
 - /orders/:id/purchase 에서 오래된 온라인 주문서를 볼때 오류가 나는 문제 해결 - 배송관련 정보가 없음 (#171)
 
