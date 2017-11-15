@@ -14,7 +14,7 @@ use String::Random;
 use Time::HiRes;
 
 use OpenCloset::Schema;
-use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER/;
+use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER $SHIPPING_DEADLINE_HOUR/;
 use OpenCloset::Constants::Category qw/$JACKET $PANTS $SKIRT $SHIRT $BLOUSE $SHOES $BELT $TIE %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
@@ -922,8 +922,8 @@ sub formatted {
 Default C<$days> 는 3박 4일의 C<3>
 발송(예정)일 또는 의류착용일과 대여기간을 기준으로 발송(예정)일, 대여일, 의류착용일, 반납일, 택배발송일을 계산합니다.
 
-    # 발송(예정)일 = 주말 + 공휴일 + 0일    # AM 10:00 이전
-    # 발송(예정)일 = 주말 + 공휴일 + 1일    # AM 10:00 이후
+    # 발송(예정)일 = 주말 + 공휴일 + 0일    # AM 09:00 이전
+    # 발송(예정)일 = 주말 + 공휴일 + 1일    # AM 09:00 이후
     # 도착(예정)일 = 발송(예정)일 + 공휴일 + 주말 + 2일
     # 의류착용일   = 도착(예정)일 + 1일
     # 대여일      = 의류착용일 - 1일
@@ -956,7 +956,7 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         my $dt = DateTime->today( time_zone => $tz );
-        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour >= 10;
+        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour >= $SHIPPING_DEADLINE_HOUR;
         while (1) {
             $dt->add( days => 1 ) and next if $dt->day_of_week > 5;
             $dt->add( days => 1 ) and next if $holidays{ $dt->ymd };
@@ -1033,7 +1033,7 @@ sub payment_deadline {
     my $wearon_date = $order->wearon_date;
     my $dates       = $self->date_calc( { wearon => $wearon_date } );
     my $deadline    = $dates->{shipping}->clone;
-    $deadline->set_hour(10);
+    $deadline->set_hour($SHIPPING_DEADLINE_HOUR);
 
     return $deadline;
 }

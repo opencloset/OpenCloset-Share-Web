@@ -18,7 +18,7 @@ requires 'Text::CSV';
 
 # cpan.theopencloset.net
 requires 'Iamport::REST::Client',               'v0.0.4';
-requires 'OpenCloset::Common',                  'v0.0.16';
+requires 'OpenCloset::Common',                  'v0.1.3';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
 requires 'OpenCloset::Plugin::Helpers',         'v0.0.21';
 requires 'OpenCloset::Schema',                  '0.051';
