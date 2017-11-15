@@ -8,7 +8,7 @@
 % my $ui = $order_user->user_info;
 
 <div class="pull-right text-muted">
-  %= include 'partials/sms-help', parcel => $parcel;
+  %= include 'partials/sms-help', parcel => $parcel if $parcel;
 </div>
 
 %= include 'partials/order-summary', order => $order;
@@ -21,81 +21,83 @@
 
 <hr>
 
-<ul class="order-status list-inline">
-  % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
-    <li>
-      % if ($parcel->status_id != $sts) {
-        <a href="<%= url_for('/orders/' . $order->id . '/parcel') %>" class="btn-parcel-status" data-status="<%= $sts %>">
+% if ($parcel) {
+  <ul class="order-status list-inline">
+    % for my $sts ($PAYMENT_DONE, $WAITING_SHIPPED, $SHIPPED, $DELIVERED, $RETURN_REQUESTED, $RETURNED) {
+      <li>
+        % if ($parcel->status_id != $sts) {
+          <a href="<%= url_for('/orders/' . $order->id . '/parcel') %>" class="btn-parcel-status" data-status="<%= $sts %>">
+            %= status2label($sts, $parcel->status_id == $sts)
+          </a>
+        % } else {
           %= status2label($sts, $parcel->status_id == $sts)
-        </a>
-      % } else {
-        %= status2label($sts, $parcel->status_id == $sts)
-      % }
-    </li>
-  % }
-</ul>
-
-<hr>
-
-% my $waybill = $parcel->waybill;
-% if ($waybill) {
-<p title="운송장">운송장 <samp><%= $waybill %></samp></p>
-% }
-
-<p>
-  % if ($waybill) {
-  <a class="btn btn-default btn-sm" href="<%= parcel($parcel->parcel_service, $waybill) %>" target="_blank">
-    <i class="fa fa-external-link"></i>
-    배송조회
-  </a>
-  % }
-
-  <button id="btn-toggle-parcel" class="btn btn-info btn-sm" type="button">
-    % if ($waybill) {
-      운송장변경
-    % } else {
-      운송장입력
+        % }
+      </li>
     % }
-  </button>
+  </ul>
 
-  <button id="btn-comment" class="btn btn-default btn-sm" type="button">Comment</button>
-  <a class="btn btn-default btn-sm" href="<%= $config->{opencloset}{root} %>/sms?to=<%= $ui->phone %>" target="_blank">
-    <i class="fa fa-external-link"></i>
-    SMS
-  </a>
-</p>
+  <hr>
 
-% if (my $comment = $parcel->comment) {
-  <pre><%= $comment %></pre>
-% }
+  % my $waybill = $parcel->waybill;
+  % if ($waybill) {
+    <p title="운송장">운송장 <samp><%= $waybill %></samp></p>
+  % }
 
-<form id="form-parcel" class="form-inline hide" action="<%= url_for('order.update_parcel') %>" method="POST">
-  <div class="form-group">
-    <select class="form-control" name="parcel-service">
-      <option value="CJ대한통운">CJ대한통운</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <input class="form-control" name="waybill" type="text" value="<%= $waybill || '' %>" placeholder="운송장번호">
-  </div>
-  <button class="btn btn-primary" type="submit">입력</button>
-  <button class="btn btn-danger btn-cancel" type="button">취소</button>
-  <p class="help-block">
-    <small>
-      운송장 번호를 입력하면 상태가
-      %= status2label($SHIPPED)
-      으로 변경됩니다
-    </small>
+  <p>
+    % if ($waybill) {
+      <a class="btn btn-default btn-sm" href="<%= parcel($parcel->parcel_service, $waybill) %>" target="_blank">
+        <i class="fa fa-external-link"></i>
+        배송조회
+      </a>
+    % }
+
+    <button id="btn-toggle-parcel" class="btn btn-info btn-sm" type="button">
+      % if ($waybill) {
+        운송장변경
+      % } else {
+        운송장입력
+      % }
+    </button>
+
+    <button id="btn-comment" class="btn btn-default btn-sm" type="button">Comment</button>
+    <a class="btn btn-default btn-sm" href="<%= $config->{opencloset}{root} %>/sms?to=<%= $ui->phone %>" target="_blank">
+      <i class="fa fa-external-link"></i>
+      SMS
+    </a>
   </p>
-</form>
 
-<form id="form-comment" class="hide" action="<%= url_for('order.update_parcel') %>" method="POST">
-  <div class="form-group">
-    <textarea id="comment" name="comment" class="form-control" placeholder="Comment"><%= $parcel->comment || '' %></textarea>
-  </div>
-  <button class="btn btn-primary" type="submit">입력</button>
-  <button class="btn btn-danger btn-cancel" type="button">취소</button>
-</form>
+  % if (my $comment = $parcel->comment) {
+    <pre><%= $comment %></pre>
+  % }
+
+  <form id="form-parcel" class="form-inline hide" action="<%= url_for('order.update_parcel') %>" method="POST">
+    <div class="form-group">
+      <select class="form-control" name="parcel-service">
+        <option value="CJ대한통운">CJ대한통운</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input class="form-control" name="waybill" type="text" value="<%= $waybill || '' %>" placeholder="운송장번호">
+    </div>
+    <button class="btn btn-primary" type="submit">입력</button>
+    <button class="btn btn-danger btn-cancel" type="button">취소</button>
+    <p class="help-block">
+      <small>
+        운송장 번호를 입력하면 상태가
+        %= status2label($SHIPPED)
+        으로 변경됩니다
+      </small>
+    </p>
+  </form>
+
+  <form id="form-comment" class="hide" action="<%= url_for('order.update_parcel') %>" method="POST">
+    <div class="form-group">
+      <textarea id="comment" name="comment" class="form-control" placeholder="Comment"><%= $parcel->comment || '' %></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">입력</button>
+    <button class="btn btn-danger btn-cancel" type="button">취소</button>
+  </form>
+% }
 
 <hr>
 

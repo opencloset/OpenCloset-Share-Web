@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Fixed
+- /orders/:id/purchase 에서 오래된 온라인 주문서를 볼때 오류가 나는 문제 해결 - 배송관련 정보가 없음 (#171)
+
 ### Changed
 - 라운드 긴소매 블라우스 타입을 제거 (#174)
 - 취업날개는 쿠폰은 입사면접 용도만을 허용 (#178)
