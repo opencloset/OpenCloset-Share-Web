@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Changed
 - 라운드 긴소매 블라우스 타입을 제거 (#174)
 - 취업날개는 쿠폰은 입사면접 용도만을 허용 (#178)
+- 결제완료 마감시간을 오전 10시에서 오전 09시로 변경 (#173)
 
 ## [v0.1.0] - Thu, 02 Nov 2017 16:23:10 +0900
 
