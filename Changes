@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Added
 - POST /orders/:id/details
+- 여러벌을 대여가능하도록 함 (#177)
 
 ## [v0.1.1] - Wed, 15 Nov 2017 17:33:47 +0900
 
