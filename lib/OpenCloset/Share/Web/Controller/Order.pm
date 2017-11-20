@@ -877,6 +877,8 @@ sub create_order_detail {
 
     return $self->error( 500, "Failed to create a new order_detail" ) unless $detail;
     my %columns = $detail->get_columns;
+    $self->flash(
+        message => '추가하신 대여품목의 사이즈 정보는 주문과 관련된 요청 및 문의사항에 적어주세요.' );
     $self->render( json => \%columns, status => 201 );
 }
 
