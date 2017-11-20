@@ -12,6 +12,7 @@ use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
 use String::Random;
 use Time::HiRes;
+use Try::Tiny;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER $SHIPPING_DEADLINE_HOUR/;
@@ -504,22 +505,22 @@ sub waiting_shipped {
 
     ## 대여품목과 주문서품목을 비교확인
     my @clothes = $self->schema->resultset('Clothes')->search( { code => { -in => $codes } } );
-    my @details = $order->order_details;
+    my $details = $order->order_details;
 
-    my ( %source, %target );
-    for my $detail (@details) {
+    my ( @source, @target );
+    while ( my $detail = $details->next ) {
         my $name = $detail->name;
         next unless $name =~ m/^[a-z]/; # 배송비 예외처리
-        $source{$name} = $detail;
+        push @source, $name;
     }
 
     for my $clothes (@clothes) {
         my $category = $clothes->category;
-        $target{$category} = $clothes;
+        push @target, $category;
     }
 
-    my @source = sort keys %source;
-    my @target = sort keys %target;
+    @source = sort @source;
+    @target = sort @target;
 
     if ( "@source" ne "@target" ) {
         my $msg = "주문서 품목과 대여품목이 일치하지 않습니다.";
@@ -528,32 +529,44 @@ sub waiting_shipped {
         $self->log->warn("대여품목: @target");
     }
 
-    my $guard = $self->schema->txn_scope_guard;
-    for my $category ( keys %source ) {
-        my $detail  = $source{$category};
-        my $clothes = $target{$category};
+    $details->reset;
+    my ( $success, $error ) = try {
+        my $guard = $self->schema->txn_scope_guard;
+        for my $clothes (@clothes) {
+            my $category = $clothes->category;
+            my $detail = $details->search( { name => $clothes->category } )->next;
 
-        if ($clothes) {
-            my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
-            $detail->update(
-                {
-                    name         => $name,
-                    status_id    => $RENTAL,
-                    clothes_code => $clothes->code,
-                }
-            );
+            die "Not found matched category in order details: $category" unless $detail;
 
-            $clothes->update( { status_id => $RENTAL } );
+            if ($clothes) {
+                my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
+                $detail->update(
+                    {
+                        name         => $name,
+                        status_id    => $RENTAL,
+                        clothes_code => $clothes->code,
+                    }
+                );
+
+                $clothes->update( { status_id => $RENTAL } );
+            }
+            else {
+                $detail->update( { name => "$category - 대여안함" } );
+            }
         }
-        else {
-            $detail->update( { name => "$category - 대여안함" } );
-        }
+
+        $order->update( { status_id => $RENTAL } );
+        $self->update_parcel_status( $order, $WAITING_SHIPPED );
+        $guard->commit;
+        return 1;
     }
+    catch {
+        chomp;
+        $self->log->error($_);
+        return ( undef, $_ );
+    };
 
-    $order->update( { status_id => $RENTAL } );
-    $self->update_parcel_status( $order, $WAITING_SHIPPED );
-    $guard->commit;
-
+    return unless $success;
     return $order;
 }
 
