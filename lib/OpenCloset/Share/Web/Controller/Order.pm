@@ -341,7 +341,7 @@ sub order_id {
 sub order {
     my $self  = shift;
     my $order = $self->stash('order');
-    my $user  = $self->stash('user');
+    my $user  = $order->user;
 
     my $create_date = $order->create_date;
 
