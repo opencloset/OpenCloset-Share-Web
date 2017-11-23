@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- 배송지가 서울시인 주문서만 취업날개는 쿠폰을 사용할 수 있도록 제한 (#187)
+
 ## [v0.1.2] - Thu, 23 Nov 2017 17:51:40 +0900
 
 ### Added

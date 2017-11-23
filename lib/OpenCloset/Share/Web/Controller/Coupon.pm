@@ -38,6 +38,17 @@ sub validate {
         );
     }
 
+    ## 주소지가 서울시인 사람만 취업날개 이용 가능하도록 제한 (#187)
+    # address2
+    my $addr = $order->user_address;
+    my $address2 = $addr->address2 || '';
+    if ( $desc =~ m/^seoul-2017-2/ and $address2 !~ m/^서울특별시/ ) {
+        return $self->error(
+            400,
+            "취업날개 온라인(택배)대여는 서울 지역으로만 배송이 가능합니다. 배송 받을 주소를 서울시 주소로 입력해주세요."
+        );
+    }
+
     my %columns = $coupon->get_columns;
     $columns{max_suit_type_coupon_price} = \%MAX_SUIT_TYPE_COUPON_PRICE;
     if ( $columns{desc} and $columns{desc} eq 'linkstart' ) {
