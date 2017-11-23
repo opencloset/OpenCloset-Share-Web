@@ -66,9 +66,9 @@
           </ul>
 
           % if ($user_info->staff == 1) {
-          <form class="navbar-form navbar-left clothes-code" method="GET" action="<%= url_for('search') %>">
+          <form class="navbar-form navbar-left" method="GET" action="<%= url_for('search') %>">
             <div class="form-group">
-              <input type="text" name="q" class="form-control code" placeholder="의류코드">
+              <input type="text" name="q" class="form-control code" placeholder="주문서번호, 이름, 이메일, 휴대전화번호">
             </div>
             <button type="submit" class="btn btn-default">검색</button>
           </form>
