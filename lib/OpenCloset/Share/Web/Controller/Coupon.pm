@@ -1,7 +1,7 @@
 package OpenCloset::Share::Web::Controller::Coupon;
 use Mojo::Base 'Mojolicious::Controller';
 
-use OpenCloset::Constants qw/$MAX_SUIT_COUPON_PRICE/;
+use OpenCloset::Constants qw/%MAX_SUIT_TYPE_COUPON_PRICE/;
 
 has schema => sub { shift->app->schema };
 
@@ -39,7 +39,7 @@ sub validate {
     }
 
     my %columns = $coupon->get_columns;
-    $columns{max_suit_coupon_price} = $MAX_SUIT_COUPON_PRICE;
+    $columns{max_suit_type_coupon_price} = \%MAX_SUIT_TYPE_COUPON_PRICE;
     if ( $columns{desc} and $columns{desc} eq 'linkstart' ) {
         $columns{help}        = 'LINKStart x 열린옷장';
         $columns{placeholder} = '대학교명을 입력해주세요.';
