@@ -325,9 +325,10 @@ sub order_id {
         return;
     }
 
-    my $deadline = $self->payment_deadline($order);
-    my $dates = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
-    $self->stash( order => $order, deadline => $deadline, dates => $dates );
+    my $deadline      = $self->payment_deadline($order);
+    my $dates         = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $force_deposit = $self->redis->get("opencloset:share:deposit:$order_id");
+    $self->stash( order => $order, deadline => $deadline, dates => $dates, force_deposit => $force_deposit );
     return 1;
 }
 
@@ -341,7 +342,7 @@ sub order_id {
 sub order {
     my $self  = shift;
     my $order = $self->stash('order');
-    my $user  = $self->stash('user');
+    my $user  = $order->user;
 
     my $create_date = $order->create_date;
 
@@ -422,6 +423,7 @@ sub update_order {
     $v->optional('target_date');
     $v->optional('shipping_misc');
     $v->optional('desc');
+    $v->optional('force_deposit');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -501,6 +503,12 @@ sub update_order {
         else {
             $order->order_details->update_all( { clothes_code => undef } );
         }
+    }
+
+    if ( defined $input->{force_deposit} ) {
+        my $force_deposit = delete $input->{force_deposit};
+        my $order_id      = $order->id;
+        $self->redis->set( "opencloset:share:deposit:$order_id" => $force_deposit );
     }
 
     $order->update($input);
@@ -843,6 +851,43 @@ sub cancel_payment {
 
     $self->flash( message => '결제가 취소되었습니다.' );
     $self->render( json => { pay_method => $pay_method, status => 'cancelled' } );
+}
+
+=head2 create_order_detail
+
+    POST /orders/:order_id/details
+
+=cut
+
+sub create_order_detail {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    my $v = $self->validation;
+    $v->required('name');
+    $v->required('price');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $name   = $v->param('name');
+    my $price  = $v->param('price');
+    my $detail = $order->create_related(
+        'order_details',
+        {
+            name        => $name,
+            price       => $price,
+            final_price => $price,
+        }
+    );
+
+    return $self->error( 500, "Failed to create a new order_detail" ) unless $detail;
+    my %columns = $detail->get_columns;
+    $self->flash(
+        message => '추가하신 대여품목의 사이즈 정보는 주문과 관련된 요청 및 문의사항에 적어주세요.' );
+    $self->render( json => \%columns, status => 201 );
 }
 
 =head2 _cancel_payment_cond

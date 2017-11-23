@@ -17,12 +17,13 @@
 <hr>
 
 %= include 'partials/order-summary', order => $order;
+% my $logged_in = $user;
 % my $user      = $order->user;
 % my $user_info = $user->user_info;
 
 <hr>
 
-% if ($deadline->epoch > time) {
+% if ($force_deposit or $deadline->epoch > time) {
   <h5>
     결제방법
     <small>
@@ -35,7 +36,21 @@
   </h5>
 
   <p class="help-block">
-    주문한 품목을 <%= $dates->{arrival}->year %>년 <%= $dates->{arrival}->month %>월 <%= $dates->{arrival}->day %>일에 배송 받으려면, <strong><%= $deadline->year %>년 <%= $deadline->month %>월 <%= $deadline->day %>일 <%= $deadline->hour < 12 ? '오전' : '' %> <%= $deadline->hour %>시까지 결제가 완료되어야 합니다.</strong> 기한 내 결제가 되지 않으면 의류 발송이 불가능하며 해당시각 이후에는 결제를 진행할 수 없습니다.
+    % my $now = DateTime->now(time_zone => $config->{timezone});
+    % my $vbank_due = $now->clone->add(hours => 2);
+    % if ($force_deposit) {
+      입금 마감시간이 지났지만 관리자에 의해 입금가능 하도록 설정되었습니다.
+      % if ($logged_in->user_info->staff) {
+        <span class="pull-right">
+          <button id="btn-force-deposit" class="btn btn-sm btn-success" type="button" data-value="0">
+            <i class="fa fa-cog" aria-hidden="true"></i>
+            입금하지 못하도록 설정
+          </button>
+        </span>
+      % }
+    % } else {
+      주문한 품목을 <%= $dates->{arrival}->year %>년 <%= $dates->{arrival}->month %>월 <%= $dates->{arrival}->day %>일에 배송 받으려면, <strong><%= $deadline->year %>년 <%= $deadline->month %>월 <%= $deadline->day %>일 <%= $deadline->hour < 12 ? '오전' : '' %> <%= $deadline->hour %>시까지 결제가 완료되어야 합니다.</strong> 기한 내 결제가 되지 않으면 의류 발송이 불가능하며 해당시각 이후에는 결제를 진행할 수 없습니다.
+    % }
   </p>
 
   % my ($addr, $addr2);
@@ -66,6 +81,14 @@
 
   <div class="alert alert-danger">
     결제마감날짜가 지난 주문서 입니다 <strong><%= $deadline->ymd %> <%= $deadline->hour %>:00</strong>
+    % if ($logged_in->user_info->staff) {
+      <span class="pull-right">
+        <button id="btn-force-deposit" class="btn btn-sm btn-success" type="button" data-value="1">
+          <i class="fa fa-cog" aria-hidden="true"></i>
+          입금 할 수 있도록 변경
+        </button>
+      </span>
+    % }
   </div>
 
   <p class="help-block">

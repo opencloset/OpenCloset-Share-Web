@@ -10,7 +10,7 @@ use Iamport::REST::Client;
 use OpenCloset::Schema;
 use OpenCloset::DB::Plugin::Order::Sale;
 
-use version; our $VERSION = qv("v0.1.1");
+use version; our $VERSION = qv("v0.1.2");
 
 has schema => sub {
     my $self   = shift;
@@ -132,6 +132,7 @@ sub _private_routes {
     $order->post('/payments')->to('order#create_payment');
     $order->post('/coupon')->to('order#insert_coupon');
     $order->post('/cancel')->to('order#cancel_payment');
+    $order->post('/details')->to('order#create_order_detail');
 
     my $payment = $payments->under('/:payment_id')->to('payment#payment_id');
     $payment->put('/')->to('payment#update_payment');

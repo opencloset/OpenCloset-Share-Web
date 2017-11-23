@@ -1,3 +1,12 @@
+v0.1.2
+
+    $ grunt
+    $ closetpan OpenCloset::Common          # v0.1.5
+    $ closetpan OpenCloset::Plugin::Helpers # v0.0.26
+
+    # Add below to `share.conf`
+    redis_url => $ENV{OPENCLOSET_REDIS_URL} || 'redis://localhost:6379',
+
 v0.1.1
 
     $ grunt

@@ -1,5 +1,6 @@
+% use DateTime;
 % use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT/;
-% use OpenCloset::Constants::Category qw/$SHIRT $TIE $BLOUSE %PRICE/;
+% use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %LABEL_MAP %PRICE/;
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 % our %EVENT_MAP = (seoul => '취업날개', 'seoul-2017' => '취업날개', 'seoul-2017-2' => '취업날개', '10bob' => '십시일밥', gwanak => '관악고용센터', incheonjob => '인천광역시 일자리정책과', linkstart => '링크스타트');
@@ -13,6 +14,7 @@
 
 <hr>
 
+% my $status_id = $order->status_id;
 % my $timezone = $self->config->{timezone};
 % my $create_date = $order->create_date;
 <h2 class="text-success">
@@ -26,13 +28,14 @@
 </h2>
 
 <div class="row choose-clothes-panel">
+  % my %offset;
   % my @categories = categories($order);
   <ul class="list-inline">
     % my $price = category_price($order);
     % for my $c (@categories) {
       <li>
         <div class="thumbnail">
-          % my $clothes = $order->order_details->search_related('clothes', { category => $c })->next;
+          % my $clothes = $order->order_details->search_related('clothes', { category => $c }, { rows => 1, offset => $offset{$c}++ })->next;
           % if ($clothes) {
             % my $code = substr $clothes->code, 1;
             % if ($user_info->staff) {
@@ -54,21 +57,43 @@
                   %= shirt_type($order)
                   %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
                 % } elsif ($c eq $BLOUSE) {
-                %= blouse_type($order)
-                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
-    % } else {
-                %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
-    % }
+                  %= blouse_type($order)
+                  %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
+                % } else {
+                  %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
+                % }
               </span>
               <code>
                 % if ($c eq $TIE) {
-                  <%= commify(category_price($order, $TIE)) %>
+                  %= commify(category_price($order, $TIE))
                 % } else {
-                  <%= commify($PRICE{$c}) %>
+                  %= commify($PRICE{$c})
                 % }
               </code>
             </p>
           </div>
+        </div>
+      </li>
+    % }
+
+    % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT" =~ m/$status_id/) {
+      <li>
+        <div class="thumbnail">
+          <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-plus fa-5x" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-category">
+              % for my $c ($JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE) {
+                <li>
+                  <a href="<%= url_for('/orders/' . $order->id . '/details') %>" data-price="<%= $PRICE{$c} %>" data-name="<%= $c %>" class="js-add-category">
+                    <%= $LABEL_MAP{$c} %>
+                  </a>
+                </li>
+              % }
+            </ul>
+          </div>
+          <div class="caption text-center">품목추가</div>
         </div>
       </li>
     % }
@@ -140,7 +165,14 @@
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   발송(예정)일
 </h5>
-<p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $deadline->ymd(''), $deadline->hour, $deadline->minute) %>"><%= $dates->{shipping}->ymd %></p>
+
+% if ($force_deposit) {
+  % my $now = DateTime->now(time_zone => $config->{timezone});
+  % my $vbank_due = $now->clone->add(hours => 2);
+  <p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $vbank_due->ymd(''), $vbank_due->hour, $vbank_due->minute) %>"><%= $dates->{shipping}->ymd %></p>
+% } else {
+  <p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $deadline->ymd(''), $deadline->hour, $deadline->minute) %>"><%= $dates->{shipping}->ymd %></p>
+% }
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
@@ -160,7 +192,6 @@
 </h5>
 <p><%= $dates->{parcel}->ymd %></p>
 
-% my $status_id = $order->status_id;
 % if ("$CHOOSE_CLOTHES $CHOOSE_ADDRESS" !~ m/\b$status_id\b/) {
   <hr>
   <h4>
