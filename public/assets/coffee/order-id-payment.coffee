@@ -169,3 +169,14 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
         $.growl.error({ title: "품목추가 실패", message: jqXHR.responseJSON.error })
       complete: (jqXHR, textStatus) ->
+
+  $('#btn-force-deposit').click (e) ->
+    val = $(@).data('value')
+    $.ajax location.href,
+      type: 'PUT'
+      dataType: 'json'
+      data: { force_deposit: val }
+      success: (data, textStatus, jqXHR) ->
+        location.reload()
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->

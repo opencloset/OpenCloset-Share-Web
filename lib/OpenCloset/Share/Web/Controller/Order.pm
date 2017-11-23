@@ -325,9 +325,10 @@ sub order_id {
         return;
     }
 
-    my $deadline = $self->payment_deadline($order);
-    my $dates = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
-    $self->stash( order => $order, deadline => $deadline, dates => $dates );
+    my $deadline      = $self->payment_deadline($order);
+    my $dates         = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $force_deposit = $self->redis->get("opencloset:share:deposit:$order_id");
+    $self->stash( order => $order, deadline => $deadline, dates => $dates, force_deposit => $force_deposit );
     return 1;
 }
 
@@ -422,6 +423,7 @@ sub update_order {
     $v->optional('target_date');
     $v->optional('shipping_misc');
     $v->optional('desc');
+    $v->optional('force_deposit');
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -501,6 +503,12 @@ sub update_order {
         else {
             $order->order_details->update_all( { clothes_code => undef } );
         }
+    }
+
+    if ( defined $input->{force_deposit} ) {
+        my $force_deposit = delete $input->{force_deposit};
+        my $order_id      = $order->id;
+        $self->redis->set( "opencloset:share:deposit:$order_id" => $force_deposit );
     }
 
     $order->update($input);

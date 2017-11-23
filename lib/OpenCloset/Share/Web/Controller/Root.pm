@@ -1,6 +1,8 @@
 package OpenCloset::Share::Web::Controller::Root;
 use Mojo::Base 'Mojolicious::Controller';
 
+use Data::Pageset;
+
 use OpenCloset::Constants::Status qw/$RENTAL/;
 
 has schema => sub { shift->app->schema };
@@ -33,21 +35,62 @@ sub index {
 
 sub search {
     my $self = shift;
+    my $p    = $self->param('p') || 1;
     my $q    = $self->param('q');
 
+    return unless $self->admin_auth;
     return $self->error( 400, "Empty query" ) unless $q;
+    return $self->error( 400, "Query is too short: $q" ) if length $q < 2;
 
-    my $clothes = $self->schema->resultset('Clothes')->find( { code => sprintf( '%05s', $q ) } );
-    return $self->error( 404, "Clothes not found: $q" ) unless $clothes;
+    my @or;
+    if ( $q =~ m/^[0-9]{1,6}$/ ) {
+        push @or, { 'me.id' => $q };
+    }
+    elsif ( $q =~ /^[0-9\- ]+$/ ) {
+        $q =~ s/[- ]//g;
+        push @or, { 'user_info.phone' => { like => "%$q%" } };
+    }
+    elsif ( $q =~ /^[a-zA-Z0-9_\-]+/ ) {
+        if ( $q =~ /\@/ ) {
+            push @or, { email => { like => "%$q%" } };
+        }
+        else {
+            push @or, { email => { like => "%$q%" } };
+            push @or, { name  => { like => "%$q%" } };
+        }
+    }
+    elsif ( $q =~ m/^[ㄱ-힣]+$/ ) {
+        push @or, { name => { like => "$q%" } };
+    }
 
-    my $status_id = $clothes->status_id;
-    if ( $status_id == $RENTAL ) {
-        my $detail = $clothes->order_details( { status_id => $status_id }, { rows => 1, order_by => { -desc => 'create_date' } } )->single;
-        $self->redirect_to( 'order.purchase', order_id => $detail->order_id );
-    }
-    else {
-        $self->redirect_to( '/clothes/' . $clothes->code );
-    }
+    my $rs = $self->schema->resultset('Order')->search(
+        {
+            online => 1,
+            -or    => [@or]
+        },
+        {
+            prefetch => { user  => 'user_info' },
+            order_by => { -desc => 'me.update_date' },
+            page     => $p,
+            rows     => 10
+        }
+    );
+
+    my $pager   = $rs->pager;
+    my $pageset = Data::Pageset->new(
+        {
+            total_entries    => $pager->total_entries,
+            entries_per_page => $pager->entries_per_page,
+            pages_per_set    => 5,
+            current_page     => $p,
+        }
+    );
+
+    $self->render(
+        q       => $q,
+        r       => $rs,
+        pageset => $pageset,
+    );
 }
 
 =head2 terms

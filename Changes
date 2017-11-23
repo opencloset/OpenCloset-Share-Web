@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Added
 - POST /orders/:id/details
 - 여러벌을 대여가능하도록 함 (#177)
+- 주문서번호, 이름, 이메일, 휴대전화번호 로 주문서를 검색할 수 있도록 함 (#182)
+- 입금마감시간을 무시하는 관리자용 버튼 추가 (#182)
 
 ## [v0.1.1] - Wed, 15 Nov 2017 17:33:47 +0900
 

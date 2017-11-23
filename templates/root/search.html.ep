@@ -1,0 +1,69 @@
+% layout 'default';
+% title "$q 에 대한 검색결과", jses => ['/assets/dist/js/search.min.js'];
+% use OpenCloset::Constants::Status ();
+
+<h3>
+  %= $q
+  <small>에 대한 검색결과</small>
+</h3>
+
+<hr>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>사용자정보</th>
+      <th>상태</th>
+      <th>시간</th>
+    </tr>
+  </thead>
+  <tbody>
+    % while (my $order = $r->next) {
+      % my $email = $order->user->email;
+      % my $phone = $order->user->user_info->phone;
+      <tr>
+        <td>
+          <a href="<%= url_for('/orders/' . $order->id) %>">
+            % if ($order->id =~ m/$q/) {
+              <mark><%= $order->id %></mark>
+            % } else {
+              %= $order->id
+            % }
+          </a>
+        </td>
+        <td>
+          <i class="fa fa-<%= $order->user->user_info->gender %> fa-fw" aria-hidden="true"></i>
+          % if ($order->user->name =~ m/$q/) {
+            <mark><%= $order->user->name %>님</mark>
+          % } else {
+            <%= $order->user->name %>님
+          % }
+          <small>
+            % if ($email =~ m/$q/) {
+              <mark><%= $email %></mark>
+            % } else {
+              %= $email
+            % }
+
+            % if ($phone =~ m/$q/) {
+              <mark><%= $phone %></mark>
+            % } else {
+              %= $phone
+            % }
+          </small>
+        </td>
+        <td><%= $OpenCloset::Constants::Status::LABEL_MAP{$order->status_id} %></td>
+        <td><abbr class="timeago" title="<%= $order->update_date %>Z"></abbr></td>
+      </tr>
+    % }
+
+    % unless ($r->count) {
+      <tr>
+        <td colspan="4" class="text-center"><mark><%= $q %></mark> 에 대한 검색결과가 없습니다.</td>
+      </tr>
+    % }
+  </tbody>
+</table>
+
+%= include 'partials/pagination';
