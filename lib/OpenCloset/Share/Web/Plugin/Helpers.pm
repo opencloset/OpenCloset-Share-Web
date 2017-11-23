@@ -10,6 +10,7 @@ use Encode qw/encode_utf8/;
 use HTTP::Tiny;
 use Mojo::ByteStream;
 use Mojo::JSON qw/decode_json/;
+use Mojo::Redis2;
 use String::Random;
 use Time::HiRes;
 use Try::Tiny;
@@ -66,6 +67,7 @@ sub register {
     $app->helper( date_calc            => \&date_calc );
     $app->helper( payment_deadline     => \&payment_deadline );
     $app->helper( orderClothes2text    => \&orderClothes2text );
+    $app->helper( redis                => \&redis );
 }
 
 =head1 HELPERS
@@ -1066,6 +1068,28 @@ sub orderClothes2text {
     my @texts = map { $OpenCloset::Constants::Category::LABEL_MAP{$_} } @categories;
 
     return join( ', ', @texts );
+}
+
+=head2 redis
+
+    my $redis = $app->redis;
+
+=cut
+
+sub redis {
+    my $self = shift;
+
+    $self->stash->{redis} ||= do {
+        my $log = $self->app->log;
+        my $redis = Mojo::Redis2->new( url => $self->config->{redis_url} );
+        $redis->on(
+            error => sub {
+                $log->error("[REDIS ERROR] $_[1]");
+            }
+        );
+
+        $redis;
+    };
 }
 
 1;

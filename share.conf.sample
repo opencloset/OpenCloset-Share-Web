@@ -58,4 +58,5 @@ my $POSTCODIFY_URI = $ENV{OPENCLOSET_POSTCODIFY_URI} || 'https://postcodify.theo
         notice_url => q{},                                # Override if you want to iamport server configuration
     },
     postcodify_url => "$POSTCODIFY_URI/api/postcode/search.json",
+    redis_url      => $ENV{OPENCLOSET_REDIS_URL} || 'redis://localhost:6379',
 };

@@ -1,3 +1,4 @@
+% use DateTime;
 % use OpenCloset::Constants::Status qw/$CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT/;
 % use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %LABEL_MAP %PRICE/;
 
@@ -164,7 +165,14 @@
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
   발송(예정)일
 </h5>
-<p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $deadline->ymd(''), $deadline->hour, $deadline->minute) %>"><%= $dates->{shipping}->ymd %></p>
+
+% if ($force_deposit) {
+  % my $now = DateTime->now(time_zone => $config->{timezone});
+  % my $vbank_due = $now->clone->add(hours => 2);
+  <p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $vbank_due->ymd(''), $vbank_due->hour, $vbank_due->minute) %>"><%= $dates->{shipping}->ymd %></p>
+% } else {
+  <p id="shipping-date" data-vbank-due="<%= sprintf("%s%02s%02s", $deadline->ymd(''), $deadline->hour, $deadline->minute) %>"><%= $dates->{shipping}->ymd %></p>
+% }
 
 <h5>
   <i class="fa fa-calendar fa-fw" aria-hidden="true"></i>
