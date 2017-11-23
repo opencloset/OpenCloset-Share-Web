@@ -1,3 +1,7 @@
+    $ grunt
+    $ closetpan OpenCloset::Common          # v0.1.5
+    $ closetpan OpenCloset::Plugin::Helpers # v0.0.26
+
 v0.1.1
 
     $ grunt

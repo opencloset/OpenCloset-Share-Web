@@ -341,7 +341,7 @@ sub order_id {
 sub order {
     my $self  = shift;
     my $order = $self->stash('order');
-    my $user  = $self->stash('user');
+    my $user  = $order->user;
 
     my $create_date = $order->create_date;
 
@@ -843,6 +843,43 @@ sub cancel_payment {
 
     $self->flash( message => '결제가 취소되었습니다.' );
     $self->render( json => { pay_method => $pay_method, status => 'cancelled' } );
+}
+
+=head2 create_order_detail
+
+    POST /orders/:order_id/details
+
+=cut
+
+sub create_order_detail {
+    my $self  = shift;
+    my $order = $self->stash("order");
+
+    my $v = $self->validation;
+    $v->required('name');
+    $v->required('price');
+
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter validation failed: ' . join( ', ', @$failed ) );
+    }
+
+    my $name   = $v->param('name');
+    my $price  = $v->param('price');
+    my $detail = $order->create_related(
+        'order_details',
+        {
+            name        => $name,
+            price       => $price,
+            final_price => $price,
+        }
+    );
+
+    return $self->error( 500, "Failed to create a new order_detail" ) unless $detail;
+    my %columns = $detail->get_columns;
+    $self->flash(
+        message => '추가하신 대여품목의 사이즈 정보는 주문과 관련된 요청 및 문의사항에 적어주세요.' );
+    $self->render( json => \%columns, status => 201 );
 }
 
 =head2 _cancel_payment_cond
