@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.4] - Fri, 24 Nov 2017 11:50:50 +0900
+
+### Fixed
+- 쿠폰 유효성 검증에 발생하는 주소 관련 오류 해결 (#189)
+
 ## [v0.1.3] - Thu, 23 Nov 2017 18:17:34 +0900
 
 ### Added
