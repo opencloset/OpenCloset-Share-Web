@@ -1,5 +1,6 @@
 % layout 'default';
-% title $title;
+% title $title, jses => ['/assets/dist/js/order-id-waiting-deposit.min.js'];
+% use OpenCloset::Constants::Status qw/$PAYMENT/;
 
 %= include 'partials/guide', active => 5;
 
@@ -49,7 +50,17 @@
 % } else {
   <div class="alert alert-danger">
     입금기한이 지난 주문서입니다. <strong><%= $payment_due->ymd %> <%= $payment_due->hour %>:00</strong>
+    % my $logged_in = $user;
+    % if ($logged_in->user_info->staff) {
+      <span class="pull-right">
+        <button id="btn-force-deposit" class="btn btn-sm btn-success" type="button" data-value="1" data-status-id="<%= $PAYMENT %>">
+          <i class="fa fa-cog" aria-hidden="true"></i>
+          결제 할 수 있도록 변경
+        </button>
+      </span>
+    % }
   </div>
+
   <p class="help-block">
     <a href="<%= url_for('/orders/new') %>" class="btn btn-sm btn-primary">대여 주문서 작성</a> 버튼을 눌러서 새로운 주문서를 작성해주세요.
   </p>

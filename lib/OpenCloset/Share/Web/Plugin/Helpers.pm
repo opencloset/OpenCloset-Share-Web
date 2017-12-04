@@ -406,7 +406,11 @@ sub waiting_deposit {
 
     $order->update( { status_id => $WAITING_DEPOSIT } );
 
-    $payment_log ||= $order->payments->search_related( 'payment_logs', { status => 'ready' }, { rows => 1 } )->single;
+    $payment_log ||= $order->payments->search_related(
+        'payment_logs',
+        { status => 'ready' },
+        { rows   => 1, order_by => { -desc => 'id' } }
+    )->single;
 
     unless ($payment_log) {
         $self->log->error("Not found ready status payment log");

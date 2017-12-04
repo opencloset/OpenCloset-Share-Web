@@ -96,7 +96,6 @@ sub iamport {
                   "buyer_addr:   %s\n"
                 . "buyer_email:  %s\n"
                 . "buyer_name:   %s\n"
-                . "buyer_name:   %s\n"
                 . "buyer_tel:    %s\n"
                 . "imp_uid:      %s\n"
                 . "merchant_uid: %s\n"

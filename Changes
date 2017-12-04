@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- 관리자가 입금마감시간이 지난 주문서를 다시 결제할 수 있도록 함 (#182)
+
 ## [v0.1.4] - Fri, 24 Nov 2017 11:50:50 +0900
 
 ### Fixed
