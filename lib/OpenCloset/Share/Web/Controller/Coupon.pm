@@ -56,6 +56,16 @@ sub validate {
                 "취업날개 온라인(택배)대여는 서울 지역으로만 배송이 가능합니다. 배송 받을 주소를 서울시 주소로 입력해주세요."
             );
         }
+
+        my $wearon_date = $order->wearon_date;
+        return $self->error( 400, "의류착용일을 알 수 없는 주문서 입니다." ) unless $wearon_date;
+
+        ## 2017-12-13 이후에는 취업날개 쿠폰을 사용할 없도록 함 (#194)
+        our $JOBWING_CLOSE_EPOCH = 1513177200; # epoch of '2017-12-14T00:00:00'
+        $wearon_date->truncate( to => 'day' );
+        if ( $wearon_date->epoch > $JOBWING_CLOSE_EPOCH ) {
+            return $self->error( 400, "2017년도 취업날개 서비스가 종료되어서 해당 쿠폰은 사용할 수 없습니다." );
+        }
     }
 
     my %columns = $coupon->get_columns;
