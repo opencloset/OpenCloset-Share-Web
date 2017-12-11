@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.6] - Mon, 11 Dec 2017 13:40:41 +0900
+
 ### Changed
 - 의류착용일이 '2017-12-14' 까지만 2017년도 취업날개 쿠폰을 사용할 수 있도록 함 (#194)
 
