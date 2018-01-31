@@ -16,6 +16,7 @@ requires 'Path::Tiny';
 requires 'String::Random';
 requires 'Text::CSV';
 requires 'Try::Tiny';
+requires 'WebService::Jandi::WebHook';
 
 # cpan.theopencloset.net
 requires 'Iamport::REST::Client',               'v0.0.4';

@@ -3,6 +3,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.7] - Wed, 31 Jan 2018 12:42:10 +0900
+
+### Added
+- 결제정보를 3번까지 재시도 해서 확인 (#181)
+- 결제정보를 확인하지 못하면 잔디에 주문서 오류를 남김 (#181)
+
 ## [v0.1.6] - Mon, 11 Dec 2017 13:40:41 +0900
 
 ### Changed

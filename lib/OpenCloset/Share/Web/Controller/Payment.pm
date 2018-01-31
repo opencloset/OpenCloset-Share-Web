@@ -3,9 +3,12 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Try::Tiny;
 use Mojo::JSON qw/decode_json/;
+use WebService::Jandi::WebHook;
 
 use OpenCloset::Constants qw/%PAY_METHOD_MAP/;
 use OpenCloset::Constants::Status qw/$WAITING_DEPOSIT/;
+
+our $MAX_RETRY = 3;
 
 has schema => sub { shift->app->schema };
 
@@ -76,8 +79,40 @@ sub update_payment {
     my $status     = $v->param("status");
 
     my $iamport = $self->app->iamport;
-    my $json    = $iamport->payment($sid);
-    return $self->error( 500, "Failed to get payment info from iamport: sid($sid)" ) unless $json;
+
+    my $json;
+    my $retry = 0;
+    while ( $retry++ < $MAX_RETRY ) {
+        $json = $iamport->payment($sid);
+        last if $json;
+
+        $self->log->info("Failed to get payment info from iamport: sid($sid), retry($retry)");
+        sleep(1);
+    }
+
+    unless ($json) {
+        my $jandi = WebService::Jandi::WebHook->new( $self->config->{jandi}{hook} );
+        if ($jandi) {
+            my $msg = {
+                body         => sprintf( "[[온라인 결제오류]](%s)", $self->url_for( '/orders/' . $order->id )->to_abs ),
+                connectColor => '#FAC11B',
+                connectInfo  => [
+                    {
+                        title       => '주문서 번호',
+                        description => $order->id,
+                    },
+                ]
+            };
+
+            my $res = $jandi->request($msg);
+            unless ( $res->{success} ) {
+                $self->log->error("Failed to post jandi message");
+                $self->log->error("$res->{status}: $res->{reason}");
+            }
+        }
+
+        return $self->error( 500, "Failed to get payment info from iamport: sid($sid)" );
+    }
 
     my $info        = decode_json($json);
     my $info_status = $info->{response}{status};
@@ -160,8 +195,40 @@ sub callback {
     $self->log->info("imp_success: $success");
 
     my $iamport = $self->app->iamport;
-    my $json    = $iamport->payment($sid);
-    return $self->error( 500, "Failed to get payment info from iamport" ) unless $json;
+
+    my $json;
+    my $retry = 0;
+    while ( $retry++ < $MAX_RETRY ) {
+        $json = $iamport->payment($sid);
+        last if $json;
+
+        $self->log->info("Failed to get payment info from iamport: sid($sid), retry($retry)");
+        sleep(1);
+    }
+
+    unless ($json) {
+        my $jandi = WebService::Jandi::WebHook->new( $self->config->{jandi}{hook} );
+        if ($jandi) {
+            my $msg = {
+                body         => sprintf( "[[온라인 결제오류]](%s)", $self->url_for( '/orders/' . $order->id )->to_abs ),
+                connectColor => '#FAC11B',
+                connectInfo  => [
+                    {
+                        title       => '주문서 번호',
+                        description => $order->id,
+                    },
+                ]
+            };
+
+            my $res = $jandi->request($msg);
+            unless ( $res->{success} ) {
+                $self->log->error("Failed to post jandi message");
+                $self->log->error("$res->{status}: $res->{reason}");
+            }
+        }
+
+        return $self->error( 500, "Failed to get payment info from iamport: sid($sid)" );
+    }
 
     my $info       = decode_json($json);
     my $status     = $info->{response}{status};
