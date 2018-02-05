@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.8] - Mon, 05 Feb 2018 21:30:39 +0900
+
 ### Added
 - 결제오류에 대비하여 1시간마다 결제정보를 확인해서 상태를 변경하는 스크립트의 추가 (#181)
 
