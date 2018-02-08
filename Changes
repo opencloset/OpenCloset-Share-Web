@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.9] - Thu, 08 Feb 2018 18:00:35 +0900
+
+### Changed
+- 결제검증 데몬로그에 `[verify]` prefix 를 붙임 (#181)
+
 ## [v0.1.8] - Mon, 05 Feb 2018 21:30:39 +0900
 
 ### Added
