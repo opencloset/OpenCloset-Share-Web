@@ -58,7 +58,7 @@ sub run {
             ### 해서 paid 이력이 있으면 무시한다.
             next if $paid{ $log->payment_id };
 
-            $app->log->debug( "Checking payment " . $log->payment_id . " ..." );
+            $app->log->debug( "[verify] Checking payment " . $log->payment_id . " ..." );
 
             my $payment = $log->payment;
             my $order   = $payment->order;
@@ -66,7 +66,7 @@ sub run {
             ## paid 이력이 없는데 결제대기가 아니면 이것은 이상한 거
             ## 혹은 미납금을 위한 가상계좌일 수 있다.
             if ( $order->status_id != $WAITING_DEPOSIT ) {
-                $app->log->info( "Wrong order status_id: expected( $WAITING_DEPOSIT ), got( " . $order->status_id . " )" );
+                $app->log->info( "[verify] Wrong order status_id: expected( $WAITING_DEPOSIT ), got( " . $order->status_id . " )" );
                 next;
             }
 
@@ -74,7 +74,7 @@ sub run {
             my $sid  = $payment->sid;
             my $json = $iamport->payment($sid);
             unless ($json) {
-                $app->log->info("Failed to get payment info from iamport: sid($sid)");
+                $app->log->info("[verify] Failed to get payment info from iamport: sid($sid)");
                 next;
             }
 
@@ -83,7 +83,7 @@ sub run {
             next if $status ne 'paid';
 
             my $order_id = $order->id;
-            $app->log->info("Found paid payment: order($order_id)");
+            $app->log->info("[verify] Found paid payment: order($order_id)");
 
             my $pay_method = $info->{response}{pay_method};
             my $pl         = $payment->create_related(
@@ -99,7 +99,7 @@ sub run {
             $order->update( { price_pay_with => $pay_with } );
             $app->payment_done($order);
             my $payment_id = $payment->id;
-            $app->log->info("Update payment($payment_id) successfully: order($order_id)");
+            $app->log->info("[verify] Update payment($payment_id) successfully: order($order_id)");
             sleep(1);
         }
 
