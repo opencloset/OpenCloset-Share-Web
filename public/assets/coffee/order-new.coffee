@@ -4,6 +4,10 @@ $ ->
     endDate: '+1m'
     todayHighlight: true
     format: 'yyyy-mm-dd'
+    datesDisabled: [
+      '2018-02-15', '2018-02-16', '2018-02-17', '2018-02-18', '2018-02-19', '2018-02-20', '2018-02-21', 
+      '2018-02-22', '2018-02-23'
+    ]
 
   date_calc = (wearon_date, days) ->
     days = '' unless days
