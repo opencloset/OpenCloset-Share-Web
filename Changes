@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 2018 취업날개지원 seoul-2017 대신에 seoul-2018 을 사용
+
 ## [v0.1.10] - Thu, 08 Feb 2018 18:10:17 +0900
 
 ### Changed
