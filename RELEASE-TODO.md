@@ -1,3 +1,9 @@
+    $ mysql < db/alter/138-coupon-free-shipping.sql
+    mysql> UPDATE coupon SET free_shipping = 1 WHERE `desc` = 'gunpo201801';
+    $ closetpan OpenCloset::Schema             # 0.057
+    $ closetpan OpenCloset::Plugin::Helpers    # v0.0.27
+    $ grunt
+
 v0.1.11
 
 v0.1.10

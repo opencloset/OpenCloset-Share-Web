@@ -768,6 +768,19 @@ sub insert_coupon {
         return $self->error( 500, "Unknown coupon type: $type" );
     }
 
+    ## 할인 이후의 가격을 확인해서 0원이면 바로 배송대기로 변경
+    # $self->payment_done($order);
+    my $amount = $self->category_price($order);
+    my $details = $order->order_details( { desc => 'additional' } );
+    while ( my $detail = $details->next ) {
+        $amount += $detail->price;
+    }
+
+    if ( $amount <= 0 ) {
+        $self->log->info("결제할 금액이 없으므로 결제완료로 변경합니다: $amount");
+        $self->payment_done($order);
+    }
+
     my %columns = $order->get_columns;
     $self->render( json => \%columns );
 }
