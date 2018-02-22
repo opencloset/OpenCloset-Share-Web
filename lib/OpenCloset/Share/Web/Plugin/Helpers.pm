@@ -353,7 +353,11 @@ sub payment_done {
         $payment_date = $payment->update_date->clone;
     }
     else {
-        $amount       = $self->category_price($order) + 3_000;
+        $amount = $self->category_price($order);
+        my $details = $order->order_details( { desc => 'additional' } );
+        while ( my $detail = $details->next ) {
+            $amount += $detail->price;
+        }
         $payment_date = $order->update_date->clone;
     }
 

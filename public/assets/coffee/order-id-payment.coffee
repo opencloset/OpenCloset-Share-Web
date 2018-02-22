@@ -126,10 +126,15 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         $submit.addClass('disabled')
         # 쿠폰의 정보를 나타내고 사용여부를 다시 묻는다
-        data.price     = parseInt(data.price)
         data.isRate    = data.type is 'rate'
         data.isSuit    = data.type is 'suit'
         data.isDefault = data.type is 'default'
+
+        ## You can use the if helper to conditionally render a block.
+        ## If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block. 
+        ## int 로 변환해주지 않으면 "0" 으로 인식되어서 항상 true 이다
+        data.price         = parseInt(data.price)
+        data.free_shipping = parseInt(data.free_shipping)
 
         template   = JST['coupon/info']
         html       = template(data)
