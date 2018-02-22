@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.12] - Thu, 22 Feb 2018 14:31:34 +0900
+
 ### Added
 - 배송비가 무료인 쿠폰 타입을 지원 (#200)
 
