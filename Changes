@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 특정일 기준에 따라 의류착용일을 조정 (#201)
+
 ## [v0.1.12] - Thu, 22 Feb 2018 14:31:34 +0900
 
 ### Added
