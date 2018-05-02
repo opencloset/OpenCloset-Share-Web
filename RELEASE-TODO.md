@@ -1,3 +1,5 @@
+    $ grunt
+
 v0.1.12
 
     $ mysql < db/alter/138-coupon-free-shipping.sql
