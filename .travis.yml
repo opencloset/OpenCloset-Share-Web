@@ -1,0 +1,41 @@
+if: tag IS present
+
+sudo: required
+
+language: perl
+
+services:
+  - docker
+
+install:
+  - echo "Skip install"
+
+script:
+  - echo "Skip test"
+
+after_success:
+  - docker --version
+  - docker build -f Dockerfile                    -t opencloset/share:$TRAVIS_TAG .
+  - docker build -f Dockerfile.returning2returned -t opencloset/share/returning2returned:$TRAVIS_TAG .
+  - docker build -f Dockerfile.shipped2delivered  -t opencloset/share/shipped2delivered:$TRAVIS_TAG .
+  - docker tag opencloset/share:$TRAVIS_TAG        registry.theopencloset.net/opencloset/share:$TRAVIS_TAG
+  - docker tag opencloset/share:$TRAVIS_TAG        registry.theopencloset.net/opencloset/share:latest
+  - docker tag opencloset/share/returning2returned:$TRAVIS_TAG   registry.theopencloset.net/opencloset/share/returning2returned:$TRAVIS_TAG
+  - docker tag opencloset/share/returning2returned:$TRAVIS_TAG   registry.theopencloset.net/opencloset/share/returning2returned:latest
+  - docker tag opencloset/share/shipped2delivered:$TRAVIS_TAG registry.theopencloset.net/opencloset/share/shipped2delivered:$TRAVIS_TAG
+  - docker tag opencloset/share/shipped2delivered:$TRAVIS_TAG registry.theopencloset.net/opencloset/share/shipped2delivered:latest
+  - docker push registry.theopencloset.net/opencloset/share:$TRAVIS_TAG
+  - docker push registry.theopencloset.net/opencloset/share:latest
+  - docker push registry.theopencloset.net/opencloset/share/returning2returned:$TRAVIS_TAG
+  - docker push registry.theopencloset.net/opencloset/share/returning2returned:latest
+  - docker push registry.theopencloset.net/opencloset/share/shipped2delivered:$TRAVIS_TAG
+  - docker push registry.theopencloset.net/opencloset/share/shipped2delivered:latest
+
+notifications:
+  email:
+    recipients:
+      - staff@silex.kr
+    on_success: always # default: change
+    on_failure: always # default: always
+  ## irc 는 동작하지않음
+  ## https://github.com/aanoaa/fake-pause/blob/develop/.travis.yml 참고
