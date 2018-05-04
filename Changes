@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.16] - Fri, 04 May 2018 20:52:12 +0900
+
 ### Fixed
 - Set default config file in docker image
 
