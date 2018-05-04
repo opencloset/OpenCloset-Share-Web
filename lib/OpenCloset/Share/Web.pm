@@ -10,7 +10,7 @@ use Iamport::REST::Client;
 use OpenCloset::Schema;
 use OpenCloset::DB::Plugin::Order::Sale;
 
-use version; our $VERSION = qv("v0.1.14");
+use version; our $VERSION = qv("v0.1.15");
 
 has schema => sub {
     my $self   = shift;

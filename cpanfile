@@ -1,4 +1,3 @@
-required 'Mojo::Redis2';
 requires 'Data::Pageset';
 requires 'DateTime';
 requires 'DateTime::Format::Strptime';
@@ -9,6 +8,7 @@ requires 'Email::Valid';
 requires 'Encode';
 requires 'HTTP::CookieJar';
 requires 'HTTP::Tiny';
+requires 'Mojo::Redis2';
 requires 'Mojolicious';
 requires 'Parcel::Track';
 requires 'Parcel::Track::KR::CJKorea', '0.005';
