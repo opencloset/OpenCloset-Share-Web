@@ -3,7 +3,7 @@
 %   '/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js',
 %   '/assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js',
 %   '/assets/components/moment/moment.js',
-%   '/assets/extlib/iamport.payment-1.1.1.js',
+%   '//cdn.iamport.kr/js/iamport.payment-1.1.6.js',
 %   '/assets/components/jquery-mask-plugin/dist/jquery.mask.js',
 %   '/assets/dist/js/order-id-payment.min.js'
 % ], csses => [
