@@ -3,6 +3,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.17] - Thu, 02 Aug 2018 21:26:23 +0900
+
+### Fixed
+- '결제를 진행합니다' 버튼이 동작하지 않는 문제 해결 (#203)
+  - Upgrade iamport.payment.js to v1.1.6 from v1.1.1(deprecated)
+
 ## [v0.1.16] - Fri, 04 May 2018 20:52:12 +0900
 
 ### Fixed
