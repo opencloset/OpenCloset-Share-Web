@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 연장되는 대여기간의 라벨표시를 더 명확하게 수정 (#205)
+
 ## [v0.1.17] - Thu, 02 Aug 2018 21:26:23 +0900
 
 ### Fixed

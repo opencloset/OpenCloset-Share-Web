@@ -274,12 +274,12 @@
     <small>
       <select id="additional-day" name="additional_day">
         <option value="0">3박4일</option>
-        <option value="1">4박5일 +1일 연장(+20%)</option>
-        <option value="2">5박6일 +2일 연장(+40%)</option>
-        <option value="3">6박7일 +3일 연장(+60%)</option>
-        <option value="4">7박8일 +4일 연장(+80%)</option>
-        <option value="5">8박9일 +5일 연장(+100%)</option>
-        <option value="6">9박10일 +6일 연장(+120%)</option>
+        <option value="1">4박5일 = 3박4일+1일 연장(+20%)</option>
+        <option value="2">5박6일 = 3박4일+2일 연장(+40%)</option>
+        <option value="3">6박7일 = 3박4일+3일 연장(+60%)</option>
+        <option value="4">7박8일 = 3박4일+4일 연장(+80%)</option>
+        <option value="5">8박9일 = 3박4일+5일 연장(+100%)</option>
+        <option value="6">9박10일 = 3박4일+6일 연장(+120%)</option>
       </select>
     </small>
   </h5>
