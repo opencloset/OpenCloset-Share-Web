@@ -175,8 +175,14 @@ sub create {
             $order->create_related(
                 'order_details',
                 {
-                    name  => sprintf( "%d박%d일 +%d일 연장(+%d%%)", 3 + $additional_day, 3 + $additional_day + 1, $additional_day, 20 * $additional_day ),
-                    price => $extension_fee,
+                    name        => sprintf(
+                        "%d박%d일 = 3박4일 + %d일 연장(+%d%%)",
+                        3 + $additional_day,
+                        4 + $additional_day,
+                        $additional_day,
+                        20 * $additional_day
+                    ),
+                    price       => $extension_fee,
                     final_price => $extension_fee,
                     desc        => 'additional',
                 }
