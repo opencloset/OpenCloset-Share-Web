@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.19] - Mon, 27 Aug 2018 21:11:58 +0900
+
 ### Changed
 - 주문서 요약에서의 연장대여기간 라벨표시를 더 명확하게 수정 (#205)
 
