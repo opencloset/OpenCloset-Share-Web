@@ -2,14 +2,11 @@ $ ->
   now = moment()
   epoch = now.format('X')
 
-  target_dt = moment('2018-05-18T09:00')
-  target_epoch = target_dt.format('X')
-
-  disabledDates = []
-  if epoch > target_epoch
-    disabledDates = ['2018-05-23', '2018-05-24']
-  else
-    disabledDates = ['2018-05-08', '2018-05-09', '2018-05-10']
+  disabledDates = [
+    '2018-09-23', '2018-09-24', '2018-09-25', '2018-09-26', '2018-09-27',
+    '2018-09-28', '2018-09-29', '2018-09-30', '2018-10-01', '2018-10-02',
+    '2018-10-03', '2018-10-04'
+  ]
 
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
