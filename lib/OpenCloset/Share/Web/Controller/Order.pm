@@ -155,16 +155,29 @@ sub create {
         );
 
         my $discount = $order->sale_multi_times_rental( \@details );
-        if ( my $price = $discount->{after} - $discount->{before} ) {
+        if ( my $price = $discount->{before} - $discount->{after} ) {
             $order->create_related(
                 'order_details',
                 {
                     name        => "3회 이상 대여 할인",
-                    price       => $price,
-                    final_price => $price,
+                    price       => $price * -1,
+                    final_price => $price * -1,
                     desc        => 'additional',
                 }
             );
+
+            $self->log->info("[discount] 기존대여료: " . $discount->{before});
+            $self->log->info("[discount] 할인금액: " . $price);
+            for my $od (@details) {
+                $self->log->info(
+                    sprintf(
+                        "[discount] %s: %d %s",
+                        $od->{clothes_category},
+                        $od->{final_price},
+                        $od->{desc} || '',
+                    )
+                );
+            }
 
             ## 할인된 금액을 기준으로 연장비를 책정
             $sum += $price;
@@ -893,16 +906,86 @@ sub create_order_detail {
 
     my $name   = $v->param('name');
     my $price  = $v->param('price');
-    my $detail = $order->create_related(
-        'order_details',
-        {
-            name        => $name,
-            price       => $price,
-            final_price => $price,
-        }
-    );
 
-    return $self->error( 500, "Failed to create a new order_detail" ) unless $detail;
+    my ($detail, $error) = try {
+        my $guard = $self->schema->txn_scope_guard;
+        my $detail = $order->create_related(
+            'order_details',
+            {
+                name        => $name,
+                price       => $price,
+                final_price => $price,
+            }
+        );
+
+        my @details;
+        my $ods = $order->order_details;
+        while (my $od = $ods->next) {
+            my $name = $od->name;
+            next if $name !~ m/^[a-z]+$/;
+            next if "@OpenCloset::Constants::Category::ALL" !~ m/\b$name\b/;
+
+            push @details, {
+                clothes_category => $name,
+                price            => $od->price,
+                final_price      => $od->final_price,
+            };
+        }
+
+        my $discount = $order->sale_multi_times_rental( \@details );
+        if (my $price = $discount->{before} - $discount->{after}) {
+            my $detail = $order->update_or_create_related(
+                'order_details',
+                {
+                    name        => "3회 이상 대여 할인",
+                    desc        => 'additional',
+                },
+            );
+
+            $detail->update({
+                price       => $price * -1,
+                final_price => $price * -1,
+            });
+
+            $self->log->info("[discount] 기존대여료: " . $discount->{before});
+            $self->log->info("[discount] 할인금액: " . $price);
+            for my $od (@details) {
+                $self->log->info(
+                    sprintf(
+                        "[discount] %s: %d %s",
+                        $od->{clothes_category},
+                        $od->{final_price},
+                        $od->{desc} || '',
+                    )
+                );
+            }
+
+            if (my $ext_od = $ods->search({ name => { -like => '%3박4일%' }, desc => 'additional' })->first) {
+                my $name = $ext_od->name;
+                my ($days) = $name =~ /(\d)일 연장/;
+                if ($days) {
+                    my $ext_fee = $discount->{after} * 0.2 * $days;
+                    my $old_ext_fee = $ext_od->final_price;
+                    $ext_od->update({
+                        price       => $ext_fee,
+                        final_price => $ext_fee,
+                    });
+
+                    $self->log->info("[discount] 할인금액 기준으로 연장비 다시 책정: $old_ext_fee -> $ext_fee");
+                }
+            }
+        }
+
+        $guard->commit;
+        return $detail;
+    } catch {
+        chomp;
+        $self->log->error($_);
+        return ( undef, $_ );
+    };
+
+    return $self->error( 500, "Failed to create a new order_detail: $error" ) unless $detail;
+
     my %columns = $detail->get_columns;
     $self->flash(
         message => '추가하신 대여품목의 사이즈 정보는 주문과 관련된 요청 및 문의사항에 적어주세요.' );
