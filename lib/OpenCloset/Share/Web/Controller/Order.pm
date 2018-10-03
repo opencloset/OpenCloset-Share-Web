@@ -937,8 +937,8 @@ sub create_order_detail {
             my $detail = $order->update_or_create_related(
                 'order_details',
                 {
-                    name        => "3회 이상 대여 할인",
-                    desc        => 'additional',
+                    name => "3회 이상 대여 할인",
+                    desc => 'additional',
                 },
             );
 
