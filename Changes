@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 아임포트로 전달되는 `vbank_due` 파라미터를 string 형식으로 변경 (#212)
 
 ## [v0.1.21] - Wed, 03 Oct 2018 15:50:15 +0900
 ### Fixed
