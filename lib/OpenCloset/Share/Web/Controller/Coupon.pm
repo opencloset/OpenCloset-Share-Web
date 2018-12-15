@@ -29,6 +29,27 @@ sub validate {
     my ( $coupon, $err ) = $self->coupon_validate($code);
     return $self->error( 400, $err ) if $err;
 
+    ## 쿠폰 타입에 따라 사용가능여부 체크 (#218)
+    my $event = $coupon->event;
+    if ($event && $event->end_date) {
+        if (my $event_type = $event->event_type) {
+            my ($start_type, $end_type) = split /\|/, $event_type->type;
+            if ($end_type eq 'rental' && $order->wearon_date) {
+                my $wearon_date = $order->wearon_date;
+                my $rental_date = $wearon_date->clone->subtract( days => 1 );
+                if ($event->end_date->epoch < $rental_date->epoch) {
+                    return $self->error(400, sprintf(
+                        "%s 이벤트기간에만(%s ~ %s) 사용할 수 있습니다. 의류착용일이 %s 이전이어야 합니다.",
+                        $event->desc,
+                        $event->start_date->ymd,
+                        $event->end_date->ymd,
+                        $event->end_date->ymd,
+                    ));
+                }
+            }
+        }
+    }
+
     my $desc = $coupon->desc || '';
     if ( $desc =~ m/^seoul-2018/ ) {
         ## 취업날개는 쿠폰은 입사면접 용도만을 허용 (#178)
