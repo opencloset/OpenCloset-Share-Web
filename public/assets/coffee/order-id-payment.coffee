@@ -43,6 +43,8 @@ $ ->
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
 
+        vbank_due = $('#shipping-date').data('vbank-due')
+
         imp_params =
           pg:           'html5_inicis'
           pay_method:   pay_method
@@ -53,7 +55,7 @@ $ ->
           buyer_name:   name
           buyer_tel:    $info.data('phone')
           buyer_addr:   $info.data('address1')
-          vbank_due:    $('#shipping-date').data('vbank-due')
+          vbank_due:    "#{vbank_due}"
           m_redirect_url: "#{location.protocol}//#{location.host}/payments/#{data.id}/callback"
         imp_params.notice_url = CONFIG.iamport.notice_url if CONFIG.iamport.notice_url?
 
@@ -131,7 +133,7 @@ $ ->
         data.isDefault = data.type is 'default'
 
         ## You can use the if helper to conditionally render a block.
-        ## If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block. 
+        ## If its argument returns false, undefined, null, "", 0, or [], Handlebars will not render the block.
         ## int 로 변환해주지 않으면 "0" 으로 인식되어서 항상 true 이다
         data.price         = parseInt(data.price)
         data.free_shipping = parseInt(data.free_shipping)

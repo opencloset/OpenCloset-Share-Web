@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.22] - Sat, 15 Dec 2018 20:15:53 +0900
+### Changed
+- 아임포트로 전달되는 `vbank_due` 파라미터를 string 형식으로 변경 (#212)
+- 쿠폰코드 입력시 이벤트 타입과 종료일에 따라 사용여부를 제한 (#218)
+
 ## [v0.1.21] - Wed, 03 Oct 2018 15:50:15 +0900
 ### Fixed
 - 대여품목이 추가 되었을때에 3회 이상 대여할인비 및 연장비 계산 오류 수정 (#204)
