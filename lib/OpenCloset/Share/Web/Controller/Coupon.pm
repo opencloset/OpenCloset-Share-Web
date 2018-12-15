@@ -40,7 +40,7 @@ sub validate {
                 if ($event->end_date->epoch < $rental_date->epoch) {
                     return $self->error(400, sprintf(
                         "%s 이벤트기간에만(%s ~ %s) 사용할 수 있습니다. 의류착용일이 %s 이전이어야 합니다.",
-                        $event->desc,
+                        $event->title,
                         $event->start_date->ymd,
                         $event->end_date->ymd,
                         $event->end_date->ymd,
