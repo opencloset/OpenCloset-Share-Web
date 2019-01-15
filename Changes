@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.23] - Tue, 15 Jan 2019 10:29:56 +0900
+
 ### Changed
 - 2019 설연휴기간에 대여하지 못하도록 함 (#220)
 
