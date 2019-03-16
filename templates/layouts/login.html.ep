@@ -22,5 +22,17 @@
       <%= content %>
     </div>
     %= footer
+    % if ($config->{ga}{enable} && $config->{ga}{code}) {
+      % my $ga_code = $config->{ga}{code};
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=<%= $ga_code %>"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<%= $ga_code %>');
+      </script>
+    % }
   </body>
 </html>
