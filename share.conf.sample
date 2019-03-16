@@ -60,4 +60,8 @@ my $POSTCODIFY_URI = $ENV{OPENCLOSET_POSTCODIFY_URI} || 'https://postcodify.theo
     postcodify_url => "$POSTCODIFY_URI/api/postcode/search.json",
     redis_url      => $ENV{OPENCLOSET_REDIS_URL} || 'redis://localhost:6379',
     jandi          => { hook => $ENV{OPENCLOSET_JANDI_WEBHOOK_URL} || '' },
+    ga => {
+        enable => 0,
+        code   => $ENV{OPENCLOSET_GA_CODE} || '',
+    }
 };

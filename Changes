@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Added
+- Google Analytics 적용
+
 ## [v0.1.23] - Tue, 15 Jan 2019 10:29:56 +0900
 
 ### Changed
