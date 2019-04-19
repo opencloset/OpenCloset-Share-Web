@@ -951,7 +951,7 @@ Default C<$days> 는 3박 4일의 C<3>
     # 의류착용일   = 도착(예정)일 + 1일
     # 대여일      = 의류착용일 - 1일
     # 반납일      = 대여일 + 대여기간(default 3일)
-    # 택배일      = 반납일 - 1일
+    # 택배일      = 반납일
 
     my $shipping_date = $self->date_calc;    # 가장 가까운 발송(예정)일
     my $dates = $self->date_calc({ shipping => $shipping_date });
@@ -1015,7 +1015,7 @@ sub date_calc {
         $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
         $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
         $dates{target}   = $dates{rental}->clone->add( days => $days );
-        $dates{parcel}   = $dates{target}->clone->subtract( days => 1 );
+        $dates{parcel}   = $dates{target}->clone;
 
         return \%dates;
     }
