@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.25] - Sat, 20 Apr 2019 08:44:47 +0900
+
+### Changed
+- 정책의 변경으로 반납택배발송일 +1d (#223)
+
 ## [v0.1.24] - Sat, 16 Mar 2019 21:45:45 +0900
 
 ### Added
