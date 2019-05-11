@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 반납 안내 가이드에서 1일전 반납 문구 삭제 (#224)
+
 ## [v0.1.25] - Sat, 20 Apr 2019 08:44:47 +0900
 
 ### Changed
