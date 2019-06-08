@@ -180,7 +180,7 @@ sub create {
             }
 
             ## 할인된 금액을 기준으로 연장비를 책정
-            $sum += $price;
+            $sum += ($price * -1);
         }
 
         if ($additional_day) {
