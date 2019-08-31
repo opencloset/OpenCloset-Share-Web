@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.27] - Sat, 31 Aug 2019 15:01:36 +0900
+
+### Changed
+- 2019 추석연휴기간에 의류착용일을 선택하지 못하도록 함 (#235)
+
 ## [v0.1.26] - Wed, 12 Jun 2019 20:02:25 +0900
 
 ### Changed
