@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.28] - Mon, 04 Nov 2019 21:25:45 +0900
+
 ### Changed
 - 여성의 대여품목에 팬츠 추가 (#236)
 
