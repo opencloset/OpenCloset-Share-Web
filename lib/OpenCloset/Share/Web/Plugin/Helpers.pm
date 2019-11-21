@@ -546,7 +546,16 @@ sub waiting_shipped {
             my $category = $clothes->category;
             my $detail = $details->search( { name => $clothes->category } )->next;
 
-            die "Not found matched category in order details: $category" unless $detail;
+            unless ($detail) {
+                $self->log->warn("Not found matched category in order details: $category");
+                $detail = $order->create_related('order_details', {
+                    clothes_code => undef,
+                    status_id    => undef,
+                    name         => $category,
+                    price        => $clothes->price,
+                    final_price  => $clothes->price,
+                });
+            }
 
             if ($clothes) {
                 my $name = join( ' - ', $self->trim_code( $clothes->code ), $OpenCloset::Constants::Category::LABEL_MAP{$category} );
