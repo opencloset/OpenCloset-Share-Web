@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.29] - Fri, 22 Nov 2019 00:09:35 +0900
+
 ### Fixed
 - 주문서와 실제 대여 의류정보가 달라도 배송준비중으로 변경가능토록 함 (#191)
 
