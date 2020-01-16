@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.30] - Thu, 16 Jan 2020 23:16:31 +0900
+### Changed
+- 2020 설날연휴기간에 의류착용일을 선택하지 못하도록 함 (#240)
+
 ## [v0.1.29] - Fri, 22 Nov 2019 00:09:35 +0900
 
 ### Fixed
