@@ -95,7 +95,7 @@
 
   % my @categories = categories($order);
   % if (grep { /jacket/ } @categories and grep { /pants/ } @categories) {
-  <button id="btn-choose-clothes" class="btn btn-default">의류다시선택</button>
+  <button id="btn-choose-clothes" class="btn btn-default">대여내역 확인</button>
   % }
   <a id="btn-next-step" class="btn btn-success" href="<%= url_for %>">다음</a>
 </form>
