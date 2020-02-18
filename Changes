@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 의류추천 단계 제거 (#242)
 
 ## [v0.1.30] - Thu, 16 Jan 2020 23:16:31 +0900
 ### Changed
