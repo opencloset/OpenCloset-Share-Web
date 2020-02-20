@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 이용약관 업데이트 (opencloset/opencloset#1661)
 
 ## [v0.1.31] - Tue, 18 Feb 2020 21:12:16 +0900
 ### Changed
