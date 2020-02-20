@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.32] - Thu, 20 Feb 2020 21:20:21 +0900
+### Changed
+- 이용약관 업데이트 (opencloset/opencloset#1661)
+- 배송관련 안내 문구 업데이트 (#244)
+
 ## [v0.1.31] - Tue, 18 Feb 2020 21:12:16 +0900
 ### Changed
 - 의류추천 단계 제거 (#242)
