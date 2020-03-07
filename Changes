@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.33] - Sat, 07 Mar 2020 16:03:48 +0900
+### Changed
+- welcome 화면 개편 (#242)
+
 ## [v0.1.32] - Thu, 20 Feb 2020 21:20:21 +0900
 ### Changed
 - 이용약관 업데이트 (opencloset/opencloset#1661)
