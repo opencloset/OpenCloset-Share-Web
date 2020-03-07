@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- welcome 화면 개편 (#242)
 
 ## [v0.1.32] - Thu, 20 Feb 2020 21:20:21 +0900
 ### Changed
