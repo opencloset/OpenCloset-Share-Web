@@ -1,3 +1,5 @@
+    $ grunt
+
 v0.1.33
 
     $ grunt
