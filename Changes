@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.36] - Sat, 11 Jul 2020 23:47:29 +0900
 ### Changed
 - requires OpenCloset-Plugin-Helper v0.0.29 (#257)
 
