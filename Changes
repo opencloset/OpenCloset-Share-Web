@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.36] - Sat, 11 Jul 2020 23:47:29 +0900
+### Changed
+- requires OpenCloset-Plugin-Helper v0.0.29 (#257)
+
 ## [v0.1.35] - Mon, 13 Apr 2020 20:49:20 +0900
 ### Changed
 - 2020 4,5월 연휴기간 의류착용일 disable (#251)
