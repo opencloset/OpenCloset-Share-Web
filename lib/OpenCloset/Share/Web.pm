@@ -44,6 +44,7 @@ sub startup {
 
     $self->plugin('Config');
     $self->plugin('OpenCloset::Plugin::Helpers');
+    $self->plugin('OpenCloset::Plugin::Private::Helpers');
     $self->plugin('OpenCloset::Share::Web::Plugin::Helpers');
 
     $self->secrets( $self->config->{secrets} );

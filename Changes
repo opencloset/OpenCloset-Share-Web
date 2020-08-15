@@ -4,6 +4,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 ### Changed
 - 치수측정 가이드 변경 (#260)
+- 기성복 사이즈를 입력받음 (#254)
+- 사이즈 참조표 변경 (#254)
+- 치수측정에서 유효하지 않은 컨텐츠 삭제 (#254)
+- 치수측정 페이지에 열린옷장의 추천 사이즈 표시 (#254)
 ### Changed
 - 2020-08-14 ~ 2020-08-20 의류착용일 disabled (#258)
 
