@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - 사이즈 참조표 변경 (#254)
 - 치수측정에서 유효하지 않은 컨텐츠 삭제 (#254)
 - 치수측정 페이지에 열린옷장의 추천 사이즈 표시 (#254)
+- 주문서에 해당하는 추천사이즈 표시 (#254)
 ### Changed
 - 2020-08-14 ~ 2020-08-20 의류착용일 disabled (#258)
 
