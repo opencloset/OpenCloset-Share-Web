@@ -2,8 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
-
-## [v0.1.37] - Sun, 02 Aug 2020 09:54:05 +0900
+### Changed
+- 치수측정 가이드 변경 (#260)
 ### Changed
 - 2020-08-14 ~ 2020-08-20 의류착용일 disabled (#258)
 
