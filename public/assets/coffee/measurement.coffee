@@ -27,8 +27,12 @@ $ ->
       dataType: 'json'
       data: query
       success: (data, textStatus, jqXHR) ->
-        top = data.ready_to_wear_size.top.replace(/[^0-9]/g, '')
-        bottom = data.ready_to_wear_size.bot.replace(/[^0-9]/g, '')
+        suggestionSize = data.ready_to_wear_size
+        unless suggestionSize
+          return
+
+        top = suggestionSize.top.replace(/[^0-9]/g, '')
+        bottom = suggestionSize.bot.replace(/[^0-9]/g, '')
 
         $('.suggestion-body.suggestion-top strong').text(top)
         $('.suggestion-body.suggestion-bottom strong').text(bottom)

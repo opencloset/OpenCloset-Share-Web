@@ -60,11 +60,11 @@ sub dimensions {
         gender   => $gender,
         height   => $height,
         weight   => $weight,
-        waist    => $waist,
-        topbelly => $topbelly,
-        bust     => $bust,
-        hip      => $hip,
-        thigh    => $thigh,
+        bust     => $bust     || $info->{bust},
+        topbelly => $topbelly || $info->{topbelly},
+        waist    => $waist    || $info->{waist},
+        hip      => $hip      || $info->{hip},
+        thigh    => $thigh    || $info->{thigh},
     });
 
     $info->{ready_to_wear_size} = $ready_to_wear_size;
