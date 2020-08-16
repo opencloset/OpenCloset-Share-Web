@@ -471,7 +471,7 @@
         %>
         <div class="row">
           <div class="col-sm-5 suggestion-title">
-            <span>상의 <small class="size-unit">inch</small></span>
+            <span>상의</span>
           </div>
           <div class="col-sm-5 suggestion-body suggestion-top">
             <strong>
@@ -485,7 +485,7 @@
         </div>
         <div class="row">
           <div class="col-sm-5 suggestion-title">
-            <span>하의 <small class="size-unit">inch</small></span>
+            <span>하의</span>
           </div>
           <div class="col-sm-5 suggestion-body suggestion-bottom">
             <strong>
@@ -507,7 +507,7 @@
 
         <div class="row">
           <div class="col-sm-5 suggestion-title">
-            <span>상의 <small class="size-unit">inch</small></span>
+            <span>상의</span>
           </div>
           <div class="col-sm-5 suggestion-body">
             <input class="form-control" name="top_size" type="text" value="<%= $user_info->top_size %>">
@@ -516,7 +516,7 @@
 
         <div class="row">
           <div class="col-sm-5 suggestion-title">
-            <span>하의 <small class="size-unit">inch</small></span>
+            <span>하의</span>
           </div>
           <div class="col-sm-5 suggestion-body">
             <input class="form-control" name="bottom_size" type="text" value="<%= $user_info->bottom_size %>">
