@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.38] - Sun, 16 Aug 2020 23:26:19 +0900
 ### Changed
 - 치수측정 가이드 변경 (#260)
 - 기성복 사이즈를 입력받음 (#254)
