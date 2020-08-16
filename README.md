@@ -1,12 +1,12 @@
 # OpenCloset-Share-Web #
 
-[![Build Status](https://travis-ci.org/opencloset/monitor.svg?branch=v0.1.37)](https://travis-ci.org/opencloset/OpenCloset-Share-Web)
+[![Build Status](https://travis-ci.org/opencloset/monitor.svg?branch=v0.1.38)](https://travis-ci.org/opencloset/OpenCloset-Share-Web)
 
 https://share.theopencloset.net
 
 ## VERSION ##
 
-v0.1.37
+v0.1.38
 
 ## Dependencies ##
 

@@ -610,9 +610,11 @@ sub purchase {
             }
         }
 
+        my $avg = $self->user_avg_diff($user)->{avg};
         $self->render(
             staff    => \@staff,
             guess    => $guess_info,
+            avg      => $avg,
             template => 'order/purchase.payment_done'
         );
     }
