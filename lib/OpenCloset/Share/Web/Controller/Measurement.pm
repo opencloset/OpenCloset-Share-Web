@@ -42,7 +42,8 @@ sub index {
 
     my $user      = $self->current_user;
     my $user_info = $user->user_info;
-    $self->render( user => $user, user_info => $user_info );
+    my $avg = $self->user_avg_diff($user)->{avg};
+    $self->render( user => $user, user_info => $user_info, avg => $avg );
 }
 
 =head2 intro
@@ -75,8 +76,8 @@ sub update {
     $v->optional('hip')->size( 2, 3 );
     $v->optional('knee')->size( 2, 3 );
     $v->optional('foot')->size( 3, 3 );
-    $v->optional('top_size');
-    $v->optional('bottom_size');
+    $v->optional('top_size')->size( 2, 3 );
+    $v->optional('bottom_size')->size( 2, 3 );
 
     if ( $v->has_error ) {
         my $failed = $v->failed;

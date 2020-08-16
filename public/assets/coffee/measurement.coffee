@@ -1,40 +1,4 @@
 $ ->
-  $('#measurement-preview').hide()
-  $('#guide-video').hide()
-  $('#preview-desc').hide()
-
-  $('.m-preview').focus (e) ->
-    name   = $(@).prop('name')
-    title  = $(@).prop('title')
-    video  = $(@).data('video')
-    label  = $(@).parent().prev().text()
-
-    $div = $('#measurement-preview')
-    $img = $div.find('.preview-img img')
-    $img.prop('src', "/assets/img/measurements/#{name}.jpg")
-      .prop('alt', title)
-    $('#preview-desc .preview-desc-header').text(label)
-    $('#preview-desc .preview-desc-body').text(title)
-    $('#preview-desc').show()
-    $div.show()
-    if video
-      $('#guide-video').prop('src', video).show()
-    else
-      $('#guide-video').prop('src', '#').hide()
-
-  $('.m-preview-none').focus (e) ->
-    title  = $(@).prop('title') or ''
-    label  = $(@).parent().prev().text() or ''
-
-    $div = $('#measurement-preview')
-    $div.hide()
-
-    $('#preview-desc .preview-desc-header').text(label)
-    $('#preview-desc .preview-desc-body').text(title)
-    $('#preview-desc').show()
-
-    $('#guide-video').prop('src', '#').hide()
-
   $('.btn-size').click (e) ->
     $('.btn-size').removeClass('active')
     $(@).addClass('active')
@@ -51,7 +15,7 @@ $ ->
 
   $('.btn-size.active').trigger('click')
 
-  $('input[name=height],input[name=weight],input[name=waist],input[name=bust],input[name=topbelly],input[name=hip]').focusout (e) ->
+  $('input[name=height],input[name=weight],input[name=waist],input[name=bust],input[name=topbelly],input[name=hip],input[name=thigh]').focusout (e) ->
     gender = $('#gender').data('gender')
     query = "#{$('#form-body-dimensions').serialize()}&gender=#{gender}"
 
@@ -63,13 +27,17 @@ $ ->
       dataType: 'json'
       data: query
       success: (data, textStatus, jqXHR) ->
-        data.origin =
-          waist:    waist
-          bust:     bust
-          topbelly: topbelly
-        data.male = data.gender is 'male'
-        template   = JST['body/dimensions']
-        html       = template(data)
-        $('#body-average').html(html)
+        suggestionSize = data.ready_to_wear_size
+        unless suggestionSize
+          return
+
+        top = suggestionSize.top.replace(/[^0-9]/g, '')
+        bottom = suggestionSize.bot.replace(/[^0-9]/g, '')
+
+        $('.suggestion-body.suggestion-top strong').text(top)
+        $('.suggestion-body.suggestion-bottom strong').text(bottom)
       error: (jqXHR, textStatus, errorThrown) ->
+        err = jqXHR.responseJSON.error
+        $('.suggestion-body.suggestion-top strong').text('')
+        $('.suggestion-body.suggestion-bottom strong').text('')
       complete: (jqXHR, textStatus) ->

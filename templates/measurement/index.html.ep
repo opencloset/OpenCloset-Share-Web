@@ -31,12 +31,23 @@
           <input name="height" type="text" class="form-control m-preview-none" placeholder="키 cm" value="<%= $user_info->height || '' %>">
         </div>
       </div>
+
       <div class="form-group">
         <label class="col-sm-5 control-label">몸무게 <small>kg</small></label>
         <div class="col-sm-7">
           <input name="weight" type="text" class="form-control m-preview-none" placeholder="몸무게 kg" value="<%= $user_info->weight || '' %>">
         </div>
       </div>
+
+      <div class="form-group">
+        <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
+        <div class="col-sm-7">
+          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올려 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내려 수평 둘레를 측정한다.' : '가슴의 가장 두꺼운 부분의 둘레를 수평으로 측정한다.' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
+        </div>
+      </div>
+
+      <hr>
+
       <div class="form-group">
         <label class="col-sm-5 control-label">
           윗배둘레 <small>cm</small>
@@ -45,6 +56,7 @@
           <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="<%= $gender eq 'male' ? '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.' : '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다. 정장 치마는 골반이 아닌 배꼽 윗 부분에 맞춰 입습니다. 그래서, 허리가 아닌 윗배둘레로 의류를 찾기 때문에 윗배둘레가 중요합니다.' %>">
         </div>
       </div>
+
       % if ($gender eq 'male') {
         <div class="form-group">
           <label class="col-sm-5 control-label">
@@ -55,20 +67,6 @@
           </div>
         </div>
       % }
-      <div class="form-group">
-        <label class="col-sm-5 control-label">가슴둘레 <small>cm</small></label>
-        <div class="col-sm-7">
-          <input name="bust" type="text" class="form-control m-preview" placeholder="가슴둘레 cm" value="<%= $user_info->bust || '' %>" title="<%= $gender eq 'male' ? '양팔을 들어올려 줄자를 겨드랑이 가장 윗부분에 끼운 후 양팔을 내려 수평 둘레를 측정한다.' : '가슴의 가장 두꺼운 부분의 둘레를 수평으로 측정한다.' %>" data-video="https://online.theopencloset.net/stream/mens/Man_chest_all.mp4">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="col-sm-5 control-label">
-          팔길이 <small>cm</small>
-        </label>
-        <div class="col-sm-7">
-          <input name="arm" type="text" class="form-control m-preview" placeholder="팔길이 cm" value="<%= $user_info->arm || '' %>" title="팔을 가볍게 내린 상태에서 어깨뼈가 가장 톡 튀어나온 부분부터 손목 접히는 부분(손목뼈)까지 측정한다." data-video="https://online.theopencloset.net/stream/mens/Man_arms_length_all.mp4">
-        </div>
-      </div>
 
       % if ($gender eq 'male') {
         <!-- male -->
@@ -98,62 +96,442 @@
       </div>
     </div>
 
-    <div class="col-md-8">
-      <div class="row">
-        <div class="col-md-7">
-          <div>
-            <video id="guide-video" width="400" controls src="">
-              동영상을 지원하지 않는 브라우저 입니다.
-            </video>
-
-            <div id="preview-desc">
-              <h4 class="preview-desc-header"></h4>
-              <p class="preview-desc-body"></p>
+    <div class="col-md-4">
+      <div id="measurement-suggestion">
+        <h4>
+          열린옷장 추천 사이즈
+          <small>
+            <a href="#" data-toggle="modal" data-target="#size-reference-table">사이즈 참조표</a>
+            <div id="size-reference-table" class="modal" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  % if ($user_info->gender eq 'male') {
+                    <h2>
+                      남성 자켓 사이즈 참조표(cm)
+                      <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">닫기</button>
+                    </h2>
+                    <table class="table talbe-striped table-condensed table-bordered">
+                      <thead>
+                        <tr>
+                          <th>사이즈 호칭</th>
+                          <th>자켓 윗배둘레</th>
+                          <th>자켓 가슴둘레</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>90</td>
+                          <td>84</td>
+                          <td>94</td>
+                        </tr>
+                        <tr>
+                          <td>95</td>
+                          <td>88</td>
+                          <td>98</td>
+                        </tr>
+                        <tr>
+                          <td>100</td>
+                          <td>94</td>
+                          <td>104</td>
+                        </tr>
+                        <tr>
+                          <td>105</td>
+                          <td>100</td>
+                          <td>108</td>
+                        </tr>
+                        <tr>
+                          <td>110</td>
+                          <td>104</td>
+                          <td>112</td>
+                        </tr>
+                        <tr>
+                          <td>115</td>
+                          <td>112</td>
+                          <td>116</td>
+                        </tr>
+                        <tr>
+                          <td>120</td>
+                          <td>118</td>
+                          <td>124</td>
+                        </tr>
+                        <tr>
+                          <td>125</td>
+                          <td>124</td>
+                          <td>130</td>
+                        </tr>
+                        <tr>
+                          <td>130</td>
+                          <td>128</td>
+                          <td>138</td>
+                        </tr>
+                        <tr>
+                          <td>135</td>
+                          <td>130</td>
+                          <td>140</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr>
+                    <h2>
+                      남성바지 사이즈 참조표(cm)
+                      <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">닫기</button>
+                    </h2>
+                    <table class="table talbe-striped table-condensed table-bordered">
+                      <thead>
+                        <tr>
+                          <th>사이즈 호칭</th>
+                          <th>바지 허리둘레</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>26</td>
+                          <td>74</td>
+                        </tr>
+                        <tr>
+                          <td>28</td>
+                          <td>76</td>
+                        </tr>
+                        <tr>
+                          <td>30</td>
+                          <td>80</td>
+                        </tr>
+                        <tr>
+                          <td>32</td>
+                          <td>84</td>
+                        </tr>
+                        <tr>
+                          <td>34</td>
+                          <td>88</td>
+                        </tr>
+                        <tr>
+                          <td>36</td>
+                          <td>92</td>
+                        </tr>
+                        <tr>
+                          <td>38</td>
+                          <td>96</td>
+                        </tr>
+                        <tr>
+                          <td>40</td>
+                          <td>100</td>
+                        </tr>
+                        <tr>
+                          <td>42</td>
+                          <td>104</td>
+                        </tr>
+                        <tr>
+                          <td>44</td>
+                          <td>108</td>
+                        </tr>
+                        <tr>
+                          <td>46</td>
+                          <td>112</td>
+                        </tr>
+                        <tr>
+                          <td>48</td>
+                          <td>116</td>
+                        </tr>
+                        <tr>
+                          <td>50</td>
+                          <td>122</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  % } else {
+                    <h2>
+                      여성자켓 사이즈 참조표 (cm)
+                      <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">닫기</button>
+                    </h2>
+                    <table class="table talbe-striped table-condensed table-bordered">
+                      <thead>
+                        <tr>
+                          <th>사이즈 호칭</th>
+                          <th>자켓 윗배둘레</th>
+                          <th>자켓 가슴둘레</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>33반</td>
+                          <td>67</td>
+                          <td>73</td>
+                        </tr>
+                        <tr>
+                          <td>44</td>
+                          <td>72</td>
+                          <td>78</td>
+                        </tr>
+                        <tr>
+                          <td>55</td>
+                          <td>76</td>
+                          <td>82</td>
+                        </tr>
+                        <tr>
+                          <td>66</td>
+                          <td>80</td>
+                          <td>86</td>
+                        </tr>
+                        <tr>
+                          <td>66반</td>
+                          <td>82</td>
+                          <td>88</td>
+                        </tr>
+                        <tr>
+                          <td>77</td>
+                          <td>85</td>
+                          <td>90</td>
+                        </tr>
+                        <tr>
+                          <td>88</td>
+                          <td>90</td>
+                          <td>94</td>
+                        </tr>
+                        <tr>
+                          <td>88반</td>
+                          <td>92</td>
+                          <td>98</td>
+                        </tr>
+                        <tr>
+                          <td>99</td>
+                          <td>96</td>
+                          <td>100</td>
+                        </tr>
+                        <tr>
+                          <td>100</td>
+                          <td>102</td>
+                          <td>108</td>
+                        </tr>
+                        <tr>
+                          <td>110</td>
+                          <td>106</td>
+                          <td>112</td>
+                        </tr>
+                        <tr>
+                          <td>120</td>
+                          <td>110</td>
+                          <td>116</td>
+                        </tr>
+                        <tr>
+                          <td>130</td>
+                          <td>114</td>
+                          <td>120</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr>
+                    <h2>
+                      여성 치마 사이즈 참조표 (cm)
+                      <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">닫기</button>
+                    </h2>
+                    <table class="table talbe-striped table-condensed table-bordered">
+                      <thead>
+                        <tr>
+                          <th>사이즈 호칭</th>
+                          <th>하의 엉덩이둘레</th>
+                          <th>하의 허리둘레</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>33반</td>
+                          <td>85</td>
+                          <td>60</td>
+                        </tr>
+                        <tr>
+                          <td>44</td>
+                          <td>87</td>
+                          <td>64</td>
+                        </tr>
+                        <tr>
+                          <td>55</td>
+                          <td>90</td>
+                          <td>66</td>
+                        </tr>
+                        <tr>
+                          <td>66</td>
+                          <td>93</td>
+                          <td>68</td>
+                        </tr>
+                        <tr>
+                          <td>77</td>
+                          <td>98</td>
+                          <td>73</td>
+                        </tr>
+                        <tr>
+                          <td>88</td>
+                          <td>102</td>
+                          <td>80</td>
+                        </tr>
+                        <tr>
+                          <td>99</td>
+                          <td>108</td>
+                          <td>85</td>
+                        </tr>
+                        <tr>
+                          <td>100</td>
+                          <td>114</td>
+                          <td>94</td>
+                        </tr>
+                        <tr>
+                          <td>110</td>
+                          <td>119</td>
+                          <td>101</td>
+                        </tr>
+                        <tr>
+                          <td>120</td>
+                          <td>123</td>
+                          <td>108</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr>
+                    <h2>
+                      여성 바지 사이즈 참조표 (cm)
+                      <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">닫기</button>
+                    </h2>
+                    <table class="table talbe-striped table-condensed table-bordered">
+                      <thead>
+                        <tr>
+                          <th>사이즈 호칭</th>
+                          <th>하의 엉덩이둘레</th>
+                          <th>하의 허리둘레</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>33반</td>
+                          <td>83</td>
+                          <td>64</td>
+                        </tr>
+                        <tr>
+                          <td>44</td>
+                          <td>87</td>
+                          <td>68</td>
+                        </tr>
+                        <tr>
+                          <td>55</td>
+                          <td>91</td>
+                          <td>71</td>
+                        </tr>
+                        <tr>
+                          <td>66</td>
+                          <td>95</td>
+                          <td>74</td>
+                        </tr>
+                        <tr>
+                          <td>77</td>
+                          <td>98</td>
+                          <td>77</td>
+                        </tr>
+                        <tr>
+                          <td>88</td>
+                          <td>103</td>
+                          <td>84</td>
+                        </tr>
+                        <tr>
+                          <td>99</td>
+                          <td>108</td>
+                          <td>87</td>
+                        </tr>
+                        <tr>
+                          <td>100</td>
+                          <td>110</td>
+                          <td>91</td>
+                        </tr>
+                        <tr>
+                          <td>110</td>
+                          <td>115</td>
+                          <td>97</td>
+                        </tr>
+                        <tr>
+                          <td>120</td>
+                          <td>120</td>
+                          <td>112</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  % }
+                </div>
+              </div>
             </div>
+          </small>
+        </h4>
+        <%
+        my $ready_to_wear_size = ready_to_wear_size({
+          gender   => $user_info->gender,
+          height   => $user_info->height,
+          weight   => $user_info->weight,
+          waist    => $user_info->waist    || $avg->{waist},
+          topbelly => $user_info->topbelly || $avg->{topbelly},
+          bust     => $user_info->bust     || $avg->{bust},
+          hip      => $user_info->hip      || $avg->{hip},
+          thigh    => $user_info->thigh    || $avg->{thigh}
+        });
+        %>
+        <div class="row">
+          <div class="col-sm-5 suggestion-title">
+            <span>상의</span>
+          </div>
+          <div class="col-sm-5 suggestion-body suggestion-top">
+            <strong>
+              % if ($ready_to_wear_size) {
+                % my $top = $ready_to_wear_size->{top};
+                % my ($top_only_numeric) = $top =~ m/(\d+)/;
+                <%= $top_only_numeric %>
+              % }
+            </strong>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-5 suggestion-title">
+            <span>하의</span>
+          </div>
+          <div class="col-sm-5 suggestion-body suggestion-bottom">
+            <strong>
+              % if ($ready_to_wear_size) {
+                % my $bottom = $ready_to_wear_size->{bot};
+                % my ($bottom_only_numeric) = $bottom =~ m/(\d+)/;
+                <%= $bottom_only_numeric %>
+              % }
+            </strong>
           </div>
         </div>
 
-        <div class="col-md-5">
-          <div id="measurement-preview">
-            <div class="thumbnail preview-img">
-              <img src="" alt="">
-            </div>
+        <hr>
+
+        <h4>
+          기성복 사이즈<br>
+          <small>평소 입는 기성복의 상하의 치수를 입력해주세요.</small>
+        </h4>
+
+        <div class="row">
+          <div class="col-sm-5 suggestion-title">
+            <span>상의</span>
+          </div>
+          <div class="col-sm-5 suggestion-body">
+            <input class="form-control" name="top_size" type="text" value="<%= $user_info->top_size %>">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-5 suggestion-title">
+            <span>하의</span>
+          </div>
+          <div class="col-sm-5 suggestion-body">
+            <input class="form-control" name="bottom_size" type="text" value="<%= $user_info->bottom_size %>">
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <hr>
+  <hr>
 
-      <div class="row">
-        <p class="help-block">
-          inch 를 cm 로 변환한 표 입니다.
-        </p>
-        <table class="table table-bordered table-condensed">
-          <tbody>
-            <tr>
-              <th>inch</th>
-              % for my $inch (27..40) {
-                <td><%= $inch %></td>
-              % }
-            </tr>
-            <tr>
-              <th>cm</th>
-              % for my $inch (27..40) {
-                % my $cm = $inch * 2.54;
-                <td><%= int($cm) %></td>
-              % }
-            </tr>
-          </tbody>
-        </table>
-
-        <div id="body-average"></div>
-        <ul class="help-block">
-          <li>cm = inch x 2.54</li>
-          <li>입력값이 많을 수록 더 정확한 평균 사이즈가 표시됩니다.</li>
-          <li>배가 나온 체형은 허리둘레보다 배둘레가 큽니다.</li>
-          <li>대부분의 경우 팔길이는 키에 비례합니다.</li>
-        </ul>
-        <hr>
+  <div class="row">
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">저장</button>
       </div>
     </div>
   </div>
@@ -168,123 +546,5 @@
       </div>
       <hr>
     </div>
-    <div class="row">
-      <div class="col-md-offset-2">
-        % my $i = 0;
-        % my $top_size = $user_info->top_size || 0;
-        <input name="top_size" type="hidden" value="<%= $top_size %>">
-
-        <p class="help-block text-right">
-          해당하는 사이즈를 선택해주세요.
-        </p>
-
-        <table class="table table-bordered table-condensed text-center">
-          <thead>
-            <tr>
-              <th class="text-center">자켓 사이즈</th>
-              % for my $size (qw/XS(44) S(55) M(66) L(77) XL(88) 99 100 110 120/) {
-                % my ($num) = $size =~ m/(\d+)/;
-                <th>
-                  % if ($top_size == $num) {
-                    <button type="button" class="btn btn-primary btn-xs btn-size active" data-index="<%= $i++ %>" data-size="<%= $num %>" data-which="top"><%= $size %></button>
-                  % } else {
-                    <button type="button" class="btn btn-primary btn-xs btn-size" data-index="<%= $i++ %>" data-size="<%= $num %>" data-which="top"><%= $size %></button>
-                  % }
-                </th>
-              % }
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="active">
-              <td>윗배둘레</td>
-              <td>67 ~ 70</td>
-              <td>71 ~ 74</td>
-              <td>75 ~ 80</td>
-              <td>81 ~ 85</td>
-              <td>86 ~ 90</td>
-              <td>91 ~ 95</td>
-              <td>96 ~ 101</td>
-              <td>102 ~ 106</td>
-              <td>107 ~ 110</td>
-            </tr>
-          </tbody>
-        </table>
-
-        % my $bottom_size = $user_info->bottom_size || 0;
-        <input name="bottom_size" type="hidden" value="<%= $bottom_size %>">
-        <p class="help-block text-right">
-          해당하는 사이즈를 선택해주세요.
-        </p>
-        <table class="table table-bordered table-condensed text-center">
-          <thead>
-            <tr>
-              <th class="text-center">스커트 사이즈</th>
-              % $i = 0;
-              % for my $size (qw/XS(44) S(55) M(66) L(77) XL(88) 99 100 110 120/) {
-                % my ($num) = $size =~ m/(\d+)/;
-                <th>
-                  % if ($bottom_size == $num) {
-                    <button type="button" class="btn btn-primary btn-xs btn-size active" data-index="<%= $i++ %>" data-size="<%= $num %>" data-which="bottom"><%= $size %></button>
-                  % } else {
-                    <button type="button" class="btn btn-primary btn-xs btn-size" data-index="<%= $i++ %>" data-size="<%= $num %>" data-which="bottom"><%= $size %></button>
-                  % }
-                </th>
-              % }
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="active">
-              <td>엉덩이둘레</td>
-              <td>81 ~ 85</td>
-              <td>86 ~ 89</td>
-              <td>90 ~ 94</td>
-              <td>95 ~ 100</td>
-              <td>101 ~ 108</td>
-              <td>109 ~ 110</td>
-              <td>111 ~ 116</td>
-              <td>117 ~ 119</td>
-              <td>120 ~ 123</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p class="help-block">
-          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-          열린옷장의 의류는 기성복 사이즈(일반적인 S,M,L 등)가 아닌 실측 사이즈로 표시되어 있습니다. 평소에 M을 입는 분들도 실측 사이즈에 따라 M이 아닌 다른 사이즈를 받으실 수 있습니다. 절대 다른 사이즈가 아니므로 안심하고 선택해주세요.
-        </p>
-
-        <p class="help-block">
-          <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-          열린옷장 정장 선택 팁
-        </p>
-
-        <ul class="help-block">
-          <li>
-            자켓: 윗배 둘레에 5cm를 더해서 찾는다.<br>
-            <u>왜 5cm를 더하나요?</u> 활동시에 필요한 최소한의 여유공간을 5cm로 잡고 있습니다. 측정한 사이즈는 신체 자체의 사이즈이므로, 의류는 조금 더 여유롭게 입어야 합니다.
-          </li>
-          <li>
-            스커트: 엉덩이둘레에 맞는 사이즈를 찾는다.
-          </li>
-          <li>
-            밑에 안내된 가이드는 참고용이며 평소에 착용하는 사이즈 및 상세사이즈 확인 후 선택해주세요.
-          </li>
-          <li>
-            가장 잘 맞는 옷을 보내드릴게요!<br>
-            선택한 사이즈의 범위 내에서 측정 사이즈에 가까운 사이즈의 의류를 보내드리겠습니다.
-          </li>
-        </ul>
-      </div>
-    </div>
   % }
-
-  <hr>
-
-  <div class="row">
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary">저장</button>
-      </div>
-    </div>
-  </div>
 </form>

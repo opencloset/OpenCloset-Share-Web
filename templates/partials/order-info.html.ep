@@ -118,3 +118,40 @@
     </li>
   </ul>
 </div>
+
+<hr>
+
+<%
+my $ready_to_wear_size = ready_to_wear_size({
+  gender   => $user_info->gender,
+  height   => $user_info->height,
+  weight   => $user_info->weight,
+  bust     => $user_info->bust     || $avg->{bust},
+  topbelly => $user_info->topbelly || $avg->{topbelly},
+  waist    => $user_info->waist    || $avg->{waist},
+  hip      => $user_info->hip      || $avg->{hip},
+  thigh    => $user_info->thigh    || $avg->{thigh}
+});
+%>
+
+% if ($ready_to_wear_size) {
+  <h5><span class="opencloset-base-color">열린옷장</span> 추천 사이즈</h5>
+  % my $top = $ready_to_wear_size->{top};
+  % my $bottom = $ready_to_wear_size->{bot};
+  <p>
+    상의: <span class="label label-primary"><%= $top %></span>
+  </p>
+  <p>
+    하의: <span class="label label-primary"><%= $bottom %></span>
+  </p>
+% }
+
+% if ($user_info->top_size or $user_info->bottom_size) {
+  <h5>기성복 사이즈</h5>
+  <p>
+    상의: <span class="label label-info"><%= $user_info->top_size %></span>
+  </p>
+  <p>
+    하의: <span class="label label-info"><%= $user_info->bottom_size %></span>
+  </p>
+% }
