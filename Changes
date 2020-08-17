@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.39] - Mon, 17 Aug 2020 11:51:54 +0900
 ### Changed
 - 신체 치수 필수입력 변경; 키/몸무게/가슴둘레 (#254)
 

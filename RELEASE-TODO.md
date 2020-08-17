@@ -1,3 +1,5 @@
+v0.1.39
+
 v0.1.38
 
     $ closetpan OpenCloset::Plugin::Helpers    # v0.0.30
