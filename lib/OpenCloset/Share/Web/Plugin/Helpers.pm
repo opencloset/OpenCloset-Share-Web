@@ -852,30 +852,27 @@ sub check_measurement {
     my $gender = $user_info->gender || 'male'; # TODO: 원래 없으면 안됨
 
     my $input = {};
-    map { $input->{$_} = $user_info->$_ } qw/height weight bust topbelly arm waist thigh hip knee/;
+    map {
+        my $size = $user_info->$_;
+        $input->{$_} = $size if $size;
+    } qw/height weight bust topbelly arm waist thigh hip knee/;
 
     my $v = $self->validation;
     $v->input($input);
     $v->required('height')->size( 3, 3 );
     $v->required('weight')->size( 2, 3 );
     $v->required('bust')->size( 2, 3 );
-    $v->required('topbelly')->size( 2, 3 );
-    $v->required('arm')->size( 2, 3 );
 
-    if ( $gender eq 'male' ) {
-        $v->required('waist')->size( 2, 3 );
-        $v->required('thigh')->size( 2, 3 );
-    }
-    elsif ( $gender eq 'female' ) {
-        $v->required('hip')->size( 2, 3 );
-    }
-    else {
-        my $msg = "Wrong user gender: $gender($user_id)";
-        $self->log->error($msg);
-        return ["gender($msg)"];
+    $v->optional('topbelly')->size( 2, 3 );
+    $v->optional('waist')->size( 2, 3 );
+    $v->optional('hip')->size( 2, 3 );
+    $v->optional('thigh')->size( 2, 3 );
+    $v->optional('arm')->size( 2, 3 );
+
+    if ($v->has_error) {
+        return $v->failed;
     }
 
-    return $v->failed if $v->has_error;
     return;
 }
 
