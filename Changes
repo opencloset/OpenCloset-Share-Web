@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Changed
 - 할인 전에 주문서 상세 정보를 로그로 기록함 (#263)
 
+### Fixed
+- 사용자 입력에 따라 추천 사이즈표시 (#254)
+
 ## [v0.1.39] - Mon, 17 Aug 2020 11:51:54 +0900
 ### Changed
 - 신체 치수 필수입력 변경; 키/몸무게/가슴둘레 (#254)
