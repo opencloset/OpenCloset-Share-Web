@@ -31,8 +31,9 @@ $ ->
         unless suggestionSize
           return
 
-        top = suggestionSize.top.replace(/[^0-9]/g, '')
-        bottom = suggestionSize.bot.replace(/[^0-9]/g, '')
+        [top, bot] = [suggestionSize.top.toString(), suggestionSize.bot.toString()]
+        top = top.replace(/[^0-9\.]/g, '')
+        bottom = bot.replace(/[^0-9\.]/g, '')
 
         $('.suggestion-body.suggestion-top strong').text(top)
         $('.suggestion-body.suggestion-bottom strong').text(bottom)
