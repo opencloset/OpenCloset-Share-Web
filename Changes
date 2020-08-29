@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 할인 전에 주문서 상세 정보를 로그로 기록함 (#263)
 
 ## [v0.1.39] - Mon, 17 Aug 2020 11:51:54 +0900
 ### Changed
