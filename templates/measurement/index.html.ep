@@ -53,7 +53,7 @@
           윗배둘레 <small>cm</small>
         </label>
         <div class="col-sm-7">
-          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="<%= $gender eq 'male' ? '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다.' : '윗배둘레는 열린옷장만의 특별한 사이즈 포인트로, 자켓에서 단추가 잠기는 부분을 뜻합니다. 배꼽 위치에서 6CM(보통의 경우 남성의 경우 손가락 3개, 여성의 경우 4개)위의 둘레를 수평으로 측정한다. 정장 치마는 골반이 아닌 배꼽 윗 부분에 맞춰 입습니다. 그래서, 허리가 아닌 윗배둘레로 의류를 찾기 때문에 윗배둘레가 중요합니다.' %>">
+          <input name="topbelly" type="text" class="form-control m-preview" placeholder="윗배둘레 cm" value="<%= $user_info->topbelly || '' %>" title="윗배둘레는 열린옷장 만의 특별한 사이즈로 자켓 단추가 잠기는 위치의 둘레이다. 배꼽에서 6cm 위의 둘레를 수평으로 측정한다.">
         </div>
       </div>
 
