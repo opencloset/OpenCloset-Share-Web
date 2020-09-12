@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 윗배둘레 입력 값 설명 변경 (#254)
 
 ## [v0.1.40] - Sat, 29 Aug 2020 13:08:27 +0900
 ### Changed
