@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 ### Changed
 - 윗배둘레 입력 값 설명 변경 (#254)
+- 2020 추석연휴 기간동안 택배 발송 불가 (09-30 ~ 10-08) (266)
 
 ## [v0.1.40] - Sat, 29 Aug 2020 13:08:27 +0900
 ### Changed
