@@ -68,6 +68,8 @@ sub register {
     $app->helper( payment_deadline     => \&payment_deadline );
     $app->helper( orderClothes2text    => \&orderClothes2text );
     $app->helper( redis                => \&redis );
+
+    $app->helper( shipping_date_by_delivery_method => \&shipping_date_by_delivery_method );
 }
 
 =head1 HELPERS
@@ -1044,6 +1046,52 @@ sub date_calc {
 
         $shipping_date = $dt;
         return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date }, $days );
+    }
+
+    return;
+}
+
+=head2 shipping_date_by_delivery_method( $delivery_method )
+
+C<$delivery_method> 는 아래 세개의 값 중 하나.
+
+=over
+
+=item * parcel
+
+일반 택배
+
+=item * quick_service
+
+오토바이 퀵 서비스
+
+=item * post_office_parcel
+
+우체국 택배
+
+=back
+
+=cut
+
+sub shipping_date_by_delivery_method {
+    my ($self, $delivery_method) = @_;
+    my $tz = $self->config->{timezone};
+    my $now = DateTime->now(time_zone => $tz);
+
+    $delivery_method = 'parcel' unless $delivery_method;
+    if ($delivery_method eq 'parcel') {
+        return $self->date_calc;
+    } elsif ($delivery_method eq 'quick_service') {
+        # 14:00 이전이면 오늘, 이후면 내일
+        if ($now->hour < 14) {
+            return $now->truncate(to => 'day');
+        } else {
+            return $now->add(days => 1)->truncate(to => 'day');
+        }
+    } elsif ($delivery_method eq 'post_office_parcel') {
+        return $now->add(days => 1)->truncate(to => 'day');
+    } else {
+        $self->log->error("Unknown delivery_method: $delivery_method");
     }
 
     return;
