@@ -23,10 +23,6 @@
   </button>
 </h3>
 
-<p class="help-block">
-  취업날개 온라인(택배)대여는 서울 지역으로만 배송이 가능합니다. 배송 받을 주소를 서울시 주소로 입력해주세요.
-</p>
-
 <input class="postcodify_building_id" name="address1" type="hidden" value="">
 <input class="postcodify_address" name="address2" type="hidden" value="">
 <input class="postcodify_jibeon_address" name="address3" type="hidden" value="">
