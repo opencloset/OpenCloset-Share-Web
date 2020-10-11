@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.42] - Sun, 11 Oct 2020 18:39:08 +0900
+### Changed
+- 정책변경으로 배송관련 안내문구 삭제 (#268)
+
 ## [v0.1.41] - Mon, 14 Sep 2020 18:12:57 +0900
 ### Changed
 - 윗배둘레 입력 값 설명 변경 (#254)
