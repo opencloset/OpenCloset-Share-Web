@@ -287,7 +287,25 @@ sub shipping_list {
 
 =head2 dates
 
-    GET /orders/dates?wearon_date=yyyy-mm-dd
+    GET /orders/dates?wearon_date=yyyy-mm-dd&delivery_method=parcel
+
+=over
+
+delivery_method
+
+=item *
+
+parcel - 일반택배
+
+=item *
+
+post_office_parcel - 우체국택배(익일 배송)
+
+=item *
+
+quick_service - 퀵서비스
+
+=back
 
 =cut
 
@@ -296,6 +314,7 @@ sub dates {
 
     my $v = $self->validation;
     $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->optional('delivery_method');
     $v->optional('days')->like(qr/^\d+$/);
 
     if ( $v->has_error ) {
@@ -305,18 +324,19 @@ sub dates {
 
     my $wearon_date = $v->param('wearon_date');
     my $days = $v->param('days') || 0;
+    my $delivery_method = $v->param('delivery_method') || 'parcel';
     $days += $DEFAULT_RENTAL_PERIOD;
     if ($wearon_date) {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
         my $dt    = $strp->parse_datetime($wearon_date);
-        my $dates = $self->date_calc( { wearon => $dt }, $days );
+        my $dates = $self->date_calc( { wearon => $dt, delivery_method => $delivery_method }, $days );
         map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
         $self->render( json => $dates );
     }
     else {
         my $shipping_date = $self->date_calc;
-        my $dates = $self->date_calc( { shipping => $shipping_date } );
+        my $dates = $self->date_calc( { shipping => $shipping_date, delivery_method => $delivery_method } );
         $self->render( json => { wearon_date => $dates->{wearon}->ymd } );
     }
 }

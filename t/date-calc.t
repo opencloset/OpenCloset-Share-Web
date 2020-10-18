@@ -23,13 +23,14 @@ get '/wearon/:date' => sub {
     my $self = shift;
     my $date = $self->param('date');
     my $days = $self->param('days') || $DEFAULT_DAYS;
+    my $delivery_method = $self->param('delivery_method') || 'parcel';
     my $strp = DateTime::Format::Strptime->new(
         pattern => '%F',
         locale => 'ko_KR',
         time_zone => 'Asia/Seoul'
     );
     my $dt = $strp->parse_datetime($date);
-    my $dates = $self->date_calc({ wearon => $dt }, $days);
+    my $dates = $self->date_calc({ wearon => $dt, delivery_method => $delivery_method }, $days);
     my %map; # stringify DateTime
     map { $map{$_} = $dates->{$_}->ymd } keys %$dates;
     $self->render(json => \%map);
@@ -39,13 +40,14 @@ get '/shipping/:date' => sub {
     my $self = shift;
     my $date = $self->param('date');
     my $days = $self->param('days') || $DEFAULT_DAYS;
+    my $delivery_method = $self->param('delivery_method') || 'parcel';
     my $strp = DateTime::Format::Strptime->new(
         pattern => '%F',
         locale => 'ko_KR',
         time_zone => 'Asia/Seoul'
     );
     my $dt = $strp->parse_datetime($date);
-    my $dates = $self->date_calc({ shipping => $dt }, $days);
+    my $dates = $self->date_calc({ shipping => $dt, delivery_method => $delivery_method }, $days);
     my %map; # stringify DateTime
     map { $map{$_} = $dates->{$_}->ymd } keys %$dates;
     $self->render(json => \%map);
@@ -111,5 +113,33 @@ $t->get_ok('/shipping?delivery_method=quick_service')
 $t->get_ok('/shipping?delivery_method=post_office_parcel')
     ->status_is(200)
     ->json_is('/shipping' => $now->clone->add(days => 1)->ymd);
+
+## 3박 4일 - post_office_parcel
+$t->get_ok('/wearon/2020-09-30?delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => '2020-09-28')
+    ->json_is('/wearon' => '2020-09-30')
+    ->json_is('/rental' => '2020-09-29')
+    ->json_is('/arrival' => '2020-09-29')
+    ->json_is('/target' => '2020-10-02')
+    ->json_is('/parcel' => '2020-10-02');
+
+$t->get_ok('/shipping/2020-09-28?delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => '2020-09-28')
+    ->json_is('/wearon' => '2020-09-30')
+    ->json_is('/rental' => '2020-09-29')
+    ->json_is('/arrival' => '2020-09-29')
+    ->json_is('/target' => '2020-10-02')
+    ->json_is('/parcel' => '2020-10-02');
+
+$t->get_ok('/shipping/2020-09-23?delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => '2020-09-23')
+    ->json_is('/wearon' => '2020-09-25')
+    ->json_is('/rental' => '2020-09-24')
+    ->json_is('/arrival' => '2020-09-24')
+    ->json_is('/target' => '2020-09-27')
+    ->json_is('/parcel' => '2020-09-27');
 
 done_testing();

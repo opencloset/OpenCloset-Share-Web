@@ -999,6 +999,7 @@ sub date_calc {
 
     my $shipping_date = $dates->{shipping};
     my $wearon_date   = $dates->{wearon};
+    my $delivery_method = $dates->{delivery_method} || 'parcel';
 
     if ($shipping_date) {
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
@@ -1010,6 +1011,7 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         $n  = $SHIPPING_BUFFER;
+        $n  = 1 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $shipping_date->clone;
         while ($n) {
             $dt->add( days => 1 );
@@ -1036,6 +1038,7 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         $n = $SHIPPING_BUFFER + 1;
+        $n = 2 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $wearon_date->clone->truncate( to => 'day' );
         while ($n) {
             $dt->subtract( days => 1 );
@@ -1045,7 +1048,7 @@ sub date_calc {
         }
 
         $shipping_date = $dt;
-        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date }, $days );
+        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date, delivery_method => $delivery_method }, $days );
     }
 
     return;
@@ -1079,7 +1082,7 @@ sub shipping_date_by_delivery_method {
     my $now = DateTime->now(time_zone => $tz);
 
     $delivery_method = 'parcel' unless $delivery_method;
-    if ($delivery_method eq 'parcel') {
+    if ($delivery_method eq 'parcel' or $delivery_method eq 'post_office_parcel') {
         return $self->date_calc;
     } elsif ($delivery_method eq 'quick_service') {
         # 14:00 이전이면 오늘, 이후면 내일
@@ -1088,8 +1091,6 @@ sub shipping_date_by_delivery_method {
         } else {
             return $now->add(days => 1)->truncate(to => 'day');
         }
-    } elsif ($delivery_method eq 'post_office_parcel') {
-        return $now->add(days => 1)->truncate(to => 'day');
     } else {
         $self->log->error("Unknown delivery_method: $delivery_method");
     }
