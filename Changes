@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 결제 타이밍 문제해결을 위해 결제확인 wait 시간을 없애고,
+  결제 통보 후에 1초 대기함 (#270)
 
 ## [v0.1.42] - Sun, 11 Oct 2020 18:39:08 +0900
 ### Changed
