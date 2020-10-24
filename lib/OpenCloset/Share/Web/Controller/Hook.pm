@@ -29,6 +29,10 @@ sub iamport {
     my $cid    = $v->param("merchant_uid");
     my $status = $v->param("status");
 
+    ## 결제 데이터 확인전에 결제완료 통보를 받는 경우가 발견되어서 1초 타이밍을 늦춘다.
+    ## https://github.com/opencloset/OpenCloset-Share-Web/issues/270
+    sleep(1);
+
     my $payment = $self->schema->resultset("Payment")->find( { sid => $sid } );
     unless ($payment) {
         $self->log->warn("Not found payment: sid($sid)");

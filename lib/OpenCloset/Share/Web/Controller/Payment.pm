@@ -203,7 +203,6 @@ sub callback {
         last if $json;
 
         $self->log->info("Failed to get payment info from iamport: sid($sid), retry($retry)");
-        sleep(1);
     }
 
     unless ($json) {
