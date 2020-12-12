@@ -66,6 +66,7 @@ sub update_payment {
     ## 이를 감안하고 사용자가 선택한 결제수단 이외의 응답을 허용.
     ## pay_method 는 validation 하지 않는다.
     # $v->optional("pay_method")->in( $payment->pay_method );
+    $v->optional("pay_method");
     $v->optional("imp_uid");
     $v->optional("pg_provider");
     $v->optional("status")->in(qw/paid ready cancelled failed/);
