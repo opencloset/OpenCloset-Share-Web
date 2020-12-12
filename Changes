@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.44] - Sat, 12 Dec 2020 10:58:46 +0900
 ### Changed
 - iamport 로 부터 결제수단이 변경되어도 오류로 처리하지 않고 허용함 (#270)
 
