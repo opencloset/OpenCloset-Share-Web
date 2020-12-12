@@ -61,7 +61,11 @@ sub update_payment {
     $v->required("order_id")->in( $payment->order_id );
     $v->required("merchant_uid")->in( $payment->cid );
     $v->optional("amount")->in( $payment->amount );
-    $v->optional("pay_method")->in( $payment->pay_method );
+
+    ## #270 pay_method 가 iamport 에서 임의로 변경될 수 있다.
+    ## 이를 감안하고 사용자가 선택한 결제수단 이외의 응답을 허용.
+    ## pay_method 는 validation 하지 않는다.
+    # $v->optional("pay_method")->in( $payment->pay_method );
     $v->optional("imp_uid");
     $v->optional("pg_provider");
     $v->optional("status")->in(qw/paid ready cancelled failed/);

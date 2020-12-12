@@ -1,3 +1,7 @@
+v0.1.44
+
+    $ closetpan OpenCloset::Common    # v0.1.11
+
 v0.1.43
 
 v0.1.42

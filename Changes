@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.44] - Sat, 12 Dec 2020 10:58:46 +0900
+### Changed
+- iamport 로 부터 결제수단이 변경되어도 오류로 처리하지 않고 허용함 (#270)
+
 ## [v0.1.43] - Sat, 24 Oct 2020 14:26:16 +0900
 ### Changed
 - 결제 타이밍 문제해결을 위해 결제확인 wait 시간을 없애고,
