@@ -20,7 +20,7 @@ requires 'WebService::Jandi::WebHook';
 
 # cpan.theopencloset.net
 requires 'Iamport::REST::Client',               'v0.0.4';
-requires 'OpenCloset::Common',                  'v0.1.5';
+requires 'OpenCloset::Common',                  'v0.1.11';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
 requires 'OpenCloset::Plugin::Helpers',         'v0.0.31';
 requires 'OpenCloset::Schema',                  '0.059';
