@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.46] - Sun, 31 Jan 2021 07:51:26 +0900
 ### Changed
 - 2021 설연휴 기간 disable (02/11 ~ 02/17) - Sun, 31 Jan 2021 07:19:11 +0900
 
