@@ -1118,10 +1118,16 @@ sub payment_deadline {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    my $wearon_date = $order->wearon_date;
-    my $dates       = $self->date_calc( { wearon => $wearon_date } );
-    my $deadline    = $dates->{shipping}->clone;
-    $deadline->set_hour($SHIPPING_DEADLINE_HOUR);
+    my $wearon_date     = $order->wearon_date;
+    my $shipping_method = $order->shipping_method || '';
+    my $dates           = $self->date_calc( { wearon => $wearon_date, delivery_method => $shipping_method } );
+    my $deadline        = $dates->{shipping}->clone;
+    if (!$shipping_method || $shipping_method eq 'parcel') {
+        $deadline->set_hour($SHIPPING_DEADLINE_HOUR);
+    } else {
+        # 우체국택배와 퀵서비스는 오후 2:00 까지 입금
+        $deadline->set_hour(14);
+    }
 
     return $deadline;
 }
