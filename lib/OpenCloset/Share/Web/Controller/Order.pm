@@ -58,6 +58,7 @@ sub create {
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('additional_day')->like(qr/^\d+$/);
+    $v->required('delivery_method')->in('parcel', 'quick_service', 'post_office_parcel');
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
@@ -101,6 +102,8 @@ sub create {
         }
     }
 
+    my $delivery_method = $v->param('delivery_method');
+
     my ( $order, $error ) = try {
         my $guard = $self->schema->txn_scope_guard;
         my $param = {
@@ -114,6 +117,7 @@ sub create {
             purpose          => $v->param('purpose'),
             additional_day   => $additional_day,
             misc             => $misc,
+            shipping_method  => $delivery_method,
         };
         map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
         my $order = $self->schema->resultset('Order')->create($param);
