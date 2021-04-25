@@ -16,7 +16,8 @@ $ ->
 
   date_calc = (wearon_date, days) ->
     days = '' unless days
-    $.ajax "/orders/dates?wearon_date=#{wearon_date}&days=#{days}",
+    delivery_method = $('#delivery_method-list input[name="delivery_method"]:checked').val()
+    $.ajax "/orders/dates?wearon_date=#{wearon_date}&days=#{days}&delivery_method=#{delivery_method}",
       type: 'GET'
       dataType: 'json'
       success: (data, textStatus, jqXHR) ->
@@ -63,3 +64,27 @@ $ ->
   $('form').on 'change', '#additional-day', (e) ->
     wearon_date = $('#datepicker-wearon-date').datepicker('getFormattedDate')
     date_calc(wearon_date, $(e.target).val())
+
+  # 선택된 delivery_method 에 따라 wearon_date 를 바꿔주어야 한다
+  $('#delivery_method-list input[name="delivery_method"]').on 'change', ->
+    el = $(@).get(0)
+    delivery_method = $(el).attr('value')
+    $.ajax "/orders/dates?delivery_method=#{delivery_method}",
+      type: 'GET'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $('#wearon-date').text(data.wearon_date)
+        $('#datepicker-wearon-date').datepicker('setStartDate', data.wearon_date)
+        # cleanup
+        $('#shipping-date').text('')
+        $('#rental-target-date').text('')
+        $('#arrival-date').text('')
+        $('#parcel-date').text('')
+        $('#rental-date').text('')
+        $('#target-date').text('')
+        $('#wearon-date').text('')
+
+        # disable submit btn
+        $('button.btn-primary[type=submit]').attr('disabled', true)
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->

@@ -1013,19 +1013,29 @@ sub date_calc {
         $n  = $SHIPPING_BUFFER;
         $n  = 1 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $shipping_date->clone;
-        while ($n) {
+        while ($delivery_method ne 'quick_service' and $n) {
             $dt->add( days => 1 );
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };
             $n--;
         }
 
-        $dates{arrival}  = $dt->clone;
-        $dates{shipping} = $shipping_date->clone;
-        $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
-        $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
-        $dates{target}   = $dates{rental}->clone->add( days => $days );
-        $dates{parcel}   = $dates{target}->clone;
+        if ($delivery_method eq 'quick_service') {
+            # 퀵서비스는 발송일 == 도착일이라서 당일 착용이 가능
+            $dates{arrival}  = $dt->clone;
+            $dates{shipping} = $shipping_date->clone;
+            $dates{wearon} = $dates{arrival}->clone;
+            $dates{rental} = $dates{wearon}->clone;
+            $dates{target} = $dates{rental}->clone->add( days => $days );
+            $dates{parcel} = $dates{target}->clone;
+        } else {
+            $dates{arrival}  = $dt->clone;
+            $dates{shipping} = $shipping_date->clone;
+            $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
+            $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
+            $dates{target}   = $dates{rental}->clone->add( days => $days );
+            $dates{parcel}   = $dates{target}->clone;
+        }
 
         return \%dates;
     }
@@ -1040,7 +1050,7 @@ sub date_calc {
         $n = $SHIPPING_BUFFER + 1;
         $n = 2 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $wearon_date->clone->truncate( to => 'day' );
-        while ($n) {
+        while ($delivery_method ne 'quick_service' and $n) {
             $dt->subtract( days => 1 );
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };

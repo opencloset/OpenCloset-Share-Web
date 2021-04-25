@@ -314,7 +314,7 @@ sub dates {
 
     my $v = $self->validation;
     $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->optional('delivery_method');
+    $v->optional('delivery_method')->in('parcel', 'quick_service', 'post_office_parcel');
     $v->optional('days')->like(qr/^\d+$/);
 
     if ( $v->has_error ) {
@@ -335,7 +335,7 @@ sub dates {
         $self->render( json => $dates );
     }
     else {
-        my $shipping_date = $self->date_calc;
+        my $shipping_date = $self->shipping_date_by_delivery_method($delivery_method);
         my $dates = $self->date_calc( { shipping => $shipping_date, delivery_method => $delivery_method } );
         $self->render( json => { wearon_date => $dates->{wearon}->ymd } );
     }
