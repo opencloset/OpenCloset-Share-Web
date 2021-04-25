@@ -18,6 +18,8 @@ use OpenCloset::Size::Guess;
 has schema => sub { shift->app->schema };
 
 our $SHIPPING_FEE = 3_000;
+our $POSTOFFICE_SHIPPING_FEE = 6_000;
+our $QUICK_SERVICE_SHIPPING_FEE = 0; # 후불임
 
 =head1 METHODS
 
@@ -148,12 +150,19 @@ sub create {
             };
         }
 
+        my $shipping_fee = $SHIPPING_FEE;
+        if ($delivery_method eq 'quick_service') {
+            $shipping_fee = $QUICK_SERVICE_SHIPPING_FEE;
+        } elsif ($delivery_method eq 'post_office_parcel') {
+            $shipping_fee = $POSTOFFICE_SHIPPING_FEE;
+        }
+
         $order->create_related(
             'order_details',
             {
                 name        => '배송비',
-                price       => $SHIPPING_FEE,
-                final_price => $SHIPPING_FEE,
+                price       => $shipping_fee,
+                final_price => $shipping_fee,
                 desc        => 'additional',
             }
         );
