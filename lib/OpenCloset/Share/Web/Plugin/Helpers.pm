@@ -341,7 +341,8 @@ sub payment_done {
     chomp $msg;
     $self->sms( $user_info->phone, $msg );
 
-    my $dates = $self->date_calc( { wearon => $order->wearon_date } );
+    my $shipping_method = $order->shipping_method || 'parcel';
+    my $dates = $self->date_calc( { wearon => $order->wearon_date, delivery_method => $shipping_method } );
 
     $order->update( { status_id => $PAYMENT_DONE, rental_date => $dates->{rental} } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );

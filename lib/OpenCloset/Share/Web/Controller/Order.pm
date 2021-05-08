@@ -94,7 +94,8 @@ sub create {
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $additional_day = $v->param('additional_day');
-    my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $delivery_method = $v->param('delivery_method');
+    my $dates = $self->date_calc( { wearon => $dt_wearon, delivery_method => $delivery_method }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
     my $misc;
     if ( my $order_id = $v->param('past-order') ) {
@@ -103,8 +104,6 @@ sub create {
             $misc = sprintf( "%s 대여했던 의류를 다시 대여하고 싶습니다.", $past_order->rental_date->ymd );
         }
     }
-
-    my $delivery_method = $v->param('delivery_method');
 
     my ( $order, $error ) = try {
         my $guard = $self->schema->txn_scope_guard;
@@ -377,9 +376,10 @@ sub order_id {
         return;
     }
 
-    my $deadline      = $self->payment_deadline($order);
-    my $dates         = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
-    my $force_deposit = $self->redis->get("opencloset:share:deposit:$order_id");
+    my $deadline        = $self->payment_deadline($order);
+    my $shipping_method = $order->shipping_method || 'parcel';
+    my $dates           = $self->date_calc( { wearon => $order->wearon_date, delivery_method => $shipping_method }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $force_deposit   = $self->redis->get("opencloset:share:deposit:$order_id");
     $self->stash( order => $order, deadline => $deadline, dates => $dates, force_deposit => $force_deposit );
     return 1;
 }
