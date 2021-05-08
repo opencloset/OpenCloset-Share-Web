@@ -18,6 +18,8 @@ use OpenCloset::Size::Guess;
 has schema => sub { shift->app->schema };
 
 our $SHIPPING_FEE = 3_000;
+our $POSTOFFICE_SHIPPING_FEE = 6_000;
+our $QUICK_SERVICE_SHIPPING_FEE = 0; # 후불임
 
 =head1 METHODS
 
@@ -58,6 +60,7 @@ sub create {
     my $v = $self->validation;
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('additional_day')->like(qr/^\d+$/);
+    $v->required('delivery_method')->in('parcel', 'quick_service', 'post_office_parcel');
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
@@ -91,7 +94,8 @@ sub create {
     $status_id = $CHOOSE_ADDRESS if $pair != 2;
 
     my $additional_day = $v->param('additional_day');
-    my $dates = $self->date_calc( { wearon => $dt_wearon }, $additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $delivery_method = $v->param('delivery_method');
+    my $dates = $self->date_calc( { wearon => $dt_wearon, delivery_method => $delivery_method }, $additional_day + $DEFAULT_RENTAL_PERIOD );
 
     my $misc;
     if ( my $order_id = $v->param('past-order') ) {
@@ -114,6 +118,7 @@ sub create {
             purpose          => $v->param('purpose'),
             additional_day   => $additional_day,
             misc             => $misc,
+            shipping_method  => $delivery_method,
         };
         map { $param->{$_} = $user_info->$_ } qw/height weight neck bust waist hip topbelly belly thigh arm leg knee foot pants skirt/;
         my $order = $self->schema->resultset('Order')->create($param);
@@ -144,12 +149,19 @@ sub create {
             };
         }
 
+        my $shipping_fee = $SHIPPING_FEE;
+        if ($delivery_method eq 'quick_service') {
+            $shipping_fee = $QUICK_SERVICE_SHIPPING_FEE;
+        } elsif ($delivery_method eq 'post_office_parcel') {
+            $shipping_fee = $POSTOFFICE_SHIPPING_FEE;
+        }
+
         $order->create_related(
             'order_details',
             {
                 name        => '배송비',
-                price       => $SHIPPING_FEE,
-                final_price => $SHIPPING_FEE,
+                price       => $shipping_fee,
+                final_price => $shipping_fee,
                 desc        => 'additional',
             }
         );
@@ -287,7 +299,25 @@ sub shipping_list {
 
 =head2 dates
 
-    GET /orders/dates?wearon_date=yyyy-mm-dd
+    GET /orders/dates?wearon_date=yyyy-mm-dd&delivery_method=parcel
+
+=over
+
+delivery_method
+
+=item *
+
+parcel - 일반택배
+
+=item *
+
+post_office_parcel - 우체국택배(익일 배송)
+
+=item *
+
+quick_service - 퀵서비스
+
+=back
 
 =cut
 
@@ -296,6 +326,7 @@ sub dates {
 
     my $v = $self->validation;
     $v->optional('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->optional('delivery_method')->in('parcel', 'quick_service', 'post_office_parcel');
     $v->optional('days')->like(qr/^\d+$/);
 
     if ( $v->has_error ) {
@@ -305,18 +336,19 @@ sub dates {
 
     my $wearon_date = $v->param('wearon_date');
     my $days = $v->param('days') || 0;
+    my $delivery_method = $v->param('delivery_method') || 'parcel';
     $days += $DEFAULT_RENTAL_PERIOD;
     if ($wearon_date) {
         my $tz    = $self->config->{timezone};
         my $strp  = DateTime::Format::Strptime->new( pattern => '%F', time_zone => $tz, on_error => 'croak' );
         my $dt    = $strp->parse_datetime($wearon_date);
-        my $dates = $self->date_calc( { wearon => $dt }, $days );
+        my $dates = $self->date_calc( { wearon => $dt, delivery_method => $delivery_method }, $days );
         map { $dates->{$_} = $dates->{$_}->ymd } keys %$dates;
         $self->render( json => $dates );
     }
     else {
-        my $shipping_date = $self->date_calc;
-        my $dates = $self->date_calc( { shipping => $shipping_date } );
+        my $shipping_date = $self->shipping_date_by_delivery_method($delivery_method);
+        my $dates = $self->date_calc( { shipping => $shipping_date, delivery_method => $delivery_method } );
         $self->render( json => { wearon_date => $dates->{wearon}->ymd } );
     }
 }
@@ -344,9 +376,10 @@ sub order_id {
         return;
     }
 
-    my $deadline      = $self->payment_deadline($order);
-    my $dates         = $self->date_calc( { wearon => $order->wearon_date }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
-    my $force_deposit = $self->redis->get("opencloset:share:deposit:$order_id");
+    my $deadline        = $self->payment_deadline($order);
+    my $shipping_method = $order->shipping_method || 'parcel';
+    my $dates           = $self->date_calc( { wearon => $order->wearon_date, delivery_method => $shipping_method }, $order->additional_day + $DEFAULT_RENTAL_PERIOD );
+    my $force_deposit   = $self->redis->get("opencloset:share:deposit:$order_id");
     $self->stash( order => $order, deadline => $deadline, dates => $dates, force_deposit => $force_deposit );
     return 1;
 }
