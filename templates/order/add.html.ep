@@ -294,10 +294,10 @@
   <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    발송부터 도착까지 배송기간 최소 3일 소요 (주말은 배송기간 제외)
+    안전한 배송을 위해 배송기간 2박3일 소요 (주말은 배송기간 제외)
     <br/>
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    당일 주문 / 당일 배송 불가
+    당일 퀵배송, 익일 우체국 배송이 필요하신 경우 전화/카톡 문의주세요.
   </p>
 
   <hr>
