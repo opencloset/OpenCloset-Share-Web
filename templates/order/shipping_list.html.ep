@@ -3,6 +3,7 @@
 
 % use OpenCloset::Constants::Category qw/$JACKET %LABEL_MAP/;
 % use OpenCloset::Constants::Status qw/$PAYMENT_DONE $DEPOSIT_CONFIRMED $WAITING_SHIPPED $SHIPPED $DELIVERED $CHOOSE_CLOTHES $CHOOSE_ADDRESS $RETURNED/;
+% our %SHIPPING_METHOD_MAP = (parcel => '일반택배', quick_service => '퀵 발송', post_office_parcel => '우체국택배');
 
 <div class="pull-right">
   % my $url = url_with()->path('/orders/shipping.csv');
@@ -33,6 +34,7 @@
       <th>희망의류</th>
       <th>종류</th>
       <th>코멘트</th>
+      <th>배송방법</th>
       <th>발송(예정)일</th>
       <th>도착(예정)일</th>
       <th>의류착용일</th>
@@ -82,7 +84,11 @@
         </td>
         % my $wearon_date = $order->wearon_date;
         % my $ymd = $wearon_date->ymd;
-        % my $dates = date_calc({wearon => $wearon_date});
+        % my $shipping_method = $order->shipping_method || 'parcel';
+        % my $dates = date_calc({ wearon => $wearon_date, delivery_method => $shipping_method });
+        <td>
+          %= $SHIPPING_METHOD_MAP{$shipping_method}
+        </td>
         <td>
           % my $epoch = $dates->{shipping}->epoch;
           % if ($epoch < $today->epoch) {

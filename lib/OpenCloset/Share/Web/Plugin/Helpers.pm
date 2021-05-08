@@ -68,6 +68,8 @@ sub register {
     $app->helper( payment_deadline     => \&payment_deadline );
     $app->helper( orderClothes2text    => \&orderClothes2text );
     $app->helper( redis                => \&redis );
+
+    $app->helper( shipping_date_by_delivery_method => \&shipping_date_by_delivery_method );
 }
 
 =head1 HELPERS
@@ -339,7 +341,8 @@ sub payment_done {
     chomp $msg;
     $self->sms( $user_info->phone, $msg );
 
-    my $dates = $self->date_calc( { wearon => $order->wearon_date } );
+    my $shipping_method = $order->shipping_method || 'parcel';
+    my $dates = $self->date_calc( { wearon => $order->wearon_date, delivery_method => $shipping_method } );
 
     $order->update( { status_id => $PAYMENT_DONE, rental_date => $dates->{rental} } );
     $order->find_or_create_related( 'order_parcel', { status_id => $PAYMENT_DONE } );
@@ -997,6 +1000,7 @@ sub date_calc {
 
     my $shipping_date = $dates->{shipping};
     my $wearon_date   = $dates->{wearon};
+    my $delivery_method = $dates->{delivery_method} || 'parcel';
 
     if ($shipping_date) {
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
@@ -1008,20 +1012,31 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         $n  = $SHIPPING_BUFFER;
+        $n  = 1 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $shipping_date->clone;
-        while ($n) {
+        while ($delivery_method ne 'quick_service' and $n) {
             $dt->add( days => 1 );
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };
             $n--;
         }
 
-        $dates{arrival}  = $dt->clone;
-        $dates{shipping} = $shipping_date->clone;
-        $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
-        $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
-        $dates{target}   = $dates{rental}->clone->add( days => $days );
-        $dates{parcel}   = $dates{target}->clone;
+        if ($delivery_method eq 'quick_service') {
+            # 퀵서비스는 발송일 == 도착일이라서 당일 착용이 가능
+            $dates{arrival}  = $dt->clone;
+            $dates{shipping} = $shipping_date->clone;
+            $dates{wearon} = $dates{arrival}->clone;
+            $dates{rental} = $dates{wearon}->clone;
+            $dates{target} = $dates{rental}->clone->add( days => $days );
+            $dates{parcel} = $dates{target}->clone;
+        } else {
+            $dates{arrival}  = $dt->clone;
+            $dates{shipping} = $shipping_date->clone;
+            $dates{wearon}   = $wearon_date ? $wearon_date->clone : $dates{arrival}->clone->add( days => 1 );
+            $dates{rental}   = $dates{wearon}->clone->subtract( days => 1 );
+            $dates{target}   = $dates{rental}->clone->add( days => $days );
+            $dates{parcel}   = $dates{target}->clone;
+        }
 
         return \%dates;
     }
@@ -1034,8 +1049,9 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         $n = $SHIPPING_BUFFER + 1;
+        $n = 2 if $delivery_method eq 'post_office_parcel'; # 익일배송
         $dt = $wearon_date->clone->truncate( to => 'day' );
-        while ($n) {
+        while ($delivery_method ne 'quick_service' and $n) {
             $dt->subtract( days => 1 );
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };
@@ -1043,7 +1059,51 @@ sub date_calc {
         }
 
         $shipping_date = $dt;
-        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date }, $days );
+        return $self->date_calc( { shipping => $shipping_date, wearon => $wearon_date, delivery_method => $delivery_method }, $days );
+    }
+
+    return;
+}
+
+=head2 shipping_date_by_delivery_method( $delivery_method )
+
+C<$delivery_method> 는 아래 세개의 값 중 하나.
+
+=over
+
+=item * parcel
+
+일반 택배
+
+=item * quick_service
+
+오토바이 퀵 서비스
+
+=item * post_office_parcel
+
+우체국 택배
+
+=back
+
+=cut
+
+sub shipping_date_by_delivery_method {
+    my ($self, $delivery_method) = @_;
+    my $tz = $self->config->{timezone};
+    my $now = DateTime->now(time_zone => $tz);
+
+    $delivery_method = 'parcel' unless $delivery_method;
+    if ($delivery_method eq 'parcel' or $delivery_method eq 'post_office_parcel') {
+        return $self->date_calc;
+    } elsif ($delivery_method eq 'quick_service') {
+        # 14:00 이전이면 오늘, 이후면 내일
+        if ($now->hour < 14) {
+            return $now->truncate(to => 'day');
+        } else {
+            return $now->add(days => 1)->truncate(to => 'day');
+        }
+    } else {
+        $self->log->error("Unknown delivery_method: $delivery_method");
     }
 
     return;
@@ -1059,10 +1119,16 @@ sub payment_deadline {
     my ( $self, $order ) = @_;
     return unless $order;
 
-    my $wearon_date = $order->wearon_date;
-    my $dates       = $self->date_calc( { wearon => $wearon_date } );
-    my $deadline    = $dates->{shipping}->clone;
-    $deadline->set_hour($SHIPPING_DEADLINE_HOUR);
+    my $wearon_date     = $order->wearon_date;
+    my $shipping_method = $order->shipping_method || '';
+    my $dates           = $self->date_calc( { wearon => $wearon_date, delivery_method => $shipping_method } );
+    my $deadline        = $dates->{shipping}->clone;
+    if (!$shipping_method || $shipping_method eq 'parcel') {
+        $deadline->set_hour($SHIPPING_DEADLINE_HOUR);
+    } else {
+        # 우체국택배와 퀵서비스는 오후 2:00 까지 입금
+        $deadline->set_hour(14);
+    }
 
     return $deadline;
 }

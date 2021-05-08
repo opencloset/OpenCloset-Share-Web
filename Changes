@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 우체국택배, 퀵서비스 배송방법 추가 (#256)
+- 안내문구 수정 (#256, #281)
 
 ## [v0.1.46] - Sun, 31 Jan 2021 07:51:26 +0900
 ### Changed

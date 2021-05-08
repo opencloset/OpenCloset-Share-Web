@@ -252,6 +252,36 @@
 
   <hr>
 
+  <h3>배송방법</h3>
+  <ul id="delivery_method-list">
+    <li class="radio">
+      <label>
+        <input name="delivery_method" type="radio" value="parcel" checked="true"> 일반택배(<code>3,000</code>)
+        <p class="help">
+          배송기간 평균 2일 소요(도서산간 지역, 주말예외)
+        </p>
+      </label>
+    </li>
+    <li class="radio">
+      <label>
+        <input name="delivery_method" type="radio" value="quick_service"> 당일 퀵발송(서울, 경기지역만/착불)
+        <p class="help">
+          오후 2시 이전에만 신청가능<br>
+          (이용요금 지역에 따라 약 <code>15,000</code> ~ <code>50,000</code>)
+        </p>
+      </label>
+    </li>
+    <li class="radio">
+      <label>
+        <input name="delivery_method" type="radio" value="post_office_parcel"> 우체국 익일발송(<code>6,000</code>)
+        <p class="help">
+          오후 2시까지 결제완료시 익일도착
+        </p>
+      </label>
+    </li>
+  </ul>
+  <hr>
+
   <h3>의류착용일</h3>
   <p>
     <strong>달력에서 의류착용일을 선택해주세요.</strong><br>
@@ -264,10 +294,10 @@
   <input type="hidden" name="wearon_date" id="wearon_date">
   <p class="help-block">
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    발송부터 도착까지 배송기간 최소 3일 소요 (주말은 배송기간 제외)
+    안전한 배송을 위해 배송기간 2박3일 소요 (주말은 배송기간 제외)
     <br/>
     <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    당일 주문 / 당일 배송 불가
+    당일 퀵배송, 익일 우체국 배송이 필요하신 경우 전화/카톡 문의주세요.
   </p>
 
   <hr>

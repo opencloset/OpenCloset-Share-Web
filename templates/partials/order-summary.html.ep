@@ -7,6 +7,7 @@
 
 % our %COLOR_MAP = (black => '블랙', navy => '네이비', gray => '그레이', brown => '브라운', etc => '기타', staff => '직원추천', charcoalgray => '차콜그레이', dark => '어두운계열');
 % our %EVENT_MAP = (seoul => '취업날개', 'seoul-2017' => '취업날개', 'seoul-2017-2' => '취업날개', 'seoul-2018-1' => '취업날개', '10bob' => '십시일밥', gwanak => '관악고용센터', incheonjob => '인천광역시 일자리정책과', linkstart => '링크스타트');
+% our %SHIPPING_METHOD_MAP = (parcel => '일반택배', quick_service => '퀵 발송', post_office_parcel => '우체국택배');
 
 % if (my $message = flash('message')) {
   <div class="alert alert-success" role="alert"><%= $message %></div>
@@ -241,5 +242,13 @@
       % my ($name) = split /\|/, $coupon->desc;
       <small><%= $EVENT_MAP{$name} || $name %></small>
     % }
+  </p>
+% }
+
+% if (my $shipping_method = $order->shipping_method) {
+  <hr>
+  <h5>배송방법</h5>
+  <p>
+    %= $SHIPPING_METHOD_MAP{$shipping_method}
   </p>
 % }

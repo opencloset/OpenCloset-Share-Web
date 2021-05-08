@@ -1,3 +1,9 @@
+    # cd OpenCloset-Schema/
+    $ mysql < db/alter/148-order-shipping-method.sql
+
+    $ closetpan OpenCloset::Schema             # 0.060
+    $ grunt
+
 v0.1.46
 
     $ grunt
