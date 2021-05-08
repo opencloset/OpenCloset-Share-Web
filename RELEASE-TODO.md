@@ -1,3 +1,5 @@
+v0.1.47
+
     # cd OpenCloset-Schema/
     $ mysql < db/alter/148-order-shipping-method.sql
 
