@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 결제시 마감시간 안내문구 수정 (#256)
 
 ## [v0.1.47] - Sat, 08 May 2021 17:34:56 +0900
 ### Changed
