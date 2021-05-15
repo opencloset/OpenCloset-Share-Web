@@ -1052,8 +1052,15 @@ sub date_calc {
 
         $n = $SHIPPING_BUFFER + 1;
         $n = 2 if $delivery_method eq 'post_office_parcel'; # 익일배송
+        if ($delivery_method eq 'quick_service') {
+            if ($holidays{ $wearon_date->ymd } or $wearon_date->day_of_week > 5) {
+                $n = 1;
+            } else {
+                $n = 0;
+            }
+        }
         $dt = $wearon_date->clone->truncate( to => 'day' );
-        while ($delivery_method ne 'quick_service' and $n) {
+        while ($n) {
             $dt->subtract( days => 1 );
             next if $dt->day_of_week > 5;
             next if $holidays{ $dt->ymd };
