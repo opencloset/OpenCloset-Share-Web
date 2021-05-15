@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.48] - Sat, 15 May 2021 16:35:58 +0900
 ### Changed
 - 결제시 마감시간 안내문구 수정 (#256)
 - 배송방법마다의 안내문구 수정 (#256)
