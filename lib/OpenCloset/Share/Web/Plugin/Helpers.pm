@@ -979,16 +979,22 @@ sub date_calc {
     my ( $self, $dates, $days ) = @_;
     my $tz = $self->config->{timezone};
 
-    unless ($dates) {
-        my $now      = DateTime->now( time_zone => $tz );
+    my $shipping_date = $dates->{shipping};
+    my $wearon_date   = $dates->{wearon};
+    my $delivery_method = $dates->{delivery_method} || 'parcel';
+
+    # 가장 빠른 shipping date
+    unless ($shipping_date || $wearon_date) {
+        my $now      = $dates->{current} || DateTime->now( time_zone => $tz );
         my $hour     = $now->hour;
         my $year     = $now->year;
         my @holidays = $self->holidays( $year, $year + 1 ); # 연말을 고려함
         my %holidays;
         map { $holidays{$_}++ } @holidays;
 
-        my $dt = DateTime->today( time_zone => $tz );
-        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour >= $SHIPPING_DEADLINE_HOUR;
+        my $dt = $now->clone->truncate(to => 'day');
+        my $deadline_hour = $delivery_method eq 'quick_service' ? 14 : $SHIPPING_DEADLINE_HOUR;
+        $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour >= $deadline_hour;
         while (1) {
             $dt->add( days => 1 ) and next if $dt->day_of_week > 5;
             $dt->add( days => 1 ) and next if $holidays{ $dt->ymd };
@@ -997,10 +1003,6 @@ sub date_calc {
 
         return $dt;
     }
-
-    my $shipping_date = $dates->{shipping};
-    my $wearon_date   = $dates->{wearon};
-    my $delivery_method = $dates->{delivery_method} || 'parcel';
 
     if ($shipping_date) {
         $days ||= $DEFAULT_RENTAL_PERIOD; # 기본 대여일은 3박 4일
@@ -1088,25 +1090,12 @@ C<$delivery_method> 는 아래 세개의 값 중 하나.
 =cut
 
 sub shipping_date_by_delivery_method {
-    my ($self, $delivery_method) = @_;
+    my ($self, $delivery_method, $dt) = @_;
     my $tz = $self->config->{timezone};
-    my $now = DateTime->now(time_zone => $tz);
-
     $delivery_method = 'parcel' unless $delivery_method;
-    if ($delivery_method eq 'parcel' or $delivery_method eq 'post_office_parcel') {
-        return $self->date_calc;
-    } elsif ($delivery_method eq 'quick_service') {
-        # 14:00 이전이면 오늘, 이후면 내일
-        if ($now->hour < 14) {
-            return $now->truncate(to => 'day');
-        } else {
-            return $now->add(days => 1)->truncate(to => 'day');
-        }
-    } else {
-        $self->log->error("Unknown delivery_method: $delivery_method");
-    }
-
-    return;
+    my $args = { delivery_method => $delivery_method };
+    $args->{current} = $dt if $dt;
+    return $self->date_calc($args);
 }
 
 =head2 payment_deadline( $order )

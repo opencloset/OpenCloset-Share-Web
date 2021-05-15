@@ -55,8 +55,23 @@ get '/shipping/:date' => sub {
 
 get '/shipping' => sub {
     my $self = shift;
+    my $datetime = $self->param('datetime');
     my $delivery_method = $self->param('delivery_method');
-    my $shipping_date = $self->shipping_date_by_delivery_method($delivery_method);
+
+    my $strp = DateTime::Format::Strptime->new(
+        pattern => '%FT%H',
+        locale => 'ko_KR',
+        time_zone => 'Asia/Seoul'
+    );
+
+    my $dt;
+    if ($datetime) {
+        $dt = $strp->parse_datetime($datetime);
+    } else {
+        $dt = DateTime->now(time_zone => 'Asia/Seoul');
+    }
+
+    my $shipping_date = $self->shipping_date_by_delivery_method($delivery_method, $dt);
     $self->render(json => { shipping => $shipping_date->ymd });
 };
 
@@ -106,13 +121,29 @@ $t->get_ok('/shipping/2020-09-30?days=5')
 
 ## shipping_date
 my $now = DateTime->now(time_zone => 'Asia/Seoul');
-$t->get_ok('/shipping?delivery_method=quick_service')
+$t->get_ok('/shipping?datetime=2021-05-15T14&delivery_method=post_office_parcel')
     ->status_is(200)
-    ->json_is('/shipping' => $now->hour < 14 ? $now->ymd : $now->clone->add(days => 1)->truncate(to => 'day')->ymd);
+    ->json_is('/shipping' => '2021-05-17');
 
-$t->get_ok('/shipping?delivery_method=post_office_parcel')
+$t->get_ok('/shipping?datetime=2021-05-07T17&delivery_method=quick_service')
     ->status_is(200)
-    ->json_is('/shipping' => $now->clone->add(days => 1)->ymd);
+    ->json_is('/shipping' => "2021-05-10");
+
+$t->get_ok('/shipping?datetime=2021-05-07T11&delivery_method=quick_service')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-05-07");
+
+$t->get_ok('/shipping?datetime=2021-05-05T11&delivery_method=quick_service')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-05-06");
+
+$t->get_ok('/shipping?datetime=2021-05-06T18&delivery_method=quick_service')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-05-07");
+
+$t->get_ok('/shipping?datetime=2021-05-06T09&delivery_method=quick_service')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-05-06");
 
 ## 3박 4일 - post_office_parcel
 $t->get_ok('/wearon/2020-09-30?delivery_method=post_office_parcel')
