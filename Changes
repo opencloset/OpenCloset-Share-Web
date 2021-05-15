@@ -2,6 +2,10 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 결제시 마감시간 안내문구 수정 (#256)
+- 배송방법마다의 안내문구 수정 (#256)
+- 주말과 공휴일을 고려한 퀵서비스 배송일 계산 (#256)
 
 ## [v0.1.47] - Sat, 08 May 2021 17:34:56 +0900
 ### Changed

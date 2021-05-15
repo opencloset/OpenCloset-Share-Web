@@ -258,7 +258,8 @@
       <label>
         <input name="delivery_method" type="radio" value="parcel" checked="true"> 일반택배(<code>3,000</code>)
         <p class="help">
-          배송기간 평균 2일 소요(도서산간 지역, 주말예외)
+          배송기간 2박 3일 소요<br>
+          주말은 배송기간 제외
         </p>
       </label>
     </li>
@@ -266,8 +267,9 @@
       <label>
         <input name="delivery_method" type="radio" value="quick_service"> 당일 퀵발송(서울, 경기지역만/착불)
         <p class="help">
-          오후 2시 이전에만 신청가능<br>
-          (이용요금 지역에 따라 약 <code>15,000</code> ~ <code>50,000</code>)
+          평일 오후 2시 이전에만 신청 가능<br>
+          주말/공휴일 신청불가<br>
+          착불배송비 <code>10,000</code>원부터 지역에 따라 다름
         </p>
       </label>
     </li>
@@ -275,7 +277,8 @@
       <label>
         <input name="delivery_method" type="radio" value="post_office_parcel"> 우체국 익일발송(<code>6,000</code>)
         <p class="help">
-          오후 2시까지 결제완료시 익일도착
+          오후 2시 이전 결제 완료시 익일도착<br>
+          도서산간지역, 주말 예외
         </p>
       </label>
     </li>
@@ -292,13 +295,6 @@
 
   <div id="datepicker-wearon-date" data-date-start-date="<%= $dates->{wearon}->ymd %>"></div>
   <input type="hidden" name="wearon_date" id="wearon_date">
-  <p class="help-block">
-    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    안전한 배송을 위해 배송기간 2박3일 소요 (주말은 배송기간 제외)
-    <br/>
-    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
-    당일 퀵배송, 익일 우체국 배송이 필요하신 경우 전화/카톡 문의주세요.
-  </p>
 
   <hr>
 
