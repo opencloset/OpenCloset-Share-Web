@@ -1,3 +1,5 @@
+v0.1.48
+
 v0.1.47
 
     # cd OpenCloset-Schema/
