@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.49] - Thu, 20 May 2021 23:14:42 +0900
 ### Changed
 - 우체국 택배 운송장을 입력할 수 있도록 함 (#286))
 
