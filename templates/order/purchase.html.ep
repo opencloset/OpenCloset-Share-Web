@@ -7,6 +7,8 @@
 % my $order_user = $order->user;
 % my $ui = $order_user->user_info;
 
+% our %SHIPPING_METHOD_SVC_MAP = (parcel => 'CJ대한통운', quick_service => '퀵 발송', post_office_parcel => '우체국');
+
 <div class="pull-right text-muted">
   %= include 'partials/sms-help', parcel => $parcel if $parcel;
 </div>
@@ -73,7 +75,11 @@
   <form id="form-parcel" class="form-inline hide" action="<%= url_for('order.update_parcel') %>" method="POST">
     <div class="form-group">
       <select class="form-control" name="parcel-service">
-        <option value="CJ대한통운">CJ대한통운</option>
+        % my $parcel_service = $parcel->parcel_service || $SHIPPING_METHOD_SVC_MAP{$order->shipping_method} || "";
+        % for my $svc ("CJ대한통운", "우체국") {
+          % my $selected = $parcel_service && $parcel_service eq $svc ? 1 : 0;
+          <option value="<%= $svc %>"<%= $selected ? " selected" : "" %>><%= $svc %></option>
+        % }
       </select>
     </div>
     <div class="form-group">
