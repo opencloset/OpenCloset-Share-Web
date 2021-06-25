@@ -279,6 +279,10 @@
         <p class="help bg-danger">
           안산지역, 코로나19로 익일배송 불가
         </p>
+        <p class="help">
+          오후 2시 이전 결제 완료시 익일도착<br>
+          도서산간지역, 주말 예외
+        </p>
       </label>
     </li>
   </ul>
