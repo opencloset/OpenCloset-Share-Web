@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.51] - Fri, 25 Jun 2021 23:26:14 +0900
+
 ## [v0.1.50] - Tue, 08 Jun 2021 22:27:33 +0900
 ## Changed
 - 우체국 택배를 선택할 수 없도록 함 - revert (#294)
