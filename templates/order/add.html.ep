@@ -273,12 +273,9 @@
         </p>
       </label>
     </li>
-    <li class="radio disabled">
+    <li class="radio">
       <label>
-        <input name="delivery_method" type="radio" value="post_office_parcel" disabled> 우체국 익일발송(<code>6,000</code>)
-        <p class="help bg-danger">
-          우체국 배송 파업 관계로 당분간 이용불가
-        </p>
+        <input name="delivery_method" type="radio" value="post_office_parcel"> 우체국 익일발송(<code>6,000</code>)
         <p class="help">
           오후 2시 이전 결제 완료시 익일도착<br>
           도서산간지역, 주말 예외
