@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 대여목적 및 택배 대여 안내 문구 수정 (#296)
 
 ## [v0.1.51] - Fri, 25 Jun 2021 23:26:14 +0900
 
