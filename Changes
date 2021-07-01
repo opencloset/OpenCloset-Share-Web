@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [Unreleased]
 ### Changed
 - 대여목적 및 택배 대여 안내 문구 수정 (#296)
+- 배송중 문자 메세지에 우체국택배 케이스 반영 (#288)
 
 ## [v0.1.51] - Fri, 25 Jun 2021 23:26:14 +0900
 
