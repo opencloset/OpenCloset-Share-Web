@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.53] - Thu, 29 Jul 2021 00:00:31 +0900
+### Changed
+- 배송제한문구 삽입 (#299)
+
 ## [v0.1.52] - Thu, 01 Jul 2021 19:51:55 +0900
 ### Changed
 - 대여목적 및 택배 대여 안내 문구 수정 (#296)
