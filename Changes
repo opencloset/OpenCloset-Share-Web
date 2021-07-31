@@ -3,6 +3,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.54] - Sat, 31 Jul 2021 22:26:37 +0900
 ## [v0.1.53] - Thu, 29 Jul 2021 00:00:31 +0900
 ### Changed
 - 배송제한문구 삽입 (#299)
