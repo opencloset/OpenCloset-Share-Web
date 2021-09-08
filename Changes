@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.55] - Wed, 08 Sep 2021 21:33:05 +0900
 ### Changed
 - 2021 추석연휴 기간 배송방법에 따라 의류착용일 disable
 
