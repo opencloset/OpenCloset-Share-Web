@@ -2,17 +2,29 @@ $ ->
   now = moment()
   epoch = now.format('X')
 
-  disabledDates = [
-    '2021-02-11', '2021-02-12', '2021-02-13', '2021-02-14',
-    '2021-02-15', '2021-02-16', '2021-02-17',
+  commonDisableDates = [
+    '2021-09-21', '2021-09-22', '2021-09-23', '2021-09-24',
+    '2021-09-25', '2021-09-26', '2021-09-27',
   ]
+  postalDisableDates = [
+    '2021-09-10', '2021-09-11', '2021-09-12', '2021-09-13',
+    '2021-09-14', '2021-09-15', '2021-09-16', '2021-09-17',
+    '2021-09-18', '2021-09-19', '2021-09-20',
+    '2021-09-21', '2021-09-22', '2021-09-23', '2021-09-24',
+    '2021-09-25', '2021-09-26', '2021-09-27', '2021-09-28',
+  ]
+  quickServiceDisableDates = [
+    '2021-09-18', '2021-09-19', '2021-09-20',
+    '2021-09-21', '2021-09-22',
+  ]
+  disableDates = commonDisableDates
 
   $('#datepicker-wearon-date').datepicker
     language: 'kr'
     endDate: '+1m'
     todayHighlight: true
     format: 'yyyy-mm-dd'
-    datesDisabled: disabledDates
+    datesDisabled: disableDates
 
   date_calc = (wearon_date, days) ->
     days = '' unless days
@@ -66,9 +78,18 @@ $ ->
     date_calc(wearon_date, $(e.target).val())
 
   # 선택된 delivery_method 에 따라 wearon_date 를 바꿔주어야 한다
+  # 선택된 delivery_method 에 따라 의류착용일의 datesDisabled 를 바꿔주어야 한다.
   $('#delivery_method-list input[name="delivery_method"]').on 'change', ->
     el = $(@).get(0)
     delivery_method = $(el).attr('value')
+    disableDates = commonDisableDates
+    switch delivery_method
+      when 'parcel' then disableDates = commonDisableDates
+      when 'quick_service' then disableDates = quickServiceDisableDates
+      when 'post_office_parcel' then disableDates = postalDisableDates
+      else disableDates = commonDisableDates
+    $('#datepicker-wearon-date').datepicker('setDatesDisabled', disableDates)
+
     $.ajax "/orders/dates?delivery_method=#{delivery_method}",
       type: 'GET'
       dataType: 'json'
