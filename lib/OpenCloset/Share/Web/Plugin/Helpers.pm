@@ -993,7 +993,12 @@ sub date_calc {
         map { $holidays{$_}++ } @holidays;
 
         my $dt = $now->clone->truncate(to => 'day');
-        my $deadline_hour = $delivery_method eq 'quick_service' ? 14 : $SHIPPING_DEADLINE_HOUR;
+        my $deadline_hour = $SHIPPING_DEADLINE_HOUR; # 일반택배의 결제마감시간
+        if ($delivery_method eq 'quick_service') {
+            $deadline_hour = 14; # 퀵서비스의 결제마감시간
+        } elsif ($delivery_method eq 'post_office_parcel') {
+            $deadline_hour = 14; # 우체국택배의 결제마감시간
+        }
         $dt->add( days => 1 ) if $holidays{ $now->ymd } || $hour >= $deadline_hour;
         while (1) {
             $dt->add( days => 1 ) and next if $dt->day_of_week > 5;
