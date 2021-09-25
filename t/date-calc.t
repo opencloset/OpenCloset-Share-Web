@@ -173,4 +173,32 @@ $t->get_ok('/shipping/2020-09-23?delivery_method=post_office_parcel')
     ->json_is('/target' => '2020-09-27')
     ->json_is('/parcel' => '2020-09-27');
 
+## 2시 이전 우체국 택배 #291
+$t->get_ok('/shipping/2021-06-01?delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => '2021-06-01')
+    ->json_is('/wearon' => '2021-06-03')
+    ->json_is('/rental' => '2021-06-02')
+    ->json_is('/arrival' => '2021-06-02')
+    ->json_is('/target' => '2021-06-05')
+    ->json_is('/parcel' => '2021-06-05');
+
+$t->get_ok('/wearon/2021-06-03?delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => '2021-06-01')
+    ->json_is('/wearon' => '2021-06-03')
+    ->json_is('/rental' => '2021-06-02')
+    ->json_is('/arrival' => '2021-06-02')
+    ->json_is('/target' => '2021-06-05')
+    ->json_is('/parcel' => '2021-06-05');
+
+# 발송일은 결제마감시간(dealine hour) 의 영향을 받음
+$t->get_ok('/shipping?datetime=2021-06-01T11&delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-06-01");
+
+$t->get_ok('/shipping?datetime=2021-06-01T15&delivery_method=post_office_parcel')
+    ->status_is(200)
+    ->json_is('/shipping' => "2021-06-02");
+
 done_testing();

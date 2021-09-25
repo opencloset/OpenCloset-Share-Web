@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Fixed
+- 우체국택배의 결제마감시간을 09 -> 14 로 변경 (#291)
 
 ## [v0.1.55] - Wed, 08 Sep 2021 21:33:05 +0900
 ### Changed
