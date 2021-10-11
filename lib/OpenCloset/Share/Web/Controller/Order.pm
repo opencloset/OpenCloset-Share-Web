@@ -64,6 +64,8 @@ sub create {
     $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
+    $v->optional('male-shoes-type');
+    $v->optional('female-shoes-type');
     $v->optional('pre_color')->in(qw/staff dark black navy charcoalgray gray brown/);
     $v->optional('purpose');
     $v->optional('past-order');
@@ -105,6 +107,7 @@ sub create {
         }
     }
 
+    my $gender = $user_info->gender;
     my ( $order, $error ) = try {
         my $guard = $self->schema->txn_scope_guard;
         my $param = {
@@ -131,6 +134,10 @@ sub create {
             my $desc;
             $desc = $v->param('shirt-type')  if $category eq $SHIRT;
             $desc = $v->param('blouse-type') if $category eq $BLOUSE;
+            if ($category eq $SHOES) {
+                $desc = $v->param('male-shoes-type') if $gender eq 'male';
+                $desc = $v->param('female-shoes-type') if $gender eq 'female';
+            }
             $sum += $PRICE{$category};
             my $detail = $order->create_related(
                 'order_details',
