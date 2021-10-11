@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.57] - Mon, 11 Oct 2021 15:07:29 +0900
+### Added
+- 구두 품목 선택시 하위메뉴 생성 (#278)
+
 ## [v0.1.56] - Sat, 25 Sep 2021 11:31:00 +0900
 ### Fixed
 - 우체국택배의 결제마감시간을 09 -> 14 로 변경 (#291)
