@@ -64,6 +64,12 @@ $ ->
       $('#list-shirt-type').toggleClass('hide')
     if name is 'category-blouse'
       $('#list-blouse-type').toggleClass('hide')
+    if name is 'category-shoes'
+      gender = $('#gender').data('gender')
+      if gender is 'male'
+        $('#list-male-shoes-type').toggleClass('hide')
+      else
+        $('#list-female-shoes-type').toggleClass('hide')
 
   gender = $('#gender').data('gender')
   if gender is 'male'

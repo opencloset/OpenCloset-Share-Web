@@ -151,6 +151,7 @@
       % }
     </li>
   </ul>
+
   <ul id="list-blouse-type" class="list-inline hide">
     <li>
       <i class="fa fa-female fa-fw" aria-hidden="true"></i>
@@ -171,6 +172,52 @@
               checked
               % }
           > <%= $type %> 블라우스
+        </label>
+        % $cnt++;
+      % }
+    </li>
+  </ul>
+
+  <ul id="list-male-shoes-type" class="list-inline hide">
+    <li>
+      <i class="fa fa-male fa-fw" aria-hidden="true"></i>
+    </li>
+    <li>
+      % $cnt = 0;
+      % for my $type ("블랙", "브라운") {
+        <label class="radio-inline">
+          <input
+              class="radio"
+              name="male-shoes-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 구두
+        </label>
+        % $cnt++;
+      % }
+    </li>
+  </ul>
+
+  <ul id="list-female-shoes-type" class="list-inline hide">
+    <li>
+      <i class="fa fa-female fa-fw" aria-hidden="true"></i>
+    </li>
+    <li>
+      % $cnt = 0;
+      % for my $type ("3cm", "5cm", "7cm") {
+        <label class="radio-inline">
+          <input
+              class="radio"
+              name="female-shoes-type"
+              type="radio"
+              value="<%= $type %>"
+              % unless ($cnt) {
+              checked
+              % }
+          > <%= $type %> 구두
         </label>
         % $cnt++;
       % }

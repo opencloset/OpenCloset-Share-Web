@@ -63,6 +63,9 @@
                 % } elsif ($c eq $BLOUSE) {
                   %= blouse_type($order)
                   %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
+                % } elsif ($c eq $SHOES) {
+                  %= shoes_type($order)
+                  %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
                 % } else {
                   %= $OpenCloset::Constants::Category::LABEL_MAP{$c}
                 % }
