@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 쿠폰을 사용할 수 없을 때에 팝업에 에러메세지 표시 (#311)
 
 ## [v0.1.57] - Mon, 11 Oct 2021 15:07:29 +0900
 ### Added
