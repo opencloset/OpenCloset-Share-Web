@@ -160,6 +160,10 @@ $ ->
       success: (data, textStatus, jqXHR) ->
         location.reload()
       error: (jqXHR, textStatus, errorThrown) ->
+        template = JST['coupon/error']
+        html     = template({ error: jqXHR.responseJSON.error })
+        $('#coupon-modal .modal-footer').remove()
+        $('#coupon-modal .modal-content').append(html)
       complete: (jqXHR, textStatus) ->
 
   $('.js-add-category').click (e) ->
