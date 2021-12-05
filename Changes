@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 결제완료 배송주문서 목록에 사용자의 요청사항을 코멘트로 표시함 (#307)
 
 ## [v0.1.58] - Mon, 08 Nov 2021 21:45:09 +0900
 ### Added
