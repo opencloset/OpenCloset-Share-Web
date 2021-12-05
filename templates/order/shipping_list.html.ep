@@ -76,10 +76,18 @@
           </ul>
         </td>
         <td>
-          % if (my $comment = $parcel->comment || '') {
-            <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
+          % if ($status == $PAYMENT_DONE) {
+            % if (my $comment = $order->shipping_misc || '') {
+              <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
+            % } else {
+              <i class="fa fa-comment-o fa-fw"></i>
+            % }
           % } else {
-            <i class="fa fa-comment-o fa-fw"></i>
+            % if (my $comment = $parcel->comment || '') {
+              <i class="fa fa-comment fa-fw" title="<%= $comment %>"></i>
+            % } else {
+              <i class="fa fa-comment-o fa-fw"></i>
+            % }
           % }
         </td>
         % my $wearon_date = $order->wearon_date;
