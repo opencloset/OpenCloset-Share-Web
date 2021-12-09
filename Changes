@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 결제완료 배송주문서 목록에 운영자의 주문서 메모를 코멘트로 표시함 (#307)
 
 ## [v0.1.59] - Sun, 05 Dec 2021 10:46:53 +0900
 ### Changed
