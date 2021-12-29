@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.61] - Wed, 29 Dec 2021 20:18:34 +0900
+### Added
+- 택배사 파업으로 인한 안내 메세지 추가 (#316)
+
 ## [v0.1.60] - Thu, 09 Dec 2021 21:05:21 +0900
 ### Changed
 - 결제완료 배송주문서 목록에 운영자의 주문서 메모를 코멘트로 표시함 (#307)
