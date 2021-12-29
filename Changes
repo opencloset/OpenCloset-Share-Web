@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 택배사 파업으로 인한 안내 메세지 추가 (#316)
 
 ## [v0.1.60] - Thu, 09 Dec 2021 21:05:21 +0900
 ### Changed
