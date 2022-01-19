@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.1.62] - Wed, 19 Jan 2022 19:48:50 +0900
 - 2022 설연휴 기간 착용일 disable (#319)
 
 ## [v0.1.61] - Wed, 29 Dec 2021 20:18:34 +0900
