@@ -10,7 +10,7 @@ use Try::Tiny;
 
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD/;
 use OpenCloset::Constants::Measurement qw/%AVG_LEG_BY_HEIGHT %AVG_KNEE_BY_HEIGHT/;
-use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE %PRICE/;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SHIRT $SHOES $BELT $TIE $SKIRT $BLOUSE $COAT $BAG %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTAL $RETURNED $PARTIAL_RETURNED $PAYMENT $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 use OpenCloset::Size::Guess;
@@ -61,7 +61,7 @@ sub create {
     $v->required('wearon_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('additional_day')->like(qr/^\d+$/);
     $v->required('delivery_method')->in('parcel', 'quick_service', 'post_office_parcel');
-    $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE );
+    $v->optional("category-$_") for ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE, $COAT, $BAG );
     $v->optional('shirt-type');
     $v->optional('blouse-type');
     $v->optional('male-shoes-type');
@@ -86,7 +86,7 @@ sub create {
     }
 
     my @categories;
-    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE ) {
+    for my $c ( $JACKET, $PANTS, $SHIRT, $SHOES, $BELT, $TIE, $SKIRT, $BLOUSE, $COAT, $BAG ) {
         my $p = $v->param("category-$c") || '';
         push @categories, $c if $p eq 'on';
     }

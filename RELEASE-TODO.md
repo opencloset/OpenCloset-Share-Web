@@ -1,3 +1,9 @@
+    # share.conf 에 .oavatar.bag 추가
+    oavatar => {
+        ...
+        bag       => "$AVATAR_URI/avatar/4a82715423d654d61838e81060a4cdf1",
+
+
 v0.1.62
 
     $ grunt

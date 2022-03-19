@@ -17,7 +17,7 @@ use Try::Tiny;
 
 use OpenCloset::Schema;
 use OpenCloset::Constants qw/$DEFAULT_RENTAL_PERIOD $SHIPPING_BUFFER $SHIPPING_DEADLINE_HOUR/;
-use OpenCloset::Constants::Category qw/$JACKET $PANTS $SKIRT $SHIRT $BLOUSE $SHOES $BELT $TIE %PRICE/;
+use OpenCloset::Constants::Category qw/$JACKET $PANTS $SKIRT $SHIRT $BLOUSE $SHOES $BELT $TIE $COAT $BAG %PRICE/;
 use OpenCloset::Constants::Status
     qw/$RENTABLE $RENTAL $RENTALESS $LOST $DISCARD $CHOOSE_CLOTHES $CHOOSE_ADDRESS $PAYMENT $PAYMENT_DONE $WAITING_SHIPPED $SHIPPED $RETURNED $PARTIAL_RETURNED $DELIVERED $WAITING_DEPOSIT $PAYBACK/;
 use OpenCloset::Constants::Measurement;
@@ -769,6 +769,8 @@ my %CATEGORY_PRIORITY = (
     $SHOES  => 3,
     $BELT   => 2,
     $TIE    => 1,
+    $COAT   => 1,
+    $BAG    => 1,
 );
 
 sub clothes_category { $CATEGORY_PRIORITY{$b} <=> $CATEGORY_PRIORITY{$a} }
