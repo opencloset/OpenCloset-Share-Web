@@ -242,8 +242,10 @@
   <p>
     %= $pay_with
     % if (my $coupon = $order->coupon) {
-      % my ($name) = split /\|/, $coupon->desc;
-      <small><%= $EVENT_MAP{$name} || $name %></small>
+      % if ($coupon->desc) {
+        % my ($name) = split /\|/, $coupon->desc;
+        <small><%= $EVENT_MAP{$name} || $name %></small>
+      % }
     % }
   </p>
 % }
