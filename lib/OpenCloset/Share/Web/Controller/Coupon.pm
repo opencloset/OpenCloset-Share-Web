@@ -84,6 +84,10 @@ sub validate {
 
     my %columns = $coupon->get_columns;
     $columns{max_suit_type_coupon_price} = \%MAX_SUIT_TYPE_COUPON_PRICE;
+    if ($coupon->type eq 'suit' && $coupon->price != 0) {
+        $columns{max_suit_type_coupon_price}{male} = $coupon->price;
+        $columns{max_suit_type_coupon_price}{female} = $coupon->price;
+    }
     if ( $columns{desc} and $columns{desc} eq 'linkstart' ) {
         $columns{help}        = 'LINKStart x 열린옷장';
         $columns{placeholder} = '대학교명을 입력해주세요.';

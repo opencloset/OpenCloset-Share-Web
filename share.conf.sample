@@ -50,6 +50,7 @@ my $POSTCODIFY_URI = $ENV{OPENCLOSET_POSTCODIFY_URI} || 'https://postcodify.theo
         waistcoat => "$AVATAR_URI/avatar/5f65e2487f5432ea38107d62b4f8cc12",
         coat      => "$AVATAR_URI/avatar/77eaa26cdfae788af243f9fb04650eb3",
         blouse    => "$AVATAR_URI/avatar/2bbbc09c29efa9bebd8718aa6f9d7bae",
+        bag       => "$AVATAR_URI/avatar/4a82715423d654d61838e81060a4cdf1",
     },
     iamport => {
         id         => $ENV{OPENCLOSET_IAMPORT_ID},

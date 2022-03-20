@@ -1,3 +1,12 @@
+v0.1.63
+
+    # share.conf 에 .oavatar.bag 추가
+    oavatar => {
+        ...
+        bag       => "$AVATAR_URI/avatar/4a82715423d654d61838e81060a4cdf1",
+
+    $ closetpan OpenCloset::Plugin::Helpers # v0.0.34
+
 v0.1.62
 
     $ grunt
