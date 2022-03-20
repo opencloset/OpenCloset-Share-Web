@@ -22,6 +22,6 @@ requires 'WebService::Jandi::WebHook';
 requires 'Iamport::REST::Client',               'v0.0.4';
 requires 'OpenCloset::Common',                  'v0.1.11';
 requires 'OpenCloset::DB::Plugin::Order::Sale';
-requires 'OpenCloset::Plugin::Helpers',         'v0.0.31';
+requires 'OpenCloset::Plugin::Helpers',         'v0.0.34';
 requires 'OpenCloset::Schema',                  '0.059';
 requires 'OpenCloset::Size::Guess::DB',         '0.007';
