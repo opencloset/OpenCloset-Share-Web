@@ -1,3 +1,5 @@
+    $ grunt
+
 v0.1.63
 
     # share.conf 에 .oavatar.bag 추가
