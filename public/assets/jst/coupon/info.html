@@ -39,24 +39,17 @@
   {{else}}
   <p>
     <ul class="help-text fa-ul text-left">
-      {{#if free_shipping}}
       <li>
         <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
-        대여기간을 연장하셨을 경우 <strong>연장비</strong>를 결제해주세요.
-      </li>
-      {{else}}
-      <li>
-        <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
-        쿠폰을 사용하신 후에는 <strong>배송비</strong>를 결제해주세요.
+        쿠폰코드는 창에 입력하면 재사용할 수 없습니다. 신중하게 사용해주세요.
       </li>
       <li>
         <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
-        대여기간을 연장하셨을 경우 <strong>연장비</strong>와 <strong>배송비</strong>를 결제해주세요.
+        우체국 익일배송을 선택했거나 기간을 연장하신 경우 추가 비용을 결제해주세요.
       </li>
-      {{/if}}
       <li>
         <i class="fa-li fa fa-info-circle" aria-hidden="true"></i>
-        단벌대여 쿠폰(취업날개)으로는 최대 <strong>{{#commify}}{{max_suit_type_coupon_price.male}}{{/commify}}원</strong>(남성복) <strong>{{#commify}}{{max_suit_type_coupon_price.female}}{{/commify}}원</strong>(여성복) 까지 할인됩니다.
+        무료지원 품목 외의 수량을 선택하신 경우 추가 대여비를 결제해주세요.
       </li>
     </ul>
     <button id="btn-coupon-use" class="btn btn-success" data-coupon-id="{{id}}">쿠폰을 사용합니다</button>
