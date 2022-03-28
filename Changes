@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.1.64] - Mon, 28 Mar 2022 20:51:56 +0900
+- 쿠폰입력 팝업 안내문구 수정
+
 ## [v0.1.63] - Sun, 20 Mar 2022 16:17:25 +0900
 - 코트, 가방 대여품목 추가 (#321)
 - suit 타입 쿠폰의 쿠폰별 최대할인 가격을 반영 (#326)
