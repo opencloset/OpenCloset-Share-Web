@@ -122,6 +122,10 @@
     </div>
   % }
 
+  % if ($price < 0) {
+    % $price = 0;
+  % }
+
   <h3 class="no-margin">
     합계
     <code id="order-price" data-price="<%= $price %>"><%= commify $price %></code>

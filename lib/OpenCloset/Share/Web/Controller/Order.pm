@@ -451,10 +451,44 @@ sub order {
         );
     }
     elsif ( $status_id == $PAYMENT_DONE ) {
+        my $refund_price;
+        my @refund_account = ('', '', '');
+        my $coupon_price;
+        # 쿠폰 환불 계좌 입력해야 하는지 여부
+        if (my $coupon = $order->coupon) {
+            $coupon_price = $coupon->price;
+            if ($coupon->type =~ m/default|price/ and $coupon_price >= 30_000) {
+                my $amount = $self->category_price($order);
+                my $details = $order->order_details( { desc => 'additional' } );
+                while ( my $detail = $details->next ) {
+                    $amount += $detail->price;
+                }
+
+                # 여기에서 coupon 가격을 제외해야 함
+                $amount += $coupon_price;
+
+                if ($coupon_price - $amount > $coupon_price * 0.6) {
+                    $refund_price = $coupon_price - $amount;
+                    my $desc = $order->desc;
+                    if ($desc and $desc =~ /^#/) {
+                        my @lines = split /\n/, $desc;
+                        my @account = split /\|/, $lines[0];
+                        if (@account) {
+                            $refund_account[0] = $account[0] =~ s/^# //r;
+                            $refund_account[1] = $account[1];
+                            $refund_account[2] = $account[2];
+                        }
+                    }
+                }
+            }
+        }
         my $dates = $self->stash('dates');
         $self->render(
             template       => 'order/order.payment_done',
             cancel_payment => $self->_cancel_payment_cond( $order, $dates->{shipping} ),
+            refund_price   => $refund_price,
+            refund_account => \@refund_account,
+            coupon_price   => $coupon_price,
         );
     }
     else {
@@ -483,6 +517,7 @@ sub update_order {
     $v->optional('shipping_misc');
     $v->optional('desc');
     $v->optional('force_deposit');
+    $v->optional('coupon_refund_account'); # 쿠폰환불계좌
 
     if ( $v->has_error ) {
         my $failed = $v->failed;
@@ -568,6 +603,11 @@ sub update_order {
         my $force_deposit = delete $input->{force_deposit};
         my $order_id      = $order->id;
         $self->redis->set( "opencloset:share:deposit:$order_id" => $force_deposit );
+    }
+
+    if (my $account = delete $input->{coupon_refund_account}) {
+        my $desc = $order->desc;
+        $input->{desc} = sprintf("# %s\n%s", $account, $desc);
     }
 
     $order->update($input);
@@ -807,7 +847,7 @@ sub insert_coupon {
 
         return $self->error( 500, $error ) unless $success;
     }
-    elsif ( $type =~ /(default|rate)/ ) {
+    elsif ( $type =~ /(default|rate|price)/ ) {
         $price_pay_with .= '+';
         my $guard = $self->schema->txn_scope_guard;
         my ( $success, $error ) = try {
@@ -815,6 +855,25 @@ sub insert_coupon {
             $self->transfer_order( $coupon, $order );
             $self->discount_order($order);
             $coupon->update( { status => 'used' } );
+
+            # price 쿠폰을 사용했지만 60%+ 남았을 경우에는 환불 계좌번호를 입력받아야 함
+            if ($type =~ /(default|price)/) {
+                my $coupon_price = $coupon->price;
+                my $amount = $self->category_price($order);
+                my $details = $order->order_details( { desc => 'additional' } );
+                while ( my $detail = $details->next ) {
+                    $amount += $detail->price;
+                }
+
+                # 여기에서 coupon 가격을 제외해야 함
+                $amount += $coupon_price;
+
+                if ($coupon_price - $amount > $coupon_price * 0.6) {
+                    my $used_rate = int($amount/$coupon_price * 100);
+                    $self->log->info(sprintf("%d원 쿠폰에서 %d원 사용되었습니다.: %d%%", $coupon_price, $amount, $used_rate));
+                }
+            }
+
             $guard->commit;
             return 1;
         }
@@ -830,7 +889,6 @@ sub insert_coupon {
     }
 
     ## 할인 이후의 가격을 확인해서 0원이면 바로 배송대기로 변경
-    # $self->payment_done($order);
     my $amount = $self->category_price($order);
     my $details = $order->order_details( { desc => 'additional' } );
     while ( my $detail = $details->next ) {

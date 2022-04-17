@@ -73,7 +73,7 @@
       % my $type = $coupon->type;
       % if ($type ne 'suit') {
         %= $coupon->price
-        %= $coupon->type eq 'default' ? '원' : '%'
+        %= $coupon->type eq 'rate' ? '%' : '원'
       % }
       할인쿠폰이 적용되었습니다.
     </div>
