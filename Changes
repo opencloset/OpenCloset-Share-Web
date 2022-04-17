@@ -2,6 +2,7 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+- price 타입의 쿠폰을 사용토록 하고 환불할 수 있도록 함 (#310)
 
 ## [v0.1.64] - Mon, 28 Mar 2022 20:51:56 +0900
 - 쿠폰입력 팝업 안내문구 수정
