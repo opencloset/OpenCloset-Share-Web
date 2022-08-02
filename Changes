@@ -2,6 +2,7 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+- 주문 제한 설정 (2022-08-17 ~ 2022-08-19) #336
 
 ## [v0.1.64] - Mon, 28 Mar 2022 20:51:56 +0900
 - 쿠폰입력 팝업 안내문구 수정
